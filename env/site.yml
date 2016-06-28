@@ -55,13 +55,12 @@ engines:
 
 
     compatibility_dialog_min_version: 2015
-    debug_logging: false
+    debug_logging: true
     location:
       version: v0.5.5
       type: app_store
       name: tk-maya
     menu_favourites:
-    - {app_instance: tk-multi-workfiles2, name: File Open...}
     template_project:
     use_sgtk_as_menu_name: false
 
