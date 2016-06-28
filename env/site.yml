@@ -81,9 +81,10 @@ engines:
     compatibility_dialog_min_version: 2015
     debug_logging: true
     location:
-      version: v0.5.5
-      type: app_store
-      name: tk-maya
+      version: 92cd8e3b8bb8f2d0831d45b5215ac37eef9f6e86
+      type: git_branch
+      branch: 37277_site_context_maya
+      path: git@github.com:shotgunsoftware/tk-maya.git
     menu_favourites: []
     template_project:
     use_sgtk_as_menu_name: false
