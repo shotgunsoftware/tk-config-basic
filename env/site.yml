@@ -1,0 +1,69 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+description: Apps and Engines when toolkit is run from outside a project.
+
+#################################################################################################
+# define all the items that should appear in this environment
+# By default make the non-project side of the desktop engine available
+
+engines:
+
+  tk-maya:
+    apps:
+
+      tk-multi-loader2:
+        action_mappings:
+          Maya Scene: [reference, import]
+          Photoshop Image: [texture_node]
+          Rendered Image: [texture_node]
+        actions_hook: '{self}/tk-maya_actions.py'
+        download_thumbnails: true
+        entities:
+        - caption: Assets
+          entity_type: Asset
+          filters:
+          - [project, is, '{context.project}']
+          hierarchy: [sg_asset_type, code]
+        - caption: Shots
+          entity_type: Shot
+          filters:
+          - [project, is, '{context.project}']
+          hierarchy: [sg_sequence, code]
+        - caption: My Tasks
+          entity_type: Task
+          filters:
+          - [task_assignees, is, '{context.user}']
+          - [project, is, '{context.project}']
+          hierarchy: [entity, content]
+        filter_publishes_hook: '{self}/filter_publishes.py'
+        location:
+          version: v1.11.2
+          type: app_store
+          name: tk-multi-loader2
+        menu_name: Load
+        publish_filters: []
+        title_name: Loader
+
+
+    compatibility_dialog_min_version: 2015
+    debug_logging: false
+    location:
+      version: v0.5.5
+      type: app_store
+      name: tk-maya
+    menu_favourites:
+    - {app_instance: tk-multi-workfiles2, name: File Open...}
+    template_project:
+    use_sgtk_as_menu_name: false
+
+
+frameworks:
