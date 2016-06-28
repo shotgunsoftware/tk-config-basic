@@ -53,6 +53,30 @@ engines:
         publish_filters: []
         title_name: Loader
 
+#      tk-multi-shotgunpanel:
+#        location:
+#          version: v1.2.5
+#          type: app_store
+#          name: tk-multi-shotgunpanel
+#        shotgun_fields_hook: '{self}/shotgun_fields.py'
+#        actions_hook: '{self}/general_actions.py'
+#        action_mappings:
+#          PublishedFile:
+#          - actions:
+#            - publish_clipboard
+#            filters: {}
+#          Task:
+#          - actions:
+#            - assign_task
+#            - task_to_ip
+#            filters: {}
+#          Version:
+#          - actions:
+#            - quicktime_clipboard
+#            - sequence_clipboard
+#            filters: {}
+
+
 
     compatibility_dialog_min_version: 2015
     debug_logging: true
