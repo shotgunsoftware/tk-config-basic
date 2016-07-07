@@ -53,38 +53,35 @@ engines:
         publish_filters: []
         title_name: Loader
 
-#      tk-multi-shotgunpanel:
-#        location:
-#          version: v1.2.5
-#          type: app_store
-#          name: tk-multi-shotgunpanel
-#        shotgun_fields_hook: '{self}/shotgun_fields.py'
-#        actions_hook: '{self}/general_actions.py'
-#        action_mappings:
-#          PublishedFile:
-#          - actions:
-#            - publish_clipboard
-#            filters: {}
-#          Task:
-#          - actions:
-#            - assign_task
-#            - task_to_ip
-#            filters: {}
-#          Version:
-#          - actions:
-#            - quicktime_clipboard
-#            - sequence_clipboard
-#            filters: {}
-
-
+      tk-multi-shotgunpanel:
+        location:
+          version: v1.2.5
+          type: app_store
+          name: tk-multi-shotgunpanel
+        shotgun_fields_hook: '{self}/shotgun_fields.py'
+        actions_hook: '{self}/general_actions.py'
+        action_mappings:
+          PublishedFile:
+          - actions:
+            - publish_clipboard
+            filters: {}
+          Task:
+          - actions:
+            - assign_task
+            - task_to_ip
+            filters: {}
+          Version:
+          - actions:
+            - quicktime_clipboard
+            - sequence_clipboard
+            filters: {}
 
     compatibility_dialog_min_version: 2015
     debug_logging: true
     location:
-      version: 92cd8e3b8bb8f2d0831d45b5215ac37eef9f6e86
-      type: git_branch
-      branch: 37277_site_context_maya
-      path: git@github.com:shotgunsoftware/tk-maya.git
+      version: v0.5.6
+      type: app_store
+      name: tk-maya
     menu_favourites: []
     template_project:
     use_sgtk_as_menu_name: false
