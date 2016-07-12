@@ -30,20 +30,17 @@ engines:
         entities:
         - caption: Assets
           entity_type: Asset
-          filters:
-          - [project, is, '{context.project}']
-          hierarchy: [sg_asset_type, code]
+          filters: []
+          hierarchy: [project, sg_asset_type, code]
         - caption: Shots
           entity_type: Shot
-          filters:
-          - [project, is, '{context.project}']
-          hierarchy: [sg_sequence, code]
+          filters: []
+          hierarchy: [project, sg_sequence, code]
         - caption: My Tasks
           entity_type: Task
           filters:
           - [task_assignees, is, '{context.user}']
-          - [project, is, '{context.project}']
-          hierarchy: [entity, content]
+          hierarchy: [project, entity, content]
         filter_publishes_hook: '{self}/filter_publishes.py'
         location:
           version: v1.11.2
