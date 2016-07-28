@@ -79,10 +79,16 @@ engines:
     compatibility_dialog_min_version: 2015
     debug_logging: true
     location:
-      version: v0.5.8
+      version: v0.5.10
       type: app_store
       name: tk-maya
+    # For convenience, the following location descriptor lines will be
+    # kept around while the plug-in is still in private development.
+    # type: "dev"
+    # path: "$TK_MAYA_ROOT"
     menu_favourites: []
+    run_at_startup:
+      - {app_instance: tk-multi-shotgunpanel, name: ''}
     template_project:
     use_sgtk_as_menu_name: false
 
