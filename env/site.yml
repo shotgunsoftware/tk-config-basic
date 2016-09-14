@@ -16,10 +16,8 @@ description: Apps and Engines when toolkit is run from outside a project.
 # By default make the non-project side of the desktop engine available
 
 engines:
-
   tk-maya:
     apps:
-
       tk-multi-loader2:
         action_mappings:
           Maya Scene: [reference, import]
@@ -55,7 +53,7 @@ engines:
 
       tk-multi-shotgunpanel:
         location:
-          version: v1.2.6
+          version: v1.2.7
           type: app_store
           name: tk-multi-shotgunpanel
         shotgun_fields_hook: '{self}/shotgun_fields.py'
@@ -75,11 +73,10 @@ engines:
             - quicktime_clipboard
             - sequence_clipboard
             filters: {}
-
     compatibility_dialog_min_version: 2015
     debug_logging: true
     location:
-      version: v0.5.10
+      version: v0.6.0
       type: app_store
       name: tk-maya
     # For convenience, the following location descriptor lines will be
@@ -88,7 +85,7 @@ engines:
     # path: "$TK_MAYA_ROOT"
     menu_favourites: []
     run_at_startup:
-      - {app_instance: tk-multi-shotgunpanel, name: ''}
+    - {app_instance: tk-multi-shotgunpanel, name: ''}
     template_project:
     use_sgtk_as_menu_name: false
 
@@ -96,11 +93,11 @@ engines:
 frameworks:
   tk-framework-qtwidgets_v2.x.x:
     location:
-      version: v2.2.1
+      version: v2.4.3
       type: app_store
       name: tk-framework-qtwidgets
   tk-framework-shotgunutils_v4.x.x:
     location:
-      version: v4.3.1
+      version: v4.4.5
       type: app_store
       name: tk-framework-shotgunutils
