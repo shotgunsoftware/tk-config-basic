@@ -88,6 +88,7 @@ engines:
     - {app_instance: tk-multi-shotgunpanel, name: ''}
     template_project:
     use_sgtk_as_menu_name: false
+    automatic_context_switch: false
 
 
 frameworks:
