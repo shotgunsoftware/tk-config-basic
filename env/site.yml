@@ -76,7 +76,7 @@ engines:
     compatibility_dialog_min_version: 2015
     debug_logging: true
     location:
-      version: v0.6.0
+      version: v0.7.3
       type: app_store
       name: tk-maya
     # For convenience, the following location descriptor lines will be
@@ -99,6 +99,6 @@ frameworks:
       name: tk-framework-qtwidgets
   tk-framework-shotgunutils_v4.x.x:
     location:
-      version: v4.4.5
+      version: v4.4.12
       type: app_store
       name: tk-framework-shotgunutils
