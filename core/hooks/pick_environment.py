@@ -18,6 +18,10 @@ class PickEnvironment(Hook):
 
     def execute(self, context, **kwargs):
         """
-        This config only operates in the site context.
+        Logic for determining which environment to use, given the current context
         """
-        return "site"
+        if context.project is None:
+            return "site"
+        else:
+            return "project"
+
