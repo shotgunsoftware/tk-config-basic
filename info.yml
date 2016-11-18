@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Shotgun Software Inc.
+# Copyright (c) 2016 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -11,8 +11,8 @@
 # Metadata defining the behavior and requirements for this configuration
 
 # More verbose description of this item
-display_name: "Toolkit Zero Config"
-description: "Configuration for Toolkit based workflows."
+display_name: "Toolkit Basic Configuration"
+description: "Zero configuration Shotgun Toolkit workflow."
 
 # Required minimum versions for this item to run
 requires_shotgun_version: "v6.3.0"

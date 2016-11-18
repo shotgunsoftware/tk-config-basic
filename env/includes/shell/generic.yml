@@ -28,7 +28,6 @@ shell.generic:
         type: git_branch
         branch: develop/software_entity
         version: 3472c7dd722a4bb69ac540e997e888597e731dbd
-
   location:
     version: v0.5.1
     type: app_store
