@@ -19,7 +19,7 @@ includes:
 # By default make the non-project side of the desktop engine available
 
 
-desktop_project:
+desktop.project:
 
   apps:
     tk-multi-launchapp:

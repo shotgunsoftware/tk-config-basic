@@ -17,7 +17,7 @@ includes:
 - includes/shell/generic.yml
 
 engines:
-  tk-maya: '@maya_site'
-  tk-desktop: '@desktop_site'
-  tk-shell: '@shell_generic'
+  tk-maya: '@maya.site'
+  tk-desktop: '@desktop.site'
+  tk-shell: '@shell.generic'
 

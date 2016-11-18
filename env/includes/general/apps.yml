@@ -9,18 +9,13 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-description: Apps and Engines when toolkit is run from outside a project.
+description: Common frameworks shared across various apps and environments
 
 includes:
-- ../general/frameworks.yml
+- frameworks.yml
 
-#################################################################################################
-# define all the items that should appear in this environment
-# By default make the non-project side of the desktop engine available
-
-desktop.site:
-  apps:
+general.apps.tk-multi-about:
   location:
-    version: v2.0.22
+    version: v0.2.0
     type: app_store
-    name: tk-desktop
+    name: tk-multi-about
