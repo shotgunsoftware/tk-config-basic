@@ -1,0 +1,35 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+description: Apps and Engines when toolkit is run from outside a project.
+
+includes:
+- ./frameworks.yml
+
+#################################################################################################
+# define all the items that should appear in this environment
+# By default make the non-project side of the desktop engine available
+
+
+shell_generic:
+  apps:
+    tk-multi-launchapp:
+      use_software_entity: true
+      location:
+        path: git@github.com:shotgunsoftware/tk-multi-launchapp.git
+        type: git_branch
+        branch: develop/software_entity
+        version: 3472c7dd722a4bb69ac540e997e888597e731dbd
+
+  location:
+    version: v0.5.1
+    type: app_store
+    name: tk-shell

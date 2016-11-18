@@ -1,0 +1,23 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+description: Apps and Engines when toolkit is run from outside a project.
+
+includes:
+- ./includes/maya.yml
+- ./includes/desktop.yml
+- ./includes/shell.yml
+
+engines:
+  tk-maya: '@maya_project'
+  tk-desktop: '@desktop_project'
+  tk-shell: '@shell_generic'
+
