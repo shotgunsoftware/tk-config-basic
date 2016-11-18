@@ -12,7 +12,7 @@
 description: Apps and Engines when toolkit is run from outside a project.
 
 includes:
-- ./frameworks.yml
+- ../includes/frameworks.yml
 
 #################################################################################################
 # define all the items that should appear in this environment

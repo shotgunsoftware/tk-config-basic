@@ -12,81 +12,11 @@
 description: Apps and Engines when toolkit is run from outside a project.
 
 includes:
-- ./frameworks.yml
+- ../general/frameworks.yml
 
 #################################################################################################
 # define all the items that should appear in this environment
 # By default make the non-project side of the desktop engine available
-
-maya_project:
-  apps:
-    tk-multi-loader2:
-      action_mappings:
-        Maya Scene: [reference, import]
-        Photoshop Image: [texture_node]
-        Rendered Image: [texture_node]
-      actions_hook: '{self}/tk-maya_actions.py'
-      download_thumbnails: true
-      entities:
-      - caption: Assets
-        entity_type: Asset
-        filters:
-        - [project.Project.sg_status, is, Active]
-        hierarchy: [sg_asset_type, code]
-      - caption: Shots
-        entity_type: Shot
-        filters:
-        - [project.Project.sg_status, is, Active]
-        hierarchy: [sg_sequence, code]
-      - caption: My Tasks
-        entity_type: Task
-        filters:
-        - [task_assignees, is, '{context.user}']
-        hierarchy: [entity, content]
-      filter_publishes_hook: '{self}/filter_publishes.py'
-      location:
-        version: v1.11.3
-        type: app_store
-        name: tk-multi-loader2
-      menu_name: Load
-      publish_filters: []
-      title_name: Loader
-
-    tk-multi-shotgunpanel:
-      location:
-        version: v1.2.11
-        type: app_store
-        name: tk-multi-shotgunpanel
-      shotgun_fields_hook: '{self}/shotgun_fields.py'
-      actions_hook: '{self}/general_actions.py'
-      action_mappings:
-        PublishedFile:
-        - actions:
-          - publish_clipboard
-          filters: {}
-        Task:
-        - actions:
-          - assign_task
-          - task_to_ip
-          filters: {}
-        Version:
-        - actions:
-          - quicktime_clipboard
-          - sequence_clipboard
-          filters: {}
-  compatibility_dialog_min_version: 2015
-  debug_logging: true
-  location:
-    version: v0.7.6
-    type: app_store
-    name: tk-maya
-  menu_favourites: []
-  run_at_startup:
-  - {app_instance: tk-multi-shotgunpanel, name: ''}
-  template_project:
-  automatic_context_switch: false
-
-
 
 maya_site:
   apps:
