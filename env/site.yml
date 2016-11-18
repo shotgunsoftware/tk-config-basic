@@ -9,7 +9,9 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-description: Apps and Engines when toolkit is run from outside a project.
+description: Configuration to load when when we are running in a site
+             specific context and no project or other shotgun entity
+             has yet been established as the current context.
 
 includes:
 - includes/maya/site.yml

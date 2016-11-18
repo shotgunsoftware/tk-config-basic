@@ -9,19 +9,15 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-description: Apps and Engines when toolkit is run from outside a project.
+# this configuration defines the behavior of the Shotgun Desktop when it
+# is running in its project level configuration
 
 includes:
 - ../general/frameworks.yml
 
-#################################################################################################
-# define all the items that should appear in this environment
-# By default make the non-project side of the desktop engine available
-
-
 desktop.project:
-
   apps:
+
     tk-multi-launchapp:
       use_software_entity: true
       location:
@@ -35,12 +31,21 @@ desktop.project:
   debug_logging: false
   default_group: Studio
   groups:
-  - matches: ['*Houdini*', '*Mari*', '*Max*', '*Maya*', '*Motion*', '*Nuke*', '*Photoshop*',
-      '*Softimage*']
+  - matches:
+    - '*Houdini*'
+    - '*Mari*'
+    - '*Max*'
+    - '*Maya*'
+    - '*Motion*'
+    - '*Nuke*'
+    - '*Photoshop*'
+    - '*Softimage*'
     name: Creative Tools
-  - matches: ['*Hiero*']
+  - matches:
+    - '*Hiero*'
     name: Editorial Tools
-  - matches: ['*Fla*']
+  - matches:
+    - '*Fla*'
     name: Finishing Tools
   location:
     version: v2.0.22

@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-description: Common frameworks shared across various apps and environments
+# all the frameworks required by the config are defined here.
 
 frameworks:
 

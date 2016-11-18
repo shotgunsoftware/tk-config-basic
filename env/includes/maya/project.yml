@@ -9,19 +9,19 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-description: Apps and Engines when toolkit is run from outside a project.
+# this configuration defines the behavior of the Maya Integration when it
+# is running in its project level configuration
 
 includes:
 - ../general/frameworks.yml
 - ../general/apps.yml
 
-#################################################################################################
-# define all the items that should appear in this environment
-# By default make the non-project side of the desktop engine available
 
 maya.project:
   apps:
+
     tk-multi-about: '@general.apps.tk-multi-about'
+
     tk-multi-loader2:
       action_mappings:
         Maya Scene: [reference, import]
@@ -76,6 +76,7 @@ maya.project:
           - quicktime_clipboard
           - sequence_clipboard
           filters: {}
+
   compatibility_dialog_min_version: 2015
   debug_logging: false
   location:
