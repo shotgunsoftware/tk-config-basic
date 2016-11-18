@@ -12,9 +12,9 @@
 description: Apps and Engines when toolkit is run from outside a project.
 
 includes:
-- ./includes/maya/site.yml
-- ./includes/desktop/site.yml
-- ./includes/shell/generic.yml
+- includes/maya/site.yml
+- includes/desktop/site.yml
+- includes/shell/generic.yml
 
 engines:
   tk-maya: '@maya_site'
