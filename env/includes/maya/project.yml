@@ -71,9 +71,7 @@ maya.project:
           - actions: [assign_task, task_to_ip]
             filters: {}
         Version:
-          - actions:
-            - quicktime_clipboard
-            - sequence_clipboard
+          - actions: [quicktime_clipboard, sequence_clipboard]
             filters: {}
 
   location:
