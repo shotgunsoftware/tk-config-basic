@@ -13,7 +13,7 @@
 # is running in both project and site configurations
 
 includes:
-- ../general/frameworks.yml
+- ../common/frameworks.yml
 
 shell.generic:
   apps:

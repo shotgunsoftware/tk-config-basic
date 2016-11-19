@@ -13,7 +13,7 @@
 # is running in its project level configuration
 
 includes:
-- ../general/frameworks.yml
+- ../common/frameworks.yml
 
 desktop.site:
   apps:
