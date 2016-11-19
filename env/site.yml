@@ -9,96 +9,17 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-description: Apps and Engines when toolkit is run from outside a project.
+description: Configuration to load when when we are running in a site
+             specific context and no project or other shotgun entity
+             has yet been established as the current context.
 
-#################################################################################################
-# define all the items that should appear in this environment
-# By default make the non-project side of the desktop engine available
+includes:
+- includes/maya/site.yml
+- includes/desktop/site.yml
+- includes/shell/all.yml
 
 engines:
-  tk-maya:
-    apps:
-      tk-multi-loader2:
-        action_mappings:
-          Maya Scene: [reference, import]
-          Photoshop Image: [texture_node]
-          Rendered Image: [texture_node]
-        actions_hook: '{self}/tk-maya_actions.py'
-        download_thumbnails: true
-        entities:
-        - caption: Assets
-          entity_type: Asset
-          filters:
-          - [project.Project.sg_status, is, Active]
-          hierarchy: [project, sg_asset_type, code]
-        - caption: Shots
-          entity_type: Shot
-          filters:
-          - [project.Project.sg_status, is, Active]
-          hierarchy: [project, sg_sequence, code]
-        - caption: My Tasks
-          entity_type: Task
-          filters:
-          - [task_assignees, is, '{context.user}']
-          - [project.Project.sg_status, is, Active]
-          hierarchy: [project, entity, content]
-        filter_publishes_hook: '{self}/filter_publishes.py'
-        location:
-          version: v1.11.2
-          type: app_store
-          name: tk-multi-loader2
-        menu_name: Load
-        publish_filters: []
-        title_name: Loader
+  tk-maya: '@maya.site'
+  tk-desktop: '@desktop.site'
+  tk-shell: '@shell.all'
 
-      tk-multi-shotgunpanel:
-        location:
-          version: v1.2.7
-          type: app_store
-          name: tk-multi-shotgunpanel
-        shotgun_fields_hook: '{self}/shotgun_fields.py'
-        actions_hook: '{self}/general_actions.py'
-        action_mappings:
-          PublishedFile:
-          - actions:
-            - publish_clipboard
-            filters: {}
-          Task:
-          - actions:
-            - assign_task
-            - task_to_ip
-            filters: {}
-          Version:
-          - actions:
-            - quicktime_clipboard
-            - sequence_clipboard
-            filters: {}
-    compatibility_dialog_min_version: 2015
-    debug_logging: true
-    location:
-      version: v0.7.3
-      type: app_store
-      name: tk-maya
-    # For convenience, the following location descriptor lines will be
-    # kept around while the plug-in is still in private development.
-    # type: "dev"
-    # path: "$TK_MAYA_ROOT"
-    menu_favourites: []
-    run_at_startup:
-    - {app_instance: tk-multi-shotgunpanel, name: ''}
-    template_project:
-    use_sgtk_as_menu_name: false
-    automatic_context_switch: false
-
-
-frameworks:
-  tk-framework-qtwidgets_v2.x.x:
-    location:
-      version: v2.4.3
-      type: app_store
-      name: tk-framework-qtwidgets
-  tk-framework-shotgunutils_v4.x.x:
-    location:
-      version: v4.4.12
-      type: app_store
-      name: tk-framework-shotgunutils

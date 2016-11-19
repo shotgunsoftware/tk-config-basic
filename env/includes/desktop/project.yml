@@ -1,0 +1,52 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# this configuration defines the behavior of the Shotgun Desktop when it
+# is running in its project level configuration
+
+includes:
+- ../common/frameworks.yml
+
+desktop.project:
+  apps:
+    tk-multi-launchapp:
+      use_software_entity: true
+      location:
+        path: git@github.com:shotgunsoftware/tk-multi-launchapp.git
+        version: d2530b9c22f5d0bb326c5d0a4a411cab3753ce6c
+        type: git_branch
+        branch: develop/software_entity
+  collapse_rules:
+  - {button_label: $app, match: Launch $app, menu_label: None}
+  default_group: Studio
+  groups:
+  - matches:
+    - '*Houdini*'
+    - '*Mari*'
+    - '*Max*'
+    - '*Maya*'
+    - '*Motion*'
+    - '*Nuke*'
+    - '*Photoshop*'
+    - '*Softimage*'
+    name: Creative Tools
+  - matches:
+    - '*Hiero*'
+    name: Editorial Tools
+  - matches:
+    - '*Fla*'
+    name: Finishing Tools
+  location:
+    version: v2.0.22
+    type: app_store
+    name: tk-desktop
+
+

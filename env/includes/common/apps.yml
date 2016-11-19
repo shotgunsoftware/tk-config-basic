@@ -7,9 +7,16 @@
 # By accessing, using, copying or modifying this work you indicate your
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
+#
 
-# this file defines all the different disk locations that this config uses.
-# these paths can be altered at project creation time to ensure that they map
-# to the correct location.
+# this file contains apps that are common to multiple applications
+# and setups
 
-# the zero configuration setup does not define any storage points.
+includes:
+- frameworks.yml
+
+common.apps.tk-multi-about:
+  location:
+    version: v0.2.0
+    type: app_store
+    name: tk-multi-about

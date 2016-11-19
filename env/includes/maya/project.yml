@@ -1,0 +1,87 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# this configuration defines the behavior of the Maya Integration when it
+# is running in its project level configuration
+
+includes:
+- ../common/frameworks.yml
+- ../common/apps.yml
+
+
+maya.project:
+  apps:
+
+    tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-loader2:
+      action_mappings:
+        Maya Scene: [reference, import]
+        Photoshop Image: [texture_node]
+        Rendered Image: [texture_node]
+      actions_hook: '{self}/tk-maya_actions.py'
+      entities:
+      - caption: Assets
+        entity_type: Asset
+        filters:
+        - [project.Project.sg_status, is, Active]
+        hierarchy: [sg_asset_type, code]
+      - caption: Shots
+        entity_type: Shot
+        filters:
+        - [project.Project.sg_status, is, Active]
+        hierarchy: [sg_sequence, code]
+      - caption: My Tasks
+        entity_type: Task
+        filters:
+        - [task_assignees, is, '{context.user}']
+        hierarchy: [entity, content]
+      location:
+        version: v1.11.3
+        type: app_store
+        name: tk-multi-loader2
+
+    tk-multi-shotgunpanel:
+      location:
+        version: v1.2.11
+        type: app_store
+        name: tk-multi-shotgunpanel
+      actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
+      action_mappings:
+        PublishedFile:
+          - actions: [reference, import]
+            filters: {published_file_type: Maya Scene}
+          - actions: [texture_node]
+            filters: {published_file_type: Rendered Image}
+          - actions: [texture_node]
+            filters: {published_file_type: Photoshop Image}
+          - actions: [udim_texture_node]
+            filters: {published_file_type: UDIM Image}
+          - actions: [publish_clipboard]
+            filters: {}
+        Task:
+          - actions: [assign_task, task_to_ip]
+            filters: {}
+        Version:
+          - actions: [quicktime_clipboard, sequence_clipboard]
+            filters: {}
+
+  location:
+    version: v0.7.6
+    type: app_store
+    name: tk-maya
+  menu_favourites: []
+  run_at_startup:
+  - {app_instance: tk-multi-shotgunpanel, name: ''}
+  automatic_context_switch: false
+
+
+

@@ -8,8 +8,10 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-# this file defines all the different disk locations that this config uses.
-# these paths can be altered at project creation time to ensure that they map
-# to the correct location.
+# this configuration file defines which version of the toolkit
+# core API that should be used at runtime.
 
-# the zero configuration setup does not define any storage points.
+location:
+  type: app_store
+  version: v0.18.35
+  name: tk-core

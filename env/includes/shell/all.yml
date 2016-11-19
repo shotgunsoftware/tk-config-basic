@@ -1,0 +1,30 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# this configuration defines the behavior of the Tank command when it
+# is running in all environments
+
+includes:
+- ../common/frameworks.yml
+
+shell.all:
+  apps:
+    tk-multi-launchapp:
+      use_software_entity: true
+      location:
+        path: git@github.com:shotgunsoftware/tk-multi-launchapp.git
+        version: d2530b9c22f5d0bb326c5d0a4a411cab3753ce6c
+        type: git_branch
+        branch: develop/software_entity
+  location:
+    version: v0.5.1
+    type: app_store
+    name: tk-shell

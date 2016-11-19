@@ -7,9 +7,17 @@
 # By accessing, using, copying or modifying this work you indicate your
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
+#
 
-# this file defines all the different disk locations that this config uses.
-# these paths can be altered at project creation time to ensure that they map
-# to the correct location.
+# this configuration defines the behavior of the Shotgun Desktop when it
+# is running in its project level configuration
 
-# the zero configuration setup does not define any storage points.
+includes:
+- ../common/frameworks.yml
+
+desktop.site:
+  apps:
+  location:
+    version: v2.0.22
+    type: app_store
+    name: tk-desktop
