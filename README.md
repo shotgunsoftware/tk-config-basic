@@ -1,5 +1,5 @@
 ### Toolkit zero configuration setup
 
-Details coming soon.
+For documentation, please see the [github wiki](https://github.com/shotgunsoftware/tk-config-basic/wiki/Documentation).
 
 
