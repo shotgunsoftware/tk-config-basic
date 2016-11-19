@@ -28,7 +28,6 @@ maya.project:
         Photoshop Image: [texture_node]
         Rendered Image: [texture_node]
       actions_hook: '{self}/tk-maya_actions.py'
-      download_thumbnails: true
       entities:
       - caption: Assets
         entity_type: Asset
@@ -45,40 +44,38 @@ maya.project:
         filters:
         - [task_assignees, is, '{context.user}']
         hierarchy: [entity, content]
-      filter_publishes_hook: '{self}/filter_publishes.py'
       location:
         version: v1.11.3
         type: app_store
         name: tk-multi-loader2
-      menu_name: Load
-      publish_filters: []
-      title_name: Loader
 
     tk-multi-shotgunpanel:
       location:
         version: v1.2.11
         type: app_store
         name: tk-multi-shotgunpanel
-      shotgun_fields_hook: '{self}/shotgun_fields.py'
-      actions_hook: '{self}/general_actions.py'
+      actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
       action_mappings:
         PublishedFile:
-        - actions:
-          - publish_clipboard
-          filters: {}
+          - actions: [reference, import]
+            filters: {published_file_type: Maya Scene}
+          - actions: [texture_node]
+            filters: {published_file_type: Rendered Image}
+          - actions: [texture_node]
+            filters: {published_file_type: Photoshop Image}
+          - actions: [udim_texture_node]
+            filters: {published_file_type: UDIM Image}
+          - actions: [publish_clipboard]
+            filters: {}
         Task:
-        - actions:
-          - assign_task
-          - task_to_ip
-          filters: {}
+          - actions: [assign_task, task_to_ip]
+            filters: {}
         Version:
-        - actions:
-          - quicktime_clipboard
-          - sequence_clipboard
-          filters: {}
+          - actions:
+            - quicktime_clipboard
+            - sequence_clipboard
+            filters: {}
 
-  compatibility_dialog_min_version: 2015
-  debug_logging: false
   location:
     version: v0.7.6
     type: app_store
@@ -86,7 +83,6 @@ maya.project:
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
-  template_project:
   automatic_context_switch: false
 
 

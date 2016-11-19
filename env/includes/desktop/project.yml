@@ -26,7 +26,6 @@ desktop.project:
         branch: develop/software_entity
   collapse_rules:
   - {button_label: $app, match: Launch $app, menu_label: None}
-  debug_logging: false
   default_group: Studio
   groups:
   - matches:
@@ -49,6 +48,5 @@ desktop.project:
     version: v2.0.22
     type: app_store
     name: tk-desktop
-  show_recents: true
 
 
