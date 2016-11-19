@@ -15,10 +15,10 @@ description: Toolkit configuration to be loaded whenever an association with a
 includes:
 - includes/maya/project.yml
 - includes/desktop/project.yml
-- includes/shell/generic.yml
+- includes/shell/all.yml
 
 engines:
   tk-maya: '@maya.project'
   tk-desktop: '@desktop.project'
-  tk-shell: '@shell.generic'
+  tk-shell: '@shell.all'
 

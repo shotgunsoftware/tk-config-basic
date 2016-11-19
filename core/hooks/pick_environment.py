@@ -21,8 +21,8 @@ class PickEnvironment(Hook):
 
     def execute(self, context, **kwargs):
 
-        if context.project is None:
-            return "site"
-        else:
+        if context.project:
             return "project"
+
+        return "site"
 

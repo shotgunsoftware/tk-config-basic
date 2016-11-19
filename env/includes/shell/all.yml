@@ -10,12 +10,12 @@
 #
 
 # this configuration defines the behavior of the Tank command when it
-# is running in both project and site configurations
+# is running in all environments
 
 includes:
 - ../common/frameworks.yml
 
-shell.generic:
+shell.all:
   apps:
 
     tk-multi-launchapp:
