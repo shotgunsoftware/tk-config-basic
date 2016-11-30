@@ -17,6 +17,7 @@ includes:
 - includes/maya/site.yml
 - includes/desktop/site.yml
 - includes/shell/all.yml
+- includes/photoshop/site.yml
 
 engines:
   tk-maya: '@maya.site'
