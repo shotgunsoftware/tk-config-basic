@@ -1,0 +1,59 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# this configuration defines the behavior of the Photoshop Integration when it
+# is running in its project level configuration
+
+includes:
+- ../common/frameworks.yml
+- ../common/apps.yml
+
+
+photoshop.project:
+  apps:
+    tk-multi-pythonconsole:
+      location:
+        # TODO: update before release
+        version: v0.0.1
+        type: app_store
+        name: tk-multi-pythonconsole
+    tk-multi-shotgunpanel:
+      location:
+        version: v1.2.7
+        type: app_store
+        name: tk-multi-shotgunpanel
+      shotgun_fields_hook: '{self}/shotgun_fields.py'
+      actions_hook: '{self}/general_actions.py'
+      action_mappings:
+        PublishedFile:
+        - actions:
+          - publish_clipboard
+          filters: {}
+        Task:
+        - actions:
+          - assign_task
+          - task_to_ip
+          filters: {}
+        Version:
+        - actions:
+          - quicktime_clipboard
+          - sequence_clipboard
+          filters: {}
+  debug_logging: false
+  location:
+    name: tk-adobecc
+    # TODO: update before release
+    #version: v0.0.1
+    #type: app_store
+    # For convenience, the following location descriptor lines will be
+    # kept around while the plug-in is still in private development.
+    type: dev
+    path: $TK_ADOBECC_ROOT

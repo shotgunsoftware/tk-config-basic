@@ -21,4 +21,5 @@ engines:
   tk-maya: '@maya.project'
   tk-desktop: '@desktop.project'
   tk-shell: '@shell.all'
+  tk-photoshop: '@photoshop.project'
 

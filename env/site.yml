@@ -22,4 +22,5 @@ engines:
   tk-maya: '@maya.site'
   tk-desktop: '@desktop.site'
   tk-shell: '@shell.all'
+  tk-photoshop: '@photoshop.site'
 
