@@ -12,6 +12,7 @@
 # core API that should be used at runtime.
 
 location:
-  type: app_store
-  version: v0.18.46
-  name: tk-core
+  path: git@github.com:shotgunsoftware/tk-core.git
+  version: 692798fb35fafc9c01e362b4a0740f15abe77001
+  type: git_branch
+  branch: develop/zero_config
