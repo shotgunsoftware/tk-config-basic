@@ -71,7 +71,7 @@ maya.project:
         - actions: [quicktime_clipboard, sequence_clipboard]
           filters: {}
   location:
-    path: git@github.com:shotgunsoftware/tk-maya.git
+    path: https://github.com/shotgunsoftware/tk-maya
     version: 52180c363cd51fd38ae659973243d524de4c5b2b
     type: git_branch
     branch: develop/zero_config
