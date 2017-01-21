@@ -49,12 +49,7 @@ photoshop.site:
           filters: {}
   debug_logging: false
   location:
-    name: tk-adobecc
-    # TODO: update before release
-    #version: v0.0.1
-    #type: app_store
-    # For convenience, the following location descriptor lines will be
-    # kept around while the plug-in is still in private development.
-    type: dev
-    path: $TK_ADOBECC_ROOT
+    name: tk-photoshopcc
+    version: v0.0.1
+    type: app_store
 
