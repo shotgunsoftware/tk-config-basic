@@ -47,6 +47,7 @@ photoshop.project:
           - quicktime_clipboard
           - sequence_clipboard
           filters: {}
+  shelf_favorites: []
   debug_logging: false
   location:
     name: tk-photoshopcc
