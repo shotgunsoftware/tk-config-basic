@@ -19,9 +19,7 @@ includes:
 
 maya.site:
   apps:
-
     tk-multi-about: '@common.apps.tk-multi-about'
-
     tk-multi-loader2:
       action_mappings:
         Maya Scene: [reference, import]
@@ -46,39 +44,38 @@ maya.site:
         - [project.Project.sg_status, is, Active]
         hierarchy: [project, entity, content]
       location:
-        version: v1.11.3
+        version: v1.12.4
         type: app_store
         name: tk-multi-loader2
-
     tk-multi-shotgunpanel:
       location:
-        version: v1.2.11
+        version: v1.2.13
         type: app_store
         name: tk-multi-shotgunpanel
       actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
       action_mappings:
         PublishedFile:
-          - actions: [reference, import]
-            filters: {published_file_type: Maya Scene}
-          - actions: [texture_node]
-            filters: {published_file_type: Rendered Image}
-          - actions: [texture_node]
-            filters: {published_file_type: Photoshop Image}
-          - actions: [udim_texture_node]
-            filters: {published_file_type: UDIM Image}
-          - actions: [publish_clipboard]
-            filters: {}
+        - actions: [reference, import]
+          filters: {published_file_type: Maya Scene}
+        - actions: [texture_node]
+          filters: {published_file_type: Rendered Image}
+        - actions: [texture_node]
+          filters: {published_file_type: Photoshop Image}
+        - actions: [udim_texture_node]
+          filters: {published_file_type: UDIM Image}
+        - actions: [publish_clipboard]
+          filters: {}
         Task:
-          - actions: [assign_task, task_to_ip]
-            filters: {}
+        - actions: [assign_task, task_to_ip]
+          filters: {}
         Version:
-          - actions: [quicktime_clipboard, sequence_clipboard]
-            filters: {}
-
+        - actions: [quicktime_clipboard, sequence_clipboard]
+          filters: {}
   location:
-    version: v0.7.6
-    type: app_store
-    name: tk-maya
+    path: https://github.com/shotgunsoftware/tk-maya.git
+    version: 52180c363cd51fd38ae659973243d524de4c5b2b
+    type: git_branch
+    branch: develop/zero_config
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
