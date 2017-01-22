@@ -20,6 +20,13 @@ includes:
 maya.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-publish2:
+      location:
+        type: app_store
+        name: tk-multi-publish2
+        version: v0.0.1
+
     tk-multi-loader2:
       action_mappings:
         Maya Scene: [reference, import]
@@ -73,12 +80,12 @@ maya.site:
           filters: {}
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 52180c363cd51fd38ae659973243d524de4c5b2b
+    version: fff8240ec5df3ead4439cc8eb08d7f20cf809d0a
     type: git_branch
-    branch: develop/zero_config
+    branch: 38958_launch_build_polish
   menu_favourites: []
-  run_at_startup:
-  - {app_instance: tk-multi-shotgunpanel, name: ''}
+  run_at_startup: []
+  launch_builtin_plugin: basic
   automatic_context_switch: false
 
 
