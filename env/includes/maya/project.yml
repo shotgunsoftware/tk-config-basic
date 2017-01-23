@@ -54,7 +54,7 @@ maya.project:
         name: tk-multi-loader2
     tk-multi-shotgunpanel:
       location:
-        version: v1.2.13
+        version: v1.2.14
         type: app_store
         name: tk-multi-shotgunpanel
       actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
