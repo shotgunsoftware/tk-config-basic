@@ -24,7 +24,7 @@ maya.site:
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.1
+        version: v0.0.2
 
     tk-multi-loader2:
       action_mappings:
