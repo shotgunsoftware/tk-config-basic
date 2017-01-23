@@ -20,7 +20,6 @@ includes:
 maya.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
-
     tk-multi-publish2:
       location:
         type: app_store
@@ -51,7 +50,7 @@ maya.site:
         - [project.Project.sg_status, is, Active]
         hierarchy: [project, entity, content]
       location:
-        version: v1.12.4
+        version: v1.13.4
         type: app_store
         name: tk-multi-loader2
     tk-multi-shotgunpanel:
