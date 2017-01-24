@@ -78,9 +78,9 @@ maya.project:
           filters: {}
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: fff8240ec5df3ead4439cc8eb08d7f20cf809d0a
+    version: 84a572a0c25104260bf00db2b93378e2e8244843
     type: git_branch
-    branch: 38958_launch_build_polish
+    branch: develop/zero_config
   menu_favourites: []
   run_at_startup: []
   launch_builtin_plugin: basic
