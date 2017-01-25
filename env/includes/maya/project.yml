@@ -82,7 +82,8 @@ maya.project:
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
-  run_at_startup: []
+  run_at_startup:
+  - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugin: basic
   automatic_context_switch: false
 
