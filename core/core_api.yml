@@ -16,3 +16,4 @@ location:
   version: 62ecc6538c964a379c5564fe3168c1880103661b
   type: git_branch
   branch: develop/zero_config
+
