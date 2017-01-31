@@ -21,7 +21,7 @@ desktop.project:
       use_software_entity: true
       location:
         path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-        version: d0185eb5ac6c7a00e52af078c17a2fa646bd040c
+        version: 058447a6f482757c9194f7f595e6ca755e337c54
         type: git_branch
         branch: develop/software_entity
   collapse_rules:
@@ -46,6 +46,6 @@ desktop.project:
     name: Finishing Tools
   location:
     path: https://github.com/shotgunsoftware/tk-desktop.git
-    version: a5f0035ca93699b5bdbf2b62f55a62150990909f
+    version: e19620bcf4448fa0c7da3014cc60ff26a2ddae90
     type: git_branch
     branch: develop/zero_config
