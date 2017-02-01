@@ -17,7 +17,7 @@ includes:
 - ../common/apps.yml
 
 
-photoshop.site:
+photoshopcc.site:
   apps:
     tk-multi-shotgunpanel:
       location:
