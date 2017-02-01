@@ -18,6 +18,7 @@ includes:
 desktop.site:
   apps:
   location:
-    version: v2.0.23
-    type: app_store
-    name: tk-desktop
+    path: https://github.com/shotgunsoftware/tk-desktop.git
+    version: e19620bcf4448fa0c7da3014cc60ff26a2ddae90
+    type: git_branch
+    branch: develop/zero_config
