@@ -17,17 +17,11 @@ includes:
 - ../common/apps.yml
 
 
-photoshop.site:
+photoshop.project:
   apps:
-    tk-multi-pythonconsole:
-      location:
-        # TODO: update before release
-        version: v0.0.1
-        type: app_store
-        name: tk-multi-pythonconsole
     tk-multi-shotgunpanel:
       location:
-        version: v1.2.7
+        version: v1.3.0
         type: app_store
         name: tk-multi-shotgunpanel
       shotgun_fields_hook: '{self}/shotgun_fields.py'
@@ -51,6 +45,5 @@ photoshop.site:
   debug_logging: false
   location:
     name: tk-photoshopcc
-    version: v0.0.1
+    version: v1.0.1
     type: app_store
-

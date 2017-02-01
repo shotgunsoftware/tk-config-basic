@@ -16,11 +16,11 @@ includes:
 - includes/maya/project.yml
 - includes/desktop/project.yml
 - includes/shell/all.yml
-- includes/photoshop/project.yml
+- includes/photoshopcc/project.yml
 
 engines:
   tk-maya: '@maya.project'
   tk-desktop: '@desktop.project'
   tk-shell: '@shell.all'
-  tk-photoshop: '@photoshop.project'
+  tk-photoshopcc: '@photoshopcc.project'
 

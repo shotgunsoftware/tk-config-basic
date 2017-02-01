@@ -17,14 +17,8 @@ includes:
 - ../common/apps.yml
 
 
-photoshop.project:
+photoshop.site:
   apps:
-    tk-multi-pythonconsole:
-      location:
-        # TODO: update before release
-        version: v0.0.1
-        type: app_store
-        name: tk-multi-pythonconsole
     tk-multi-shotgunpanel:
       location:
         version: v1.2.7
@@ -51,5 +45,6 @@ photoshop.project:
   debug_logging: false
   location:
     name: tk-photoshopcc
-    version: v0.0.1
+    version: v1.0.1
     type: app_store
+
