@@ -20,11 +20,14 @@ includes:
 maya.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
-    tk-multi-publish2:
-      location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.0.4
+
+    tk-multi-loader2:
+      action_mappings:
+        Maya Scene: [reference, import]
+        Photoshop Image: [texture_node]
+        Rendered Image: [texture_node]
+      actions_hook: '{self}/tk-maya_actions.py'
+      entities:
 
       - caption: Project
         type: Hierarchy
