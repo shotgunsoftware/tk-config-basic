@@ -20,7 +20,6 @@ includes:
 maya.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
-
     tk-multi-publish2:
       location:
         type: app_store
@@ -34,12 +33,10 @@ maya.project:
         Rendered Image: [texture_node]
       actions_hook: '{self}/tk-maya_actions.py'
       entities:
-
       - caption: Project
         type: Hierarchy
-        root: "/"
+        root: /
         publish_filters: []
-
       - caption: My Tasks
         type: Query
         entity_type: Task
@@ -47,7 +44,6 @@ maya.project:
         - [project, is, '{context.project}']
         - [task_assignees, is, '{context.user}']
         hierarchy: [entity, content]
-
       location:
         path: https://github.com/shotgunsoftware/tk-multi-loader2.git
         version: c6cfb186fcebd59d6ca933ce61835b797de44f21
@@ -56,7 +52,7 @@ maya.project:
 
     tk-multi-shotgunpanel:
       location:
-        version: v1.2.14
+        version: v1.3.0
         type: app_store
         name: tk-multi-shotgunpanel
       actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
