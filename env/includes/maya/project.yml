@@ -24,7 +24,7 @@ maya.project:
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.4
+        version: v0.0.5
 
     tk-multi-loader2:
       action_mappings:
@@ -76,7 +76,7 @@ maya.project:
           filters: {}
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: a6e639b11f92bfb43a49a25adbef6d9faa53c77c
+    version: db15f4be6585b1a70807340c8c66d154987a421e
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
