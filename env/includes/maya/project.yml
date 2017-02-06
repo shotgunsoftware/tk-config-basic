@@ -24,7 +24,7 @@ maya.project:
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.5
+        version: v0.0.6
 
     tk-multi-loader2:
       action_mappings:
