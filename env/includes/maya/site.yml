@@ -20,12 +20,6 @@ includes:
 maya.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
-    tk-multi-publish2:
-      location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.0.2
-
     tk-multi-loader2:
       action_mappings:
         Maya Scene: [reference, import]
@@ -33,29 +27,26 @@ maya.site:
         Rendered Image: [texture_node]
       actions_hook: '{self}/tk-maya_actions.py'
       entities:
-      - caption: Assets
-        entity_type: Asset
-        filters:
-        - [project.Project.sg_status, is, Active]
-        hierarchy: [project, sg_asset_type, code]
-      - caption: Shots
-        entity_type: Shot
-        filters:
-        - [project.Project.sg_status, is, Active]
-        hierarchy: [project, sg_sequence, code]
+      - caption: Project
+        type: Hierarchy
+        root: /
+        publish_filters: []
       - caption: My Tasks
+        type: Query
         entity_type: Task
         filters:
+        - [project, is, '{context.project}']
         - [task_assignees, is, '{context.user}']
-        - [project.Project.sg_status, is, Active]
-        hierarchy: [project, entity, content]
+        hierarchy: [entity, content]
       location:
-        version: v1.13.4
-        type: app_store
-        name: tk-multi-loader2
+        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
+        type: git_branch
+        branch: develop/zero_config
+
     tk-multi-shotgunpanel:
       location:
-        version: v1.2.14
+        version: v1.3.0
         type: app_store
         name: tk-multi-shotgunpanel
       actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
@@ -79,7 +70,7 @@ maya.site:
           filters: {}
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 6e69e7ed0583c03d5be996f285b07f5a0ffd29a9
+    version: db15f4be6585b1a70807340c8c66d154987a421e
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
