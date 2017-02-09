@@ -36,7 +36,7 @@ maya.site:
         entity_type: Task
         filters:
         - [task_assignees, is, '{context.user}']
-        hierarchy: [entity, content]
+        hierarchy: [project, entity, content]
       location:
         path: https://github.com/shotgunsoftware/tk-multi-loader2.git
         version: c6cfb186fcebd59d6ca933ce61835b797de44f21
