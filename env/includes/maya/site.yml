@@ -35,7 +35,6 @@ maya.site:
         type: Query
         entity_type: Task
         filters:
-        - [project, is, '{context.project}']
         - [task_assignees, is, '{context.user}']
         hierarchy: [entity, content]
       location:
