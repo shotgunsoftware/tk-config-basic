@@ -22,8 +22,11 @@ desktop.project:
       location:
         path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
         version: 058447a6f482757c9194f7f595e6ca755e337c54
-        type: git_branch
+        #type: git_branch
         branch: develop/software_entity
+        type: dev
+        path: /Users/manne/Documents/work_dev/toolkit/tk-multi-launchapp
+  debug_logging: true
   collapse_rules:
   - {button_label: $app, match: Launch $app, menu_label: None}
   default_group: Studio
@@ -36,6 +39,7 @@ desktop.project:
     - '*Motion*'
     - '*Nuke*'
     - '*Photoshop*'
+    - 'CC*'
     - '*Softimage*'
     name: Creative Tools
   - matches:

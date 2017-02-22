@@ -14,6 +14,7 @@
 location:
   path: https://github.com/shotgunsoftware/tk-core.git
   version: 1a9aa6191655ab482af0d4d33f1099c25f28e9d2
-  type: git_branch
+  type: dev
   branch: develop/zero_config
+  path: /Users/manne/Documents/work_dev/toolkit/tk-core
 

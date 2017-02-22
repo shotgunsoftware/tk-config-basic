@@ -19,6 +19,7 @@ includes:
 
 photoshopcc.project:
   apps:
+
     tk-multi-shotgunpanel:
       location:
         version: v1.3.0
@@ -42,8 +43,9 @@ photoshopcc.project:
           - sequence_clipboard
           filters: {}
   shelf_favorites: []
-  debug_logging: false
+  debug_logging: true
   location:
     name: tk-photoshopcc
     version: v1.0.1
-    type: app_store
+    type: dev
+    path: /Users/manne/Documents/work_dev/toolkit/tk-photoshopcc
