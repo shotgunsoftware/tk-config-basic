@@ -20,6 +20,7 @@ includes:
 maya.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
+
     tk-multi-publish2:
       location:
         type: app_store

@@ -19,6 +19,58 @@ includes:
 
 photoshopcc.site:
   apps:
+    tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-publish2:
+      collector: "{self}/collector.py"
+      publish_plugins:
+        - name: Publish to Shotgun
+          hook: "{self}/file_publisher.py"
+          settings:
+            Publish all file types: false
+            File Types:
+            - [Nuke Script, nk]
+            - [Photoshop Image, psd, psb]
+            - [3dsmax Scene, max]
+            - [Houdini Scene, hip]
+            - [Maya Scene, ma, mb]
+            - [Hiero Project, hrox]
+            - [Alembic Cache]
+            - [Rendered Image, dpx, exr]
+            - [Texture, tiff, tx, tga, dds]
+            - [Image, jpeg, jpg, png]
+
+        - name: Send to Shotgun review
+          hook: "{self}/version_creator.py"
+          settings: {}
+      location:
+        type: app_store
+        name: tk-multi-publish2
+        version: v0.0.6
+
+    tk-multi-loader2:
+      action_mappings:
+        Photoshop Image: [add_as_a_layer, open_file]
+        Rendered Image: [add_as_a_layer, open_file]
+        Image: [add_as_a_layer, open_file]
+      actions_hook: '{self}/tk-photoshopcc_actions.py'
+      entities:
+      - caption: Project
+        type: Hierarchy
+        root: /
+        publish_filters: []
+      - caption: My Tasks
+        type: Query
+        entity_type: Task
+        filters:
+        - [task_assignees, is, '{context.user}']
+        hierarchy: [project, entity, content]
+      location:
+        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
+        type: git_branch
+        branch: develop/zero_config
+
     tk-multi-shotgunpanel:
       location:
         version: v1.2.7
@@ -41,6 +93,8 @@ photoshopcc.site:
           - quicktime_clipboard
           - sequence_clipboard
           filters: {}
+
+
   shelf_favorites: []
   debug_logging: true
   location:

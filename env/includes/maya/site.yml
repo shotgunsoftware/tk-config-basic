@@ -20,6 +20,7 @@ includes:
 maya.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
+
     tk-multi-loader2:
       action_mappings:
         Maya Scene: [reference, import]
