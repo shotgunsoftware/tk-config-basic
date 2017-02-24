@@ -94,12 +94,11 @@ photoshopcc.site:
           - sequence_clipboard
           filters: {}
 
-
   shelf_favorites: []
   debug_logging: true
   location:
-    name: tk-photoshopcc
-    version: v1.0.1
-    type: dev
-    path: /Users/manne/Documents/work_dev/toolkit/tk-photoshopcc
+    path: https://github.com/shotgunsoftware/tk-photoshopcc.git
+    version: 856f225e0f6993ff30f8e0c80df2e663f058ee44
+    type: git_branch
+    branch: develop/zero_config
 
