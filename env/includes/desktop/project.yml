@@ -17,13 +17,43 @@ includes:
 
 desktop.project:
   apps:
+
+    tk-multi-publish2:
+      collector: "{self}/collector.py"
+      publish_plugins:
+        - name: Publish to Shotgun
+          hook: "{self}/file_publisher.py"
+          settings:
+            Publish all file types: false
+            File Types:
+            - [Nuke Script, nk]
+            - [Photoshop Image, psd, psb]
+            - [3dsmax Scene, max]
+            - [Houdini Scene, hip]
+            - [Maya Scene, ma, mb]
+            - [Hiero Project, hrox]
+            - [Alembic Cache]
+            - [Rendered Image, dpx, exr]
+            - [Texture, tiff, tx, tga, dds]
+            - [Image, jpeg, jpg, png]
+
+        - name: Send to Shotgun review
+          hook: "{self}/version_creator.py"
+          settings: {}
+      location:
+        type: app_store
+        name: tk-multi-publish2
+        version: v0.0.6
+
     tk-multi-launchapp:
       use_software_entity: true
       location:
         path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-        version: 9486141f58064c37ed43157b90a16accfe3e67fd
+        version: 699d14107cb052981c0a1bb6b0c2b3fdb5797b91
         type: git_branch
         branch: develop/software_entity
+
+  debug_logging: true
   collapse_rules:
   - {button_label: $app, match: Launch $app, menu_label: None}
   default_group: Studio
@@ -36,6 +66,7 @@ desktop.project:
     - '*Motion*'
     - '*Nuke*'
     - '*Photoshop*'
+    - 'CC*'
     - '*Softimage*'
     name: Creative Tools
   - matches:

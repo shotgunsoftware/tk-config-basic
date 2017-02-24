@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Maya Integration when it
+# this configuration defines the behavior of the Photoshop Integration when it
 # is running in its project level configuration
 
 includes:
@@ -17,11 +17,32 @@ includes:
 - ../common/apps.yml
 
 
-maya.project:
+photoshopcc.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-publish2:
+      collector: "{self}/collector.py"
+      publish_plugins:
+        - name: Publish to Shotgun
+          hook: "{self}/file_publisher.py"
+          settings:
+            Publish all file types: false
+            File Types:
+            - [Nuke Script, nk]
+            - [Photoshop Image, psd, psb]
+            - [3dsmax Scene, max]
+            - [Houdini Scene, hip]
+            - [Maya Scene, ma, mb]
+            - [Hiero Project, hrox]
+            - [Alembic Cache]
+            - [Rendered Image, dpx, exr]
+            - [Texture, tiff, tx, tga, dds]
+            - [Image, jpeg, jpg, png]
+
+        - name: Send to Shotgun review
+          hook: "{self}/version_creator.py"
+          settings: {}
       location:
         type: app_store
         name: tk-multi-publish2
@@ -29,10 +50,10 @@ maya.project:
 
     tk-multi-loader2:
       action_mappings:
-        Maya Scene: [reference, import]
-        Photoshop Image: [texture_node]
-        Rendered Image: [texture_node]
-      actions_hook: '{self}/tk-maya_actions.py'
+        Photoshop Image: [add_as_a_layer, open_file]
+        Rendered Image: [add_as_a_layer, open_file]
+        Image: [add_as_a_layer, open_file]
+      actions_hook: '{self}/tk-photoshopcc_actions.py'
       entities:
       - caption: Project
         type: Hierarchy
@@ -42,9 +63,8 @@ maya.project:
         type: Query
         entity_type: Task
         filters:
-        - [project, is, '{context.project}']
         - [task_assignees, is, '{context.user}']
-        hierarchy: [entity, content]
+        hierarchy: [project, entity, content]
       location:
         path: https://github.com/shotgunsoftware/tk-multi-loader2.git
         version: c6cfb186fcebd59d6ca933ce61835b797de44f21
@@ -53,38 +73,32 @@ maya.project:
 
     tk-multi-shotgunpanel:
       location:
-        version: v1.3.0
+        version: v1.2.7
         type: app_store
         name: tk-multi-shotgunpanel
-      actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
+      shotgun_fields_hook: '{self}/shotgun_fields.py'
+      actions_hook: '{self}/general_actions.py'
       action_mappings:
         PublishedFile:
-        - actions: [reference, import]
-          filters: {published_file_type: Maya Scene}
-        - actions: [texture_node]
-          filters: {published_file_type: Rendered Image}
-        - actions: [texture_node]
-          filters: {published_file_type: Photoshop Image}
-        - actions: [udim_texture_node]
-          filters: {published_file_type: UDIM Image}
-        - actions: [publish_clipboard]
+        - actions:
+          - publish_clipboard
           filters: {}
         Task:
-        - actions: [assign_task, task_to_ip]
+        - actions:
+          - assign_task
+          - task_to_ip
           filters: {}
         Version:
-        - actions: [quicktime_clipboard, sequence_clipboard]
+        - actions:
+          - quicktime_clipboard
+          - sequence_clipboard
           filters: {}
+
+  shelf_favorites: []
+  debug_logging: true
   location:
-    path: https://github.com/shotgunsoftware/tk-maya.git
-    version: f4a6c6bd5f00f9e854bcb2d6bb5eea82340b2ba1
+    path: https://github.com/shotgunsoftware/tk-photoshopcc.git
+    version: 856f225e0f6993ff30f8e0c80df2e663f058ee44
     type: git_branch
     branch: develop/zero_config
-  menu_favourites: []
-  run_at_startup:
-  - {app_instance: tk-multi-shotgunpanel, name: ''}
-  launch_builtin_plugin: basic
-  automatic_context_switch: false
-
-
 
