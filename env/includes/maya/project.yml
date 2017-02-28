@@ -34,9 +34,9 @@ maya.project:
         Rendered Image: [texture_node]
       actions_hook: '{self}/tk-maya_actions.py'
       entities:
-      - caption: Project
+      - caption: Current Project
         type: Hierarchy
-        root: /
+        root: "/Project/{context.project.id}"
         publish_filters: []
       - caption: My Tasks
         type: Query

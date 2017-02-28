@@ -55,9 +55,9 @@ photoshopcc.project:
         Image: [add_as_a_layer, open_file]
       actions_hook: '{self}/tk-photoshopcc_actions.py'
       entities:
-      - caption: Project
+      - caption: Current Project
         type: Hierarchy
-        root: /
+        root: "/Project/{context.project.id}"
         publish_filters: []
       - caption: My Tasks
         type: Query
