@@ -20,6 +20,7 @@ includes:
 maya.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
+
     tk-multi-loader2:
       action_mappings:
         Maya Scene: [reference, import]
@@ -69,7 +70,7 @@ maya.site:
           filters: {}
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 1241a127b312da3c7395d4fa1dc18556083ceb01
+    version: f4a6c6bd5f00f9e854bcb2d6bb5eea82340b2ba1
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []

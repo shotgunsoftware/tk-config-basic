@@ -17,13 +17,15 @@ includes:
 
 shell.all:
   apps:
+
     tk-multi-launchapp:
       use_software_entity: true
       location:
         path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-        version: 9486141f58064c37ed43157b90a16accfe3e67fd
+        version: 699d14107cb052981c0a1bb6b0c2b3fdb5797b91
         type: git_branch
         branch: develop/software_entity
+
   location:
     version: v0.5.1
     type: app_store
