@@ -20,3 +20,11 @@ common.apps.tk-multi-about:
     version: v0.2.2
     type: app_store
     name: tk-multi-about
+
+common.apps.tk-multi-pythonconsole: 
+  location:
+    version: v1.0.7
+    type: app_store
+    name: tk-multi-pythonconsole
+
+    

@@ -24,4 +24,4 @@ engines:
   tk-desktop: '@desktop.project'
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.project'
-  tk-3dsmax: '@3dsmax.project'
+  tk-3dsmaxplus: '@3dsmax.project'

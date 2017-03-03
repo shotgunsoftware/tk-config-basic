@@ -25,5 +25,5 @@ engines:
   tk-desktop: '@desktop.site'
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.site'
-  tk-3dsmax: '@3dsmax.site'
+  tk-3dsmaxplus: '@3dsmax.site'
 

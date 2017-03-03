@@ -21,10 +21,11 @@ includes:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
     tk-multi-publish2:
 
-      collector: "{config}/collector.py"
+      collector: "{config}/3dsmax/publish/collector.py"
 
       publish_plugins:
 
@@ -112,7 +113,8 @@ includes:
   debug_logging: false
   location:
     version: v0.2.0
-    type: app_store
+    type: dev
+    path: 'C:\Users\Manne Ohrstrom\Documents\GitHub\tk-3dsmaxplus'
     name: tk-3dsmaxplus
   menu_favourites: []
 
