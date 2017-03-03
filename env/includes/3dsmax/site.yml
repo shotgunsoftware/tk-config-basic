@@ -49,8 +49,6 @@ includes:
             hook: "{self}/version_creator.py"
             settings: {}
 
-
-
       location:
         type: app_store
         name: tk-multi-publish2
@@ -61,31 +59,22 @@ includes:
         3dsmax Scene: [import, reference]
         Alembic Cache: [import]
       actions_hook: '{self}/tk-3dsmaxplus_actions.py'
-      download_thumbnails: true
       entities:
-      - caption: Assets
-        entity_type: Asset
-        filters:
-        - [project.Project.is_template, is, False]
-        hierarchy: [project, sg_asset_type, code]
-      - caption: Shots
-        entity_type: Shot
-        filters:
-        - [project.Project.is_template, is, False]
-        hierarchy: [project, sg_sequence, code]
+      - caption: Project
+        type: Hierarchy
+        root: /
+        publish_filters: []
       - caption: My Tasks
+        type: Query
         entity_type: Task
         filters:
         - [task_assignees, is, '{context.user}']
         hierarchy: [project, entity, content]
-      filter_publishes_hook: '{self}/filter_publishes.py'
       location:
-        version: v1.11.3
-        type: app_store
-        name: tk-multi-loader2
-      menu_name: Load
-      publish_filters: []
-      title_name: Loader
+        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
+        type: git_branch
+        branch: develop/zero_config
 
     tk-multi-shotgunpanel:
       location:
@@ -109,13 +98,12 @@ includes:
           - quicktime_clipboard
           - sequence_clipboard
           filters: {}
-  compatibility_dialog_min_version: 2017
-  debug_logging: false
+
   location:
-    version: v0.2.0
-    type: dev
-    path: 'C:\Users\Manne Ohrstrom\Documents\GitHub\tk-3dsmaxplus'
-    name: tk-3dsmaxplus
+    path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git
+    version: aa76fc8c1a87b518e623abdfead4ddd8b571c168
+    type: git_branch
+    branch: develop/zero_config
   menu_favourites: []
 
 
