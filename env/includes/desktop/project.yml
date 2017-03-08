@@ -49,7 +49,7 @@ desktop.project:
       use_software_entity: true
       location:
         path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-        version: 699d14107cb052981c0a1bb6b0c2b3fdb5797b91
+        version: babf29afb416408cbafb6673b04e1a1c93273964
         type: git_branch
         branch: develop/software_entity
 

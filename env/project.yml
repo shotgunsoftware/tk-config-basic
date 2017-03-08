@@ -14,12 +14,14 @@ description: Toolkit configuration to be loaded whenever an association with a
 
 includes:
 - includes/maya/project.yml
+- includes/nuke/project.yml
 - includes/desktop/project.yml
 - includes/shell/all.yml
 - includes/photoshopcc/project.yml
 
 engines:
   tk-maya: '@maya.project'
+  tk-nuke: '@nuke.project'
   tk-desktop: '@desktop.project'
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.project'
