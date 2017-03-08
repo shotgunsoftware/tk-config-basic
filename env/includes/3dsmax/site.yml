@@ -45,6 +45,10 @@ includes:
               - [Texture, tiff, tx, tga, dds]
               - [Image, jpeg, jpg, png]
 
+          - name: Publish current 3dsMax Scene
+            hook: "{config}/3dsmax/publish/scene_publisher.py"
+            settings: {}
+
           - name: Send to Shotgun review
             hook: "{self}/version_creator.py"
             settings: {}
