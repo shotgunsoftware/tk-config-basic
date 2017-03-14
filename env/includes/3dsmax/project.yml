@@ -48,7 +48,7 @@ includes:
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.7
+        version: v0.0.8
 
     tk-multi-loader2:
       action_mappings:
