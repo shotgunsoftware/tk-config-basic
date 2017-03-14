@@ -201,7 +201,7 @@ class SceneHook(HookBaseClass):
             "path": publish_path,
             "name": filename,
             "version_number": version_to_use,
-            "thumbnail_path": item.get_thumbnail(),
+            "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
         }
 

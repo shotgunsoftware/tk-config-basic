@@ -109,8 +109,4 @@ includes:
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
-
-
-
-
-
+  launch_builtin_plugins: [basic]
