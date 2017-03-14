@@ -19,14 +19,55 @@ includes:
 
 nuke.project:
   apps:
+    tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-loader2:
+      action_mappings:
+        Nuke Script: [script_import]
+        Rendered Image: [read_node]
+        Alembic Cache: [read_node]
+      actions_hook: '{self}/tk-nuke_actions.py'
+      entities:
+      - caption: Project
+        type: Hierarchy
+        root: /
+        publish_filters: []
+      - caption: My Tasks
+        type: Query
+        entity_type: Task
+        filters:
+        - [task_assignees, is, '{context.user}']
+        hierarchy: [project, entity, content]
+      location:
+        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
+        type: git_branch
+        branch: develop/zero_config
+
+    tk-multi-shotgunpanel:
+      location:
+        version: v1.3.0
+        type: app_store
+        name: tk-multi-shotgunpanel
+        action_mappings:
+          PublishedFile:
+          - actions: [read_node]
+            filters: {published_file_type: Rendered Image}
+          - actions: [script_import]
+            filters: {published_file_type: Nuke Script}
+          Task:
+          - actions: [assign_task, task_to_ip]
+            filters: {}
+        actions_hook: '{self}/general_actions.py:{self}/tk-nuke_actions.py'
   location:
     path: https://github.com/shotgunsoftware/tk-nuke.git
-    version: 7fc3d0d7f5e41f1829b847fe0874596231f489dd
+    version: 875dff121c75ef1b0720817e19a899379094bd8e
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
   run_at_startup:
-  launch_builtin_plugin: basic
+  - {app_instance: tk-multi-shotgunpanel, name: ''}
+  launch_builtin_plugins: [basic]
   automatic_context_switch: false
 
 
