@@ -1,0 +1,75 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# this configuration defines the behavior of the Houdini Integration when it
+# is running in its site level configuration
+
+includes:
+- ../common/frameworks.yml
+- ../common/apps.yml
+
+
+houdini.site:
+  apps:
+    tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-loader2:
+        action_mappings:
+          Alembic Cache: [import]
+        actions_hook: '{self}/tk-houdini_actions.py'
+        entities:
+        - caption: Project
+          type: Hierarchy
+          root: /
+          publish_filters: []
+        - caption: My Tasks
+          type: Query
+          entity_type: Task
+          filters:
+          - [task_assignees, is, '{context.user}']
+          hierarchy: [project, entity, content]
+        location:
+          path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+          version: c6cfb186fcebd59d6ca933ce61835b797de44f21
+          type: git_branch
+          branch: develop/zero_config
+
+    tk-multi-shotgunpanel:
+        location:
+          version: v1.3.0
+          type: app_store
+          name: tk-multi-shotgunpanel
+        actions_hook: '{self}/general_actions.py'
+        action_mappings:
+          PublishedFile:
+          - actions:
+            - publish_clipboard
+            filters: {}
+          Task:
+          - actions:
+            - assign_task
+            - task_to_ip
+            filters: {}
+          Version:
+          - actions:
+            - quicktime_clipboard
+            - sequence_clipboard
+            filters: {}
+  location:
+    path: https://github.com/shotgunsoftware/tk-houdini.git
+    version: ac3dffda4a5644ab036580f5891845b3fb2badd9
+    type: git_branch
+    branch: develop/zero_config
+  menu_favourites: []
+  run_at_startup:
+  - {app_instance: tk-multi-shotgunpanel, name: ''}
+  launch_builtin_plugins: [basic]
+  automatic_context_switch: false

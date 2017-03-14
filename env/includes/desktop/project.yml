@@ -43,13 +43,13 @@ desktop.project:
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.7
+        version: v0.0.8
 
     tk-multi-launchapp:
       use_software_entity: true
       location:
         path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-        version: 699d14107cb052981c0a1bb6b0c2b3fdb5797b91
+        version: de33d6915cba76de8f459da5e5257215389dde50
         type: git_branch
         branch: develop/software_entity
 

@@ -14,14 +14,18 @@ description: Configuration to load when when we are running in a site
              has yet been established as the current context.
 
 includes:
+- includes/houdini/site.yml
 - includes/maya/site.yml
+- includes/nuke/site.yml
 - includes/desktop/site.yml
 - includes/shell/all.yml
 - includes/photoshopcc/site.yml
 - includes/3dsmax/site.yml
 
 engines:
+  tk-houdini: '@houdini.site'
   tk-maya: '@maya.site'
+  tk-nuke: '@nuke.site'
   tk-desktop: '@desktop.site'
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.site'

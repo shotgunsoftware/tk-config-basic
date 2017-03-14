@@ -13,14 +13,18 @@ description: Toolkit configuration to be loaded whenever an association with a
              project has been established.
 
 includes:
+- includes/houdini/project.yml
 - includes/maya/project.yml
+- includes/nuke/project.yml
 - includes/desktop/project.yml
 - includes/shell/all.yml
 - includes/photoshopcc/project.yml
 - includes/3dsmax/project.yml
 
 engines:
+  tk-houdini: '@houdini.project'
   tk-maya: '@maya.project'
+  tk-nuke: '@nuke.project'
   tk-desktop: '@desktop.project'
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.project'
