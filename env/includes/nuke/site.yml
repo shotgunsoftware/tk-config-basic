@@ -21,12 +21,12 @@ nuke.site:
   apps:
   location:
     path: https://github.com/shotgunsoftware/tk-nuke.git
-    version: 7fc3d0d7f5e41f1829b847fe0874596231f489dd
+    version: 875dff121c75ef1b0720817e19a899379094bd8e
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
   run_at_startup:
-  launch_builtin_plugin: basic
+  launch_builtin_plugins: [basic]
   automatic_context_switch: false
 
 

@@ -46,7 +46,7 @@ photoshopcc.site:
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.6
+        version: v0.0.8
 
     tk-multi-loader2:
       action_mappings:
@@ -98,6 +98,6 @@ photoshopcc.site:
   debug_logging: true
   location:
     path: https://github.com/shotgunsoftware/tk-photoshopcc.git
-    version: 4d80398afa5ff5ba817ad7bbdba9dd367007c30e
+    version: 8be2aba5e13c045aa2bb1ae0a1b88aae37853acb
     type: git_branch
     branch: develop/zero_config
