@@ -46,7 +46,7 @@ photoshopcc.project:
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.8
+        version: v0.0.9
 
     tk-multi-loader2:
       action_mappings:
