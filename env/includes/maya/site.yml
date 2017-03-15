@@ -70,7 +70,7 @@ maya.site:
           filters: {}
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 51fb7f4e2a08c19dd80a5ac088cdfdf3201f01e7
+    version: 18037f210450adbead4e8834d9ab5f1f7ed203e7
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
