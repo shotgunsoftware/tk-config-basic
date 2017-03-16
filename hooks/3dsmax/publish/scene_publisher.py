@@ -110,7 +110,7 @@ class SceneHook(HookBaseClass):
                 with open(context_file, "rb") as fh:
                     context_str = fh.read()
                 context_obj = sgtk.Context.deserialize(context_str)
-                item.set_context(context_obj)
+                item.context = context_obj
             except Exception, e:
                  log.warning("Could not read saved context %s: %s" % (context_file, e))
 
