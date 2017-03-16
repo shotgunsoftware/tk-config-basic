@@ -49,25 +49,25 @@ nuke.project:
         version: v1.3.0
         type: app_store
         name: tk-multi-shotgunpanel
-        action_mappings:
-          PublishedFile:
-          - actions: [read_node]
-            filters: {published_file_type: Rendered Image}
-          - actions: [script_import]
-            filters: {published_file_type: Nuke Script}
-          Task:
-          - actions: [assign_task, task_to_ip]
-            filters: {}
-        actions_hook: '{self}/general_actions.py:{self}/tk-nuke_actions.py'
-  location:
-    path: https://github.com/shotgunsoftware/tk-nuke.git
-    version: 875dff121c75ef1b0720817e19a899379094bd8e
-    type: git_branch
-    branch: develop/zero_config
+      action_mappings:
+        PublishedFile:
+        - actions: [read_node]
+          filters: {published_file_type: Rendered Image}
+        - actions: [script_import]
+          filters: {published_file_type: Nuke Script}
+        Task:
+        - actions: [assign_task, task_to_ip]
+          filters: {}
+      actions_hook: '{self}/general_actions.py:{self}/tk-nuke_actions.py'
+
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
   automatic_context_switch: false
 
-
+  location:
+    path: https://github.com/shotgunsoftware/tk-nuke.git
+    version: f99f3edf986d64575bab6024dc01bbb933741d5e
+    type: git_branch
+    branch: develop/zero_config
