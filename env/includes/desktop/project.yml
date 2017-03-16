@@ -43,7 +43,7 @@ desktop.project:
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.9
+        version: v0.0.10
 
     tk-multi-launchapp:
       use_software_entity: true
