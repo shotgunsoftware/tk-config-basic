@@ -20,3 +20,11 @@ common.apps.tk-multi-about:
     version: v0.2.2
     type: app_store
     name: tk-multi-about
+
+common.apps.tk-multi-launchapp:
+  use_software_entity: true
+  location:
+    path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
+    version: 059a037210da65cf4d7a0478178ffd734872c691
+    type: git_branch
+    branch: develop/software_entity
