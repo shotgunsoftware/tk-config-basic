@@ -103,7 +103,7 @@ includes:
 
   location:
     path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git
-    version: 65a49edd1122bb0d45f528e56e4c0619358af888
+    version: 882ab2ab7a5d42d4e6fec5109a12b814227bde0e
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
