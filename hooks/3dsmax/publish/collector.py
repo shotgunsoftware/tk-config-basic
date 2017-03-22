@@ -10,8 +10,6 @@
 import MaxPlus
 import sgtk
 import os
-import re
-from pymxs import runtime as mxs_rt
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -77,7 +75,7 @@ class MaxSceneCollector(HookBaseClass):
 
         current_scene = parent_item.create_item("3dsmax.scene", "Current 3dsMax Scene", scene_file_name)
         current_scene.properties["path"] = scene_file_name_and_path
-        current_scene.properties["project_root"] = mxs_rt.pathConfig.getCurrentProjectFolder()
+        current_scene.properties["project_root"] = MaxPlus.PathManager.GetProjectFolderDir()
         current_scene.set_icon_from_path(os.path.join(self.disk_location, "icons", "3dsmax.png"))
         return current_scene
 
