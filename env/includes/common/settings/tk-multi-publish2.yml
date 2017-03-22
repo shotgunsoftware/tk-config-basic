@@ -1,0 +1,32 @@
+# Copyright (c) 2017 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+
+tk-multi-publish2.default_publish_to_shotgun:
+  name: Publish to Shotgun
+  hook: "{self}/file_publisher.py"
+  settings:
+    Publish all file types: false
+    File Types:
+    - [Nuke Script, nk]
+    - [Photoshop Image, psd, psb]
+    - [3dsmax Scene, max]
+    - [Houdini Scene, hip]
+    - [Maya Scene, ma, mb]
+    - [Hiero Project, hrox]
+    - [Alembic Cache, abc]
+    - [Rendered Image, dpx, exr]
+    - [Texture, tiff, tx, tga, dds]
+    - [Image, jpeg, jpg, png]
+
+tk-multi-publish2.default_send_to_shotgun_review:
+  name: Send to Shotgun review
+  hook: "{self}/version_creator.py"
+  settings: {}
+

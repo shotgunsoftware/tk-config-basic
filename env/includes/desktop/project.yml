@@ -14,6 +14,8 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/settings/tk-multi-publish2.yml
+
 
 desktop.project:
   apps:
@@ -21,25 +23,8 @@ desktop.project:
     tk-multi-publish2:
       collector: "{self}/collector.py"
       publish_plugins:
-        - name: Publish to Shotgun
-          hook: "{self}/file_publisher.py"
-          settings:
-            Publish all file types: false
-            File Types:
-            - [Nuke Script, nk]
-            - [Photoshop Image, psd, psb]
-            - [3dsmax Scene, max]
-            - [Houdini Scene, hip]
-            - [Maya Scene, ma, mb]
-            - [Hiero Project, hrox]
-            - [Alembic Cache]
-            - [Rendered Image, dpx, exr]
-            - [Texture, tiff, tx, tga, dds]
-            - [Image, jpeg, jpg, png]
-
-        - name: Send to Shotgun review
-          hook: "{self}/version_creator.py"
-          settings: {}
+        - '@tk-multi-publish2.default_publish_to_shotgun'
+        - '@tk-multi-publish2.default_send_to_shotgun_review'
       location:
         type: app_store
         name: tk-multi-publish2

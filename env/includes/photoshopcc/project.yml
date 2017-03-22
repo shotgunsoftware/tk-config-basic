@@ -15,6 +15,7 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
 
 
 photoshopcc.project:
@@ -22,26 +23,12 @@ photoshopcc.project:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-publish2:
-      collector: "{self}/collector.py"
+      collector: "{self}/collector.py:{config}/tk-multi-publish2/photoshopcc.basic/collector.py"
       publish_plugins:
-        - name: Publish to Shotgun
-          hook: "{self}/file_publisher.py"
-          settings:
-            Publish all file types: false
-            File Types:
-            - [Nuke Script, nk]
-            - [Photoshop Image, psd, psb]
-            - [3dsmax Scene, max]
-            - [Houdini Scene, hip]
-            - [Maya Scene, ma, mb]
-            - [Hiero Project, hrox]
-            - [Alembic Cache]
-            - [Rendered Image, dpx, exr]
-            - [Texture, tiff, tx, tga, dds]
-            - [Image, jpeg, jpg, png]
-
-        - name: Send to Shotgun review
-          hook: "{self}/version_creator.py"
+        - '@tk-multi-publish2.default_publish_to_shotgun'
+        - '@tk-multi-publish2.default_send_to_shotgun_review'
+        - name: Publish PS Document to Shotgun
+          hook: "{config}/tk-multi-publish2/photoshopcc.basic/document_publisher.py"
           settings: {}
       location:
         type: app_store
@@ -98,6 +85,7 @@ photoshopcc.project:
   debug_logging: true
   location:
     path: https://github.com/shotgunsoftware/tk-photoshopcc.git
-    version: 8be2aba5e13c045aa2bb1ae0a1b88aae37853acb
+    version: ce1d2dc901586cd580440647b4fb94cf7f970aa1
     type: git_branch
     branch: develop/zero_config
+

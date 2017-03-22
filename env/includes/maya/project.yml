@@ -15,13 +15,28 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
 
 
 maya.project:
   apps:
+
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-publish2:
+      collector: "{self}/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
+      publish_plugins:
+        - '@tk-multi-publish2.default_publish_to_shotgun'
+        - '@tk-multi-publish2.default_send_to_shotgun_review'
+        - name: Publish current Maya Scene
+          hook: "{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
+          settings: {}
+        - name: Playblast to Shotgun Review
+          hook: "{config}/tk-multi-publish2/maya.basic/playblast_publisher.py"
+          settings: {}
+        - name: Publish alembic to Shotgun
+          hook: "{config}/tk-multi-publish2/maya.basic/alembic_publisher.py"
+          settings: {}
       location:
         type: app_store
         name: tk-multi-publish2
@@ -75,9 +90,10 @@ maya.project:
         Version:
         - actions: [quicktime_clipboard, sequence_clipboard]
           filters: {}
+
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 18037f210450adbead4e8834d9ab5f1f7ed203e7
+    version: 7313c6ffd585dfe6077c646b7902d0711b4bcd30
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
