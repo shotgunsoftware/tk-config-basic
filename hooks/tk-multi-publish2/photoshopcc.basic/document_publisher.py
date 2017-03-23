@@ -66,7 +66,16 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         The type string should be one of the data types that toolkit accepts
         as part of its environment configuration.
         """
-        return {}
+        return {
+            "Publish Type": {
+                "type": "str",
+                "default": "Photoshop Image",
+                "description": (
+                    "The shotgun publish file type to use when publishing "
+                    "items with this plugin."
+                )
+            }
+        }
 
     @property
     def item_filters(self):
@@ -161,7 +170,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             "name": "%s.%s" % (file_info["prefix"], extension),
             "version_number": file_info["version"],
             "thumbnail_path": None,  # TODO: revisit
-            "published_file_type": extension,
+            "published_file_type": settings["Publish Type"].value,
         }
 
         sg_data = sgtk.util.register_publish(**args)

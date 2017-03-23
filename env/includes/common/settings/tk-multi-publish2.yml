@@ -8,7 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-tk-multi-publish2.default_publish_to_shotgun:
+common.settings.tk-multi-publish2.publish_to_shotgun:
   name: Publish to Shotgun
   hook: "{self}/file_publisher.py"
   settings:
@@ -25,7 +25,7 @@ tk-multi-publish2.default_publish_to_shotgun:
     - [Texture, tiff, tx, tga, dds]
     - [Image, jpeg, jpg, png]
 
-tk-multi-publish2.default_send_to_shotgun_review:
+common.settings.tk-multi-publish2.send_to_shotgun_review:
   name: Send to Shotgun review
   hook: "{self}/version_creator.py"
   settings: {}
