@@ -28,21 +28,49 @@ nuke.project:
         Alembic Cache: [read_node]
       actions_hook: '{self}/tk-nuke_actions.py'
       entities:
-      - caption: Project
+      - caption: Current Project
         type: Hierarchy
-        root: /
+        root: "/Project/{context.project.id}"
         publish_filters: []
       - caption: My Tasks
         type: Query
         entity_type: Task
         filters:
+        - [project, is, '{context.project}']
         - [task_assignees, is, '{context.user}']
-        hierarchy: [project, entity, content]
+        hierarchy: [entity, content]
       location:
         path: https://github.com/shotgunsoftware/tk-multi-loader2.git
         version: c6cfb186fcebd59d6ca933ce61835b797de44f21
         type: git_branch
         branch: develop/zero_config
+
+    tk-multi-publish2:
+      collector: "{self}/collector.py"
+      publish_plugins:
+        - name: Publish to Shotgun
+          hook: "{self}/file_publisher.py"
+          settings:
+            Publish all file types: false
+            File Types:
+            - [Nuke Script, nk]
+            - [Photoshop Image, psd, psb]
+            - [3dsmax Scene, max]
+            - [Houdini Scene, hip]
+            - [Maya Scene, ma, mb]
+            - [Hiero Project, hrox]
+            - [Alembic Cache]
+            - [Rendered Image, dpx, exr]
+            - [Texture, tiff, tx, tga, dds]
+            - [Image, jpeg, jpg, png]
+
+        - name: Send to Shotgun review
+          hook: "{self}/version_creator.py"
+          settings: {}
+      location:
+        type: app_store
+        name: tk-multi-publish2
+        version: v0.0.9
 
     tk-multi-shotgunpanel:
       location:
@@ -68,6 +96,6 @@ nuke.project:
 
   location:
     path: https://github.com/shotgunsoftware/tk-nuke.git
-    version: 1196d9d15c78794ec839ca21c96d9f740fb41374
+    version: 0b7ef3a855eb711ae3d5913d15cb79496c343dac
     type: git_branch
     branch: develop/zero_config

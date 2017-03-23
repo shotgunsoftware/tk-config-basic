@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Maya Integration when it
+# this configuration defines the behavior of the Nuke Integration when it
 # is running in its site level configuration
 
 includes:
@@ -20,6 +20,30 @@ includes:
 nuke.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-loader2:
+      action_mappings:
+        Nuke Script: [script_import]
+        Rendered Image: [read_node]
+        Alembic Cache: [read_node]
+      actions_hook: '{self}/tk-nuke_actions.py'
+      entities:
+      - caption: Project
+        type: Hierarchy
+        root: /
+        publish_filters: []
+      - caption: My Tasks
+        type: Query
+        entity_type: Task
+        filters:
+        - [task_assignees, is, '{context.user}']
+        hierarchy: [project, entity, content]
+      location:
+        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
+        type: git_branch
+        branch: develop/zero_config
+
     tk-multi-shotgunpanel:
       location:
         version: v1.3.0
@@ -35,6 +59,7 @@ nuke.site:
         - actions: [assign_task, task_to_ip]
           filters: {}
       actions_hook: '{self}/general_actions.py:{self}/tk-nuke_actions.py'
+
   automatic_context_switch: false
   menu_favourites: []
   run_at_startup:
@@ -43,7 +68,7 @@ nuke.site:
   
   location:
     path: https://github.com/shotgunsoftware/tk-nuke.git
-    version: 1196d9d15c78794ec839ca21c96d9f740fb41374
+    version: 0b7ef3a855eb711ae3d5913d15cb79496c343dac
     type: git_branch
     branch: develop/zero_config
 
