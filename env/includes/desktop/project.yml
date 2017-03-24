@@ -14,6 +14,7 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/apps.yml
 
 desktop.project:
   apps:
@@ -45,13 +46,7 @@ desktop.project:
         name: tk-multi-publish2
         version: v0.0.10
 
-    tk-multi-launchapp:
-      use_software_entity: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-        version: de33d6915cba76de8f459da5e5257215389dde50
-        type: git_branch
-        branch: develop/software_entity
+    tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
 
   debug_logging: true
   collapse_rules:

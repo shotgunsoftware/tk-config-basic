@@ -100,6 +100,6 @@ photoshopcc.project:
   debug_logging: true
   location:
     path: https://github.com/shotgunsoftware/tk-photoshopcc.git
-    version: 8be2aba5e13c045aa2bb1ae0a1b88aae37853acb
+    version: ce1d2dc901586cd580440647b4fb94cf7f970aa1
     type: git_branch
     branch: develop/zero_config
