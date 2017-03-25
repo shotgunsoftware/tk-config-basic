@@ -36,20 +36,16 @@ class MayaSceneCollector(HookBaseClass):
 
         if path.endswith(".ma") or path.endswith(".mb"):
 
-            item.type = "file.maya"
-            item.display_type = "Maya File"
-            item.set_icon_from_path(os.path.join(self.disk_location, "icons", "maya.png"))
-
-            # set the workspace root for this item
-
             folder = os.path.dirname(path)
             if os.path.basename(folder) == "scenes":
-                # assume parent level is workspace root
-                item.properties["project_root"] = os.path.dirname(folder)
-            else:
-                item.properties["project_root"] = None
 
-            self.create_playblasts(item)
+                # assume parent level is workspace root
+                project_root = os.path.dirname(folder)
+                item.properties["project_root"] = os.path.dirname(folder)
+
+                # collect associated files
+                self.collect_alembic_caches(item, project_root)
+                self.collect_playblasts(item, project_root)
 
         return item
 
@@ -61,94 +57,141 @@ class MayaSceneCollector(HookBaseClass):
         :param parent_item: Root item instance
         """
         # create an item representing the current maya scene
-        item = self.create_current_maya_scene(parent_item)
-        # look for playblasts
-        self.create_playblasts(item)
-        # look for caches
-        self.create_alembic_caches(item)
+        item = self.collect_current_maya_scene(parent_item)
 
-    def create_current_maya_scene(self, parent_item):
+        # look for playblasts
+        self.collect_playblasts(item, item.properties["project_root"])
+
+        # look for caches
+        self.collect_alembic_caches(item, item.properties["project_root"])
+
+    def collect_current_maya_scene(self, parent_item):
         """
         Creates an item that represents the current maya scene.
 
         :param parent_item: Parent Item instance
         :returns: Item of type maya.scene
         """
-        scene_file = cmds.file(query=True, sn=True)
-        if scene_file == "":
-            # make more pythonic
-            scene_file = None
-        if scene_file:
-            scene_file = os.path.abspath(scene_file)
-            file_name = os.path.basename(scene_file)
-            current_scene = parent_item.create_item("maya.scene", "Current Maya Scene", file_name)
 
+        publisher = self.parent
+
+        # get the path to the current file
+        path = cmds.file(query=True, sn=True)
+
+        # determine the display name for the item
+        if path:
+            path = os.path.abspath(path)
+            display_name = os.path.basename(path)
         else:
-            current_scene = parent_item.create_item("maya.scene", "Current Maya Scene", "Untitled Scene")
+            display_name = "Untitled Scene"
+            # more pythonic empty file path
+            path = None
 
-        current_scene.properties["path"] = scene_file
-        current_scene.properties["project_root"] = cmds.workspace(q=True, rootDirectory=True)
+        # discover the project root which helps in discovery of other
+        # publishable items
+        project_root = cmds.workspace(q=True, rootDirectory=True)
 
-        current_scene.set_icon_from_path(os.path.join(self.disk_location, "icons", "maya.png"))
+        # create the scene item for the publish hierarchy
+        scene_item = parent_item.create_item(
+            "maya.scene",
+            "Current Maya Scene",
+            display_name
+        )
 
-        return current_scene
+        scene_item.properties["path"] = path
+        scene_item.properties["project_root"] = project_root
+        scene_item.set_icon_from_path(publisher.get_icon_path("maya"))
 
-    def create_alembic_caches(self, parent_item):
+        return scene_item
+
+    def collect_alembic_caches(self, parent_item, project_root):
         """
         Creates items for alembic caches
 
-        Looks for a 'project_root' property on the parent item,
-        and if such exists, look for quicktimes in a 'cache/alembic' subfolder.
+        Looks for a 'project_root' property on the parent item, and if such
+        exists, look for alembic caches in a 'cache/alembic' subfolder.
 
         :param parent_item: Parent Item instance
-        :returns: List of items of type maya.alembic_file
+        :param str project_root: The maya project root to search for alembics
+
+        :returns: List of alembic cache items
         """
-        # use the workspace_root property on the parent to
-        # extract playblast objects
+
+        # use the workspace_root property on the parent to locate alembic caches
         items = []
 
-        ws_root = parent_item.properties.get("project_root")
-        if ws_root:
-            cache_dir = os.path.join(ws_root, "cache", "alembic")
-            if os.path.exists(cache_dir):
-                for filename in os.listdir(cache_dir):
-                    path = os.path.join(cache_dir, filename)
-                    if path.endswith(".abc"):
-                        item = parent_item.create_item("maya.alembic_file", "Alembic Cache File", filename)
-                        item.properties["path"] = path
-                        item.set_icon_from_path(os.path.join(self.disk_location, "icons", "alembic.png"))
-                        items.append(item)
+        # ensure the alembic cache dir exists
+        cache_dir = os.path.join(project_root, "cache", "alembic")
+        if not os.path.exists(cache_dir):
+            return items
+
+        publisher = self.parent
+
+        # look for alembic files in the cache directory
+        for filename in os.listdir(cache_dir):
+            cache_path = os.path.join(cache_dir, filename)
+
+            # ensure this is an alembic cache
+            if not cache_path.endswith(".abc"):
+                continue
+
+            # get file path parts for display
+            file_info = publisher.util.get_file_path_components(cache_path)
+
+            # create and populate the item
+            item = parent_item.create_item(
+                "cache.alembic",
+                "Alembic Cache",
+                file_info["filename_no_ext"]
+            )
+            item.properties["path"] = cache_path
+            item.set_icon_from_path(publisher.get_icon_path("alembic"))
+            items.append(item)
 
         return items
 
-    def create_playblasts(self, parent_item):
+    def collect_playblasts(self, parent_item, project_root):
         """
         Creates items for quicktime playblasts.
 
-        Looks for a 'project_root' property on the parent item,
-        and if such exists, look for quicktimes in a 'movies' subfolder.
+        Looks for a 'project_root' property on the parent item, and if such
+        exists, look for movie files in a 'movies' subfolder.
 
         :param parent_item: Parent Item instance
-        :returns: List of items with type maya.playblast
+        :param str project_root: The maya project root to search for playblasts
+        :returns: List of movie items
         """
-        # use the workspace_root property on the parent to
-        # extract playblast objects
+
+        # use the workspace_root property on the parent to extract movies
         items = []
 
-        ws_root = parent_item.properties.get("project_root")
-        if ws_root:
-            playblast_dir = os.path.join(ws_root, "movies")
-            if os.path.exists(playblast_dir):
-                for filename in os.listdir(playblast_dir):
-                    path = os.path.join(playblast_dir, filename)
-                    if path.endswith(".mov"):
-                        item = parent_item.create_item("maya.playblast", "Playblast in Maya Project", filename)
-                        item.properties["path"] = path
-                        item.set_icon_from_path(os.path.join(self.disk_location, "icons", "popcorn.png"))
-                        items.append(item)
+        # ensure the movies dir exists
+        movies_dir = os.path.join(project_root, "movies")
+        if not os.path.exists(movies_dir):
+            return items
+
+        publisher = self.parent
+
+        # look for movie files in the movies directory
+        for filename in os.listdir(movies_dir):
+            movie_path = os.path.join(movies_dir, filename)
+
+            # get file path parts for type checking and display
+            file_info = publisher.util.get_file_path_components(movie_path)
+
+            # ensure the file is of type video
+            if not publisher.util.is_video(file_info["extension"]):
+                continue
+
+            # create the item
+            item = parent_item.create_item(
+                "maya.playblast",
+                "Maya Playblast",  # override the display for specificity
+                file_info["filename_no_ext"]
+            )
+            item.properties["path"] = movie_path
+            item.set_icon_from_path(publisher.get_icon_path("movie"))
+            items.append(item)
 
         return items
-
-
-
 

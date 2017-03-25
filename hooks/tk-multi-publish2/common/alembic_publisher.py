@@ -9,14 +9,13 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import sgtk
 import os
-import maya.cmds as cmds
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaScenePublishPlugin(HookBaseClass):
+class AlembicCachePublishPlugin(HookBaseClass):
     """
-    Plugin for versioning and publishing the current maya scene
+    Plugin for creating publishes for alembic files that exist on disk
     """
 
     @property
@@ -31,7 +30,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish Maya Scene"
+        return "Publish Alembic"
 
     @property
     def description(self):
@@ -40,15 +39,16 @@ class MayaScenePublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return (
-            "Publishes the current maya scene. This will create a versioned "
-            "snapshot of the file in a <tt>publish</tt> directory in the same "
-            "folder as the file."
+            "Publishes an alembic cache. This will create a versioned snapshot "
+            "of the file in a <tt>publish</tt> directory in the same "
+            "folder as the file. The associated version number will come from "
+            "the parent item's publish version."
         )
 
     @property
     def settings(self):
         """
-        Dictionary defining the settings that this plugin expects to receive
+        Dictionary defining the settings that this plugin expects to recieve
         through the settings parameter in the accept, validate, publish and
         finalize methods.
 
@@ -67,7 +67,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         return {
             "Publish Type": {
                 "type": "shotgun_publish_type",
-                "default": "Maya Scene",
+                "default": "Alembic Cache",
                 "description": "SG publish type to associate publishes with."
             },
         }
@@ -81,7 +81,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["maya.scene"]
+        return ["cache.alembic"]
 
     def accept(self, log, settings, item):
         """
@@ -108,25 +108,9 @@ class MayaScenePublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        # if we have a project root, check for a valid, serialized context.
-        # warn if not.
-        if "project_root" in item.properties:
-
-            project_root = item.properties["project_root"]
-            context_file = os.path.join(project_root, "shotgun.context")
-
-            log.debug("Looking for context file in %s" % context_file)
-            if os.path.exists(context_file):
-                try:
-                    with open(context_file, "rb") as fh:
-                        context_str = fh.read()
-                    context_obj = sgtk.Context.deserialize(context_str)
-                    item.context = context_obj
-                except Exception, e:
-                    log.warning(
-                        "Could not read saved context %s: %s" %
-                        (context_file, e)
-                    )
+        if "path" not in item.properties:
+            log.error("Unknown file path for alembic cache.")
+            return {"accepted": False}
 
         return {"accepted": True, "required": False, "enabled": True}
 
@@ -141,14 +125,9 @@ class MayaScenePublishPlugin(HookBaseClass):
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
+
         :returns: True if item is valid, False otherwise.
         """
-        if item.properties["path"] is None:
-            log.error("Please save your scene before you continue!")
-            return False
-
-        if item.properties["project_root"] is None:
-            log.warning("Your scene is not part of a maya project.")
 
         return True
 
@@ -164,15 +143,26 @@ class MayaScenePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # save the maya scene
-        log.info("Saving maya scene...")
-        cmds.file(save=True, force=True)
+        path = item.properties["path"]
+        parent_publish_data = item.parent.properties.get("sg_publish_data")
 
-        path = os.path.dirname(item.properties["path"])
+        if parent_publish_data:
+            # this plugin is running after a parent (likely a work file) has
+            # already been published. use the same publish version to build a
+            # simple association to the parent on disk
+            publish_version = parent_publish_data["version_number"]
+        else:
+            # the prepare_for_publish method will use the next available version
+            publish_version = None
 
         # prepare the file for publishing and get the publish path components
         publisher = self.parent
-        file_info = publisher.util.prepare_for_publish(path)
+        file_info = publisher.util.prepare_for_publish(
+            path,
+            version=publish_version
+        )
+
+        parent_publish_id = parent_publish_data["id"]
 
         # Create the TankPublishedFile entity in Shotgun
         args = {
@@ -184,12 +174,9 @@ class MayaScenePublishPlugin(HookBaseClass):
             "version_number": file_info["version"],
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
-            # TODO: need to update core for this to work
-            #"dependency_paths": self._maya_find_additional_scene_dependencies(),
+            "dependency_ids": [parent_publish_id]
         }
 
-        # create the publish and stash it in the item properties for other
-        # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
 
     def finalize(self, log, settings, item):
@@ -204,52 +191,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # try to save the associated context into the project root. since the
-        # project root isn't required, bail if not known.
-        if "project_root" not in item.properties:
-            return
-
-        project_root = item.properties["project_root"]
-        context_file = os.path.join(project_root, "shotgun.context")
-        with open(context_file, "wb") as fh:
-            fh.write(item.context.serialize(with_user_credentials=False))
-
-    def _maya_find_additional_scene_dependencies(self):
-        """
-        Find additional dependencies from the scene
-        """
-        # default implementation looks for references and
-        # textures (file nodes) and returns any paths that
-        # match a template defined in the configuration
-        ref_paths = set()
-
-        # first let's look at maya references
-        ref_nodes = cmds.ls(references=True)
-        for ref_node in ref_nodes:
-            # get the path:
-            ref_path = cmds.referenceQuery(ref_node, filename=True)
-            # make it platform dependent
-            # (maya uses C:/style/paths)
-            ref_path = ref_path.replace("/", os.path.sep)
-            if ref_path:
-                ref_paths.add(ref_path)
-
-        # now look at file texture nodes
-        for file_node in cmds.ls(l=True, type="file"):
-            # ensure this is actually part of this scene and not referenced
-            if cmds.referenceQuery(file_node, isNodeReferenced=True):
-                # this is embedded in another reference, so don't include it in the
-                # breakdown
-                continue
-
-            # get path and make it platform dependent
-            # (maya uses C:/style/paths)
-            texture_path = cmds.getAttr("%s.fileTextureName" % file_node).replace("/", os.path.sep)
-            if texture_path:
-                ref_paths.add(texture_path)
-
-        return ref_paths
-
-
-
-
+        # remove the source path
+        path = item.properties["path"]
+        log.info("Deleting %s" % item.properties["path"])
+        sgtk.util.filesystem.safe_delete_file(path)

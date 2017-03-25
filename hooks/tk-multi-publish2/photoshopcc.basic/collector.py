@@ -8,7 +8,6 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import os
-import re
 
 import sgtk
 
@@ -29,7 +28,9 @@ class PhotoshopCCSceneCollector(HookBaseClass):
         """
 
         # get a handle on the photoshop cc engine
-        engine = self.parent.engine
+        publisher = self.parent
+        engine = publisher.engine
+
         engine.logger.debug(
             "Checking current PS session for items to publish...")
 
@@ -49,10 +50,7 @@ class PhotoshopCCSceneCollector(HookBaseClass):
                 "Processing PS document: %s" % (document.name,))
 
             # now set the item's type icon to display in the hierarchy
-            icon_path = os.path.join(
-                self.disk_location,
-                "icons", "photoshop.png"
-            )
+            icon_path = publisher.get_icon_path("photoshop")
 
             # build a list of properties for use by matching plugins
             properties = dict(document=document)
@@ -86,7 +84,7 @@ class PhotoshopCCSceneCollector(HookBaseClass):
             # create a publish item for the document
             document_item = parent_item.create_item(
                 "photoshop.document",
-                "Image File",
+                "Photoshop Document",
                 item_info["properties"]["document"].name,
             )
 

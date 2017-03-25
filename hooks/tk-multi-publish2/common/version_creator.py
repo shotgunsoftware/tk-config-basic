@@ -13,9 +13,9 @@ import os
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaAlembicCachePublishPlugin(HookBaseClass):
+class ShotgunReviewPlugin(HookBaseClass):
     """
-    Plugin for creating publishes for maya alembic files that exist on disk
+    Plugin for sending quicktimes and images to shotgun for review.
     """
 
     @property
@@ -23,14 +23,14 @@ class MayaAlembicCachePublishPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        return os.path.join(self.disk_location, "icons", "shotgun.png")
+        return self.parent.get_icon_path("review")
 
     @property
     def name(self):
         """
         One line display name describing the plugin
         """
-        return "Publish Alembic"
+        return "Send files to Shotgun review"
 
     @property
     def description(self):
@@ -38,7 +38,7 @@ class MayaAlembicCachePublishPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This
         can contain simple html for formatting.
         """
-        return """Extracts alembic geometry."""
+        return """Uploads files to Shotgun for Review."""
 
     @property
     def settings(self):
@@ -60,11 +60,22 @@ class MayaAlembicCachePublishPlugin(HookBaseClass):
         as part of its environment configuration.
         """
         return {
-            "Publish Type": {
-                "type": "shotgun_publish_type",
-                "default": "Alembic Cache",
-                "description": "Shotgun publish type to associate publishes with."
+            "File Extensions": {
+                "type": "str",
+                "default": "jpeg, jpg, png, mov, mp4",
+                "description": "File Extensions of files to include"
             },
+            "Upload": {
+                "type": "bool",
+                "default": True,
+                "description": "Upload content to Shotgun?"
+            },
+            "Link Local File": {
+                "type": "bool",
+                "default": True,
+                "description": "Should the local file be referenced by Shotgun"
+            },
+
         }
 
     @property
@@ -75,7 +86,7 @@ class MayaAlembicCachePublishPlugin(HookBaseClass):
         to the accept() method. Strings can contain glob patters
         such as *, for example ["maya.*", "file.maya"]
         """
-        return ["maya.alembic_file"]
+        return ["file.image", "file.movie"]
 
     def accept(self, log, settings, item):
         """
@@ -100,7 +111,28 @@ class MayaAlembicCachePublishPlugin(HookBaseClass):
         :param item: Item to process
         :returns: dictionary with boolean keys accepted, required and enabled
         """
-        return {"accepted": True, "required": False, "enabled": True}
+
+        file_path = item.properties["path"]
+
+        # get the extension without a "."
+        extension = os.path.splitext(file_path)[-1].lstrip(".").lower()
+
+        valid_extensions = []
+
+        for ext in settings["File Extensions"].value.split(","):
+            ext = ext.strip().lstrip(".")
+            valid_extensions.append(ext)
+
+        log.debug("valid extensions: %s" % valid_extensions)
+
+        if extension in valid_extensions:
+            return {"accepted": True, "required": False, "enabled": True}
+        else:
+            log.debug(
+                "%s not in valid extensions for version creation." %
+                (extension,)
+            )
+            return {"accepted": False}
 
     def validate(self, log, settings, item):
         """
@@ -114,13 +146,12 @@ class MayaAlembicCachePublishPlugin(HookBaseClass):
         :param item: Item to process
         :returns: True if item is valid, False otherwise.
         """
-        # make sure parent is published
-        if not item.parent.properties.get("is_published"):
-            log.error("You must publish the main scene in order to publish alembic!")
+
+        if "path" not in item.properties:
+            log.error("Unknown file path for item.")
             return False
 
         return True
-
 
     def publish(self, log, settings, item):
         """
@@ -133,43 +164,52 @@ class MayaAlembicCachePublishPlugin(HookBaseClass):
             returned in the settings property. The values are `Setting` instances.
         :param item: Item to process
         """
-        # save the maya scene
-        scene_folder = os.path.dirname(item.properties["path"])
-        filename = os.path.basename(item.properties["path"])
-        (filename_no_ext, extension) = os.path.splitext(filename)
-        # strip the period off the extension
-        extension = extension[1:]
 
-        publish_folder = os.path.join(scene_folder, "publishes")
-        sgtk.util.filesystem.ensure_folder_exists(publish_folder)
+        publisher = self.parent
 
-        # use same version as parent scene
-        version = item.parent.properties["publish_version"]
+        # if there is publish data, use that to determine the path to upload
+        if "sg_publish_data" in item.parent.properties:
+            path = item.parent.properties["sg_publish_data"]["local_path"]
+        else:
+            # fall back to the regular path. this may be the case when this
+            # plugin is run before or without the default file publisher.
+            path = item.properties["path"]
 
-        publish_path = os.path.join(publish_folder, "%s.v%03d.%s" % (filename_no_ext, version, extension))
+        # get all the publish file components
+        file_info = publisher.util.get_file_path_components(path)
 
-        log.info("Copying to %s" % publish_path)
-
-        sgtk.util.filesystem.copy_file(item.properties["path"], publish_path)
-
-        # Create the TankPublishedFile entity in Shotgun
-        args = {
-            "tk": self.parent.sgtk,
-            "context": item.context,
-            "comment": item.description,
-            "path": publish_path,
-            "name": filename,
-            "version_number": version,
-            "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": settings["Publish Type"].value,
-            "dependency_ids": [item.parent.properties["shotgun_publish_id"]]
+        version_data = {
+            "project": item.context.project,
+            "code": file_info["prefix"],
+            "description": item.description,
+            "entity": self._get_version_entity(item)
         }
 
-        sg_data = sgtk.util.register_publish(**args)
+        if settings["Link Local File"].value:
+            version_data["sg_path_to_movie"] = path
 
-        item.properties["shotgun_data"] = sg_data
-        item.properties["shotgun_publish_id"] = sg_data["id"]
+        log.info("Creating version for review")
+        version = self.parent.shotgun.create("Version", version_data)
 
+        # and payload
+        thumb = item.get_thumbnail_as_path()
+
+        if settings["Upload"].value:
+            log.info("Uploading content")
+            self.parent.shotgun.upload("Version",
+                version["id"],
+                path,
+                "sg_uploaded_movie"
+            )
+        elif thumb:
+            # only upload thumb if we are not uploading the content
+            # with uploaded content, the thumb is automatically extracted.
+            log.info("Uploading thumbnail")
+            self.parent.shotgun.upload_thumbnail(
+                "Version",
+                version["id"],
+                thumb
+            )
 
     def finalize(self, log, settings, item):
         """
@@ -182,8 +222,19 @@ class MayaAlembicCachePublishPlugin(HookBaseClass):
             returned in the settings property. The values are `Setting` instances.
         :param item: Item to process
         """
-        mov_path = item.properties["path"]
-        log.info("Deleting %s" % item.properties["path"])
-        sgtk.util.filesystem.safe_delete_file(mov_path)
+        pass
 
+    def _get_version_entity(self, item):
+        """
+        Returns the best entity to link the version to.
+        """
+
+        if item.context.task:
+            return item.context.task
+        elif item.context.entity:
+            return item.context.entity
+        elif item.context.project:
+            return item.context.project
+        else:
+            return None
 

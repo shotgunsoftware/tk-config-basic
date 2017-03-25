@@ -46,7 +46,7 @@ photoshopcc.site:
 
     tk-multi-shotgunpanel:
       location:
-        version: v1.2.7
+        version: v1.3.0
         type: app_store
         name: tk-multi-shotgunpanel
       shotgun_fields_hook: '{self}/shotgun_fields.py'

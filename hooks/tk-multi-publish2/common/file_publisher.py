@@ -7,18 +7,15 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
-import os
-
 import sgtk
-
+import os
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
+class GenericFilePublishPlugin(HookBaseClass):
     """
-    Plugin for publishing Photoshop documents in Shotgun.
+    Plugin for creating generic publishes in Shotgun
     """
 
     @property
@@ -26,14 +23,14 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        return self.parent.get_icon_path("shotgun")
+        return self.parent.get_icon_path("publish")
 
     @property
     def name(self):
         """
         One line display name describing the plugin
         """
-        return "Publish PS Document to Shotgun"
+        return "Publish files to Shotgun"
 
     @property
     def description(self):
@@ -42,13 +39,13 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Publishes Photoshop documents to shotgun.
+        Publishes files to shotgun.
         """
 
     @property
     def settings(self):
         """
-        Dictionary defining the settings that this plugin expects to receive
+        Dictionary defining the settings that this plugin expects to recieve
         through the settings parameter in the accept, validate, publish and
         finalize methods.
 
@@ -61,18 +58,27 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
                     "description": "One line description of the setting"
             }
 
-        The type string should be one of the data types that toolkit accepts as
-        part of its environment configuration.
+        The type string should be one of the data types that toolkit accepts
+        as part of its environment configuration.
         """
         return {
-            "Publish Type": {
-                "type": "str",
-                "default": "Photoshop Image",
+            "File Types": {
+                "type": "list",
+                "default": "[]",
                 "description": (
-                    "The shotgun publish file type to use when publishing "
-                    "items with this plugin."
-                )
-            }
+                    "List of file types to include. Each entry in the list "
+                    "is a list in which the first entry is the Shotgun "
+                    "published file type and subsequent entries are file "
+                    "extensions that should be associated.")
+            },
+            "Publish all file types": {
+                "type": "bool",
+                "default": False,
+                "description": (
+                    "If set to True, all files will be published, even if "
+                    "their extension has not been declared in the file types "
+                    "setting.")
+            },
         }
 
     @property
@@ -84,7 +90,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["photoshop.document"]
+        return ["file.*"]
 
     def accept(self, log, settings, item):
         """
@@ -111,11 +117,15 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        # ensure there is a document in the item properties
-        if "document" not in item.properties:
-            return {"accepted": False}
+        file_path = item.properties["path"]
 
-        return {"accepted": True, "required": False, "enabled": True}
+        # get the extension without a "."
+        extension = os.path.splitext(file_path)[-1].lstrip(".")
+
+        if self._get_matching_publish_type(extension, settings):
+            return {"accepted": True, "required": False, "enabled": True}
+        else:
+            return {"accepted": False}
 
     def validate(self, log, settings, item):
         """
@@ -133,17 +143,17 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        document = item.properties["document"]
-        if not document.saved:
-            log.error("Document '%s' not saved." % (document.name,))
+        if "path" not in item.properties:
+            log.error("Unknown file path for item.")
             return False
 
         return True
 
     def publish(self, log, settings, item):
         """
-        Executes the publish logic for the given item and settings. Use the
-        logger to give the user status updates.
+        Executes the publish logic for the given item and settings.
+
+        Use the logger to give the user status updates.
 
         :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
@@ -152,10 +162,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        document = item.properties["document"]
-
-        # should be saved if we're here
-        path = os.path.abspath(document.fullName.fsName)
+        path = item.properties["path"]
 
         # prepare the file for publishing and get the publish path components
         publisher = self.parent
@@ -163,6 +170,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
 
         # determine the publish type
         extension = file_info["extension"]
+
+        # get the publish type
+        publish_type = self._get_matching_publish_type(extension, settings)
 
         # Create the TankPublishedFile entity in Shotgun
         # note - explicitly calling
@@ -174,7 +184,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             "name": "%s.%s" % (file_info["prefix"], extension),
             "version_number": file_info["version"],
             "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": settings["Publish Type"].value,
+            "published_file_type": publish_type,
         }
 
         # create the publish and stash it in the item properties for other
@@ -183,13 +193,40 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
 
     def finalize(self, log, settings, item):
         """
-        Execute the finalization pass. This pass executes once all the publish
-        tasks have completed, and can for example be used to version up files.
+        Execute the finalization pass. This pass executes once
+        all the publish tasks have completed, and can for example
+        be used to version up files.
 
         :param log: Logger to output feedback to.
-        :param settings: Dictionary of Settings. The keys are strings, matching
-            the keys returned in the settings property. The values are `Setting`
-            instances.
+        :param settings: Dictionary of Settings. The keys are strings, matching the keys
+            returned in the settings property. The values are `Setting` instances.
         :param item: Item to process
         """
         pass
+
+    def _get_matching_publish_type(self, extension, settings):
+        """
+        Get a publish type for the supplied extension and publish settings.
+
+        :param extension: The file extension to find a publish type for
+        :param settings: The publish settings defining the publish types
+
+        :return: A publish type or None if one could not be found.
+        """
+
+        # ensure lowercase and no dot
+        extension = extension.lstrip(".").lower()
+
+        for type_def in settings["File Types"].value:
+
+            publish_type = type_def[0]
+            file_extensions = type_def[1:]
+
+            if extension in file_extensions:
+                return publish_type
+
+        if settings["Publish all file types"].value:
+            # publish type is based on extension
+            return "%s File" % extension.capitalize()
+
+        return None

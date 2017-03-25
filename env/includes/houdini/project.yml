@@ -15,17 +15,27 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
 
 
 houdini.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
-    tk-multi-publish2:
-      location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.0.9
+    #tk-multi-publish2:
+    #  collector: "{self}/collector.py:{config}/tk-multi-publish2/houdini.basic/collector.py"
+    #  publish_plugins:
+    #    - '@common.settings.tk-multi-publish2.publish_to_shotgun'
+    #    - '@common.settings.tk-multi-publish2.send_to_shotgun_review'
+    #    # hip/hipnc publish
+    #    # alembic publish
+    #    # render publish
+    #  location:
+    #    #type: app_store
+    #    #name: tk-multi-publish2
+    #    #version: v0.0.9
+    #    type: dev
+    #    path: /Users/josh/dev/sg/zero_config/tk-multi-publish2
 
     tk-multi-loader2:
         action_mappings:
