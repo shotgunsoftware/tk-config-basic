@@ -138,6 +138,7 @@ class MayaPlayblastReviewPlugin(HookBaseClass):
         path = item.properties["path"]
 
         publisher = self.parent
+
         file_info = publisher.util.get_file_path_components(path)
         filename_no_ext = file_info["filename_no_ext"]
 
@@ -159,11 +160,12 @@ class MayaPlayblastReviewPlugin(HookBaseClass):
             version_data["published_files"] = [published_file]
 
         # create the version entry
-        log.info("Creating version for review")
+        log.info("Creating version for review...")
+        log.debug("Version data: %s" % (version_data,))
         version = self.parent.shotgun.create("Version", version_data)
 
         # upload the the movie
-        log.info("Uploading content")
+        log.info("Uploading content...")
         self.parent.shotgun.upload(
             "Version",
             version["id"],

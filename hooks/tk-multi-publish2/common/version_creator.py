@@ -166,14 +166,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-
-        # if there is publish data, use that to determine the path to upload
-        if "sg_publish_data" in item.parent.properties:
-            path = item.parent.properties["sg_publish_data"]["local_path"]
-        else:
-            # fall back to the regular path. this may be the case when this
-            # plugin is run before or without the default file publisher.
-            path = item.properties["path"]
+        path = item.properties["path"]
 
         # get all the publish file components
         file_info = publisher.util.get_file_path_components(path)
@@ -188,14 +181,18 @@ class ShotgunReviewPlugin(HookBaseClass):
         if settings["Link Local File"].value:
             version_data["sg_path_to_movie"] = path
 
-        log.info("Creating version for review")
+        log.info("Creating version for review...")
+        log.debug("Version data: %s" % (version_data,))
         version = self.parent.shotgun.create("Version", version_data)
+
+        # stash the version info in the item just in case
+        item.properties["sg_version_data"] = version
 
         # and payload
         thumb = item.get_thumbnail_as_path()
 
         if settings["Upload"].value:
-            log.info("Uploading content")
+            log.info("Uploading content...")
             self.parent.shotgun.upload("Version",
                 version["id"],
                 path,
@@ -204,7 +201,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         elif thumb:
             # only upload thumb if we are not uploading the content
             # with uploaded content, the thumb is automatically extracted.
-            log.info("Uploading thumbnail")
+            log.info("Uploading thumbnail...")
             self.parent.shotgun.upload_thumbnail(
                 "Version",
                 version["id"],

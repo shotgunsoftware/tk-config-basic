@@ -12,6 +12,8 @@ import os
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
+from sgtk.util.filesystem import copy_file
+
 
 class GenericFilePublishPlugin(HookBaseClass):
     """
@@ -163,10 +165,37 @@ class GenericFilePublishPlugin(HookBaseClass):
         """
 
         path = item.properties["path"]
-
-        # prepare the file for publishing and get the publish path components
         publisher = self.parent
-        file_info = publisher.util.prepare_for_publish(path)
+
+        # get the publish path components
+        file_info = publisher.util.get_file_path_components(path)
+
+        # if the parent item has a publish folder, we'll copy the cache there
+        # prior to publishing
+        publish_folder = item.parent.properties.get("publish_folder")
+        if publish_folder:
+
+            # full path to where we'll copy the file to and publish from
+            publish_path = os.path.join(publish_folder, file_info["filename"])
+
+            # copy the source to the publish folder
+            log.info("Copying to publish folder: %s" % (publish_folder,))
+            copy_file(path, publish_path)
+
+            # update the file info for the new publish path
+            file_info = publisher.util.get_file_path_components(publish_path)
+        else:
+            # no parent. publish in place
+            publish_path = path
+
+        # this plugin may be running after a parent has already been published.
+        # use the same publish version to build a simple association to the
+        # parent on disk. if no publish version available, fall back to any
+        # version discovered in the file name itself. otherwise, the version
+        # number will not be set.
+        publish_version = item.parent.properties.get("publish_version")
+        if not publish_version:
+            publish_version = file_info["version"]
 
         # determine the publish type
         extension = file_info["extension"]
@@ -180,16 +209,23 @@ class GenericFilePublishPlugin(HookBaseClass):
             "tk": self.parent.sgtk,
             "context": item.context,
             "comment": item.description,
-            "path": file_info["path"],
+            "path": publish_path,
             "name": "%s.%s" % (file_info["prefix"], extension),
-            "version_number": file_info["version"],
+            "version_number": publish_version,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": publish_type,
         }
+        log.debug("Publishing: %s" % (args,))
 
         # create the publish and stash it in the item properties for other
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
+
+        # add publish version and publish version folder to the item properties.
+        # child items can choose to also write to the same location and use the
+        # same version to keep a tight association of files published together.
+        item.properties["publish_version"] = publish_version
+        item.properties["publish_folder"] = file_info["folder"]
 
     def finalize(self, log, settings, item):
         """

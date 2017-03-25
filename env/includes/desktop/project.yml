@@ -23,8 +23,8 @@ desktop.project:
     tk-multi-publish2:
       collector: "{config}/tk-multi-publish2/common/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.publish_to_shotgun_publish_all'
-        - '@common.settings.tk-multi-publish2.send_to_shotgun_review'
+        - '@common.settings.tk-multi-publish2.file_publisher_all'
+        - '@common.settings.tk-multi-publish2.version_creator'
       location:
         #type: app_store
         #name: tk-multi-publish2

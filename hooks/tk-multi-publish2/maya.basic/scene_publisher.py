@@ -11,6 +11,8 @@ import sgtk
 import os
 import maya.cmds as cmds
 
+from sgtk.util.filesystem import ensure_folder_exists, copy_file
+
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
@@ -41,7 +43,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         """
         return (
             "Publishes the current maya scene. This will create a versioned "
-            "snapshot of the file in a <tt>publish</tt> directory in the same "
+            "snapshot of the file in a <tt>publish</tt> folder in the same "
             "folder as the file."
         )
 
@@ -147,7 +149,7 @@ class MayaScenePublishPlugin(HookBaseClass):
             log.error("Please save your scene before you continue!")
             return False
 
-        if item.properties["project_root"] is None:
+        if not item.properties.get("project_root"):
             log.warning("Your scene is not part of a maya project.")
 
         return True
@@ -168,29 +170,75 @@ class MayaScenePublishPlugin(HookBaseClass):
         log.info("Saving maya scene...")
         cmds.file(save=True, force=True)
 
-        path = os.path.dirname(item.properties["path"])
-
-        # prepare the file for publishing and get the publish path components
         publisher = self.parent
-        file_info = publisher.util.prepare_for_publish(path)
+
+        path = item.properties["path"]
+        file_info = publisher.util.get_file_path_components(path)
+
+        # place the publish folder in the project root if known, otherwise next
+        # to the maya file.
+        publish_root = item.properties.get(
+            "project_root",
+            file_info["folder"]
+        )
+
+        # ensure the publish folder exists
+        publish_folder = os.path.join(publish_root, "publish")
+        log.debug("Ensuring publish folder exists: '%s'" % (publish_folder,))
+        ensure_folder_exists(publish_folder)
+
+        # get the next available version within the publish folder
+        publish_version = publisher.util.get_next_version_folder(publish_folder)
+
+        # build the path to the next available version subfolder that we will
+        # copy the source file to and publish from
+        publish_version_folder = os.path.join(
+            publish_folder,
+            "v%03d" % (publish_version,)
+        )
+
+        # build a folder structure in the publish path that matches the
+        # project root structure
+        publish_scenes_folder = os.path.join(publish_version_folder, "scenes")
+        ensure_folder_exists(publish_scenes_folder)
+
+        # get the full destination path for the file to publish
+        publish_path = os.path.join(
+            publish_scenes_folder,
+            file_info["filename"]
+        )
+
+        # copy the source file to the new destination
+        log.info("Copying to publish folder: %s" % (publish_version_folder,))
+        copy_file(path, publish_path)
+
+        # update the file info for the new publish path
+        file_info = publisher.util.get_file_path_components(publish_path)
 
         # Create the TankPublishedFile entity in Shotgun
         args = {
             "tk": self.parent.sgtk,
             "context": item.context,
             "comment": item.description,
-            "path": file_info["path"],
+            "path": publish_path,
             "name": "%s.%s" % (file_info["prefix"], file_info["extension"]),
-            "version_number": file_info["version"],
+            "version_number": publish_version,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
             # TODO: need to update core for this to work
             #"dependency_paths": self._maya_find_additional_scene_dependencies(),
         }
+        log.debug("Publishing: %s" % (args,))
 
         # create the publish and stash it in the item properties for other
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
+
+        # add publish version and publish version folder to the item properties.
+        # child items can choose to also write to the same location and use the
+        # same version to keep a tight association of files published together.
+        item.properties["publish_version"] = publish_version
+        item.properties["publish_folder"] = publish_version_folder
 
     def finalize(self, log, settings, item):
         """

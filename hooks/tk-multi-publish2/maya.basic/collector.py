@@ -127,7 +127,7 @@ class MayaSceneCollector(HookBaseClass):
 
         publisher = self.parent
 
-        # look for alembic files in the cache directory
+        # look for alembic files in the cache folder
         for filename in os.listdir(cache_dir):
             cache_path = os.path.join(cache_dir, filename)
 
@@ -172,7 +172,7 @@ class MayaSceneCollector(HookBaseClass):
 
         publisher = self.parent
 
-        # look for movie files in the movies directory
+        # look for movie files in the movies folder
         for filename in os.listdir(movies_dir):
             movie_path = os.path.join(movies_dir, filename)
 

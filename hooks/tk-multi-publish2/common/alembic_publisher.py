@@ -12,6 +12,8 @@ import os
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
+from sgtk.util.filesystem import ensure_folder_exists, copy_file
+
 
 class AlembicCachePublishPlugin(HookBaseClass):
     """
@@ -40,7 +42,7 @@ class AlembicCachePublishPlugin(HookBaseClass):
         """
         return (
             "Publishes an alembic cache. This will create a versioned snapshot "
-            "of the file in a <tt>publish</tt> directory in the same "
+            "of the file in a <tt>publish</tt> folder in the same "
             "folder as the file. The associated version number will come from "
             "the parent item's publish version."
         )
@@ -143,41 +145,78 @@ class AlembicCachePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        path = item.properties["path"]
-        parent_publish_data = item.parent.properties.get("sg_publish_data")
-
-        if parent_publish_data:
-            # this plugin is running after a parent (likely a work file) has
-            # already been published. use the same publish version to build a
-            # simple association to the parent on disk
-            publish_version = parent_publish_data["version_number"]
-        else:
-            # the prepare_for_publish method will use the next available version
-            publish_version = None
-
-        # prepare the file for publishing and get the publish path components
         publisher = self.parent
-        file_info = publisher.util.prepare_for_publish(
-            path,
-            version=publish_version
-        )
+        path = item.properties["path"]
 
-        parent_publish_id = parent_publish_data["id"]
+        # extract the components of the alembic cache path
+        file_info = publisher.util.get_file_path_components(path)
+
+        # if the parent item has a publish folder, we'll copy the cache there
+        # prior to publishing
+        publish_folder = item.parent.properties.get("publish_folder")
+        if publish_folder:
+
+            # build a folder structure in the publish path that matches the
+            # project root structure
+            alembic_publish_folder = os.path.join(
+                publish_folder,
+                "cache",
+                "alembic",
+            )
+            ensure_folder_exists(alembic_publish_folder)
+
+            # full path to where we'll copy alembic cache to and publish from
+            publish_path = os.path.join(
+                alembic_publish_folder,
+                file_info["filename"]
+            )
+
+            # copy the source to the publish folder
+            log.info(
+                "Copying to publish folder: %s" % (alembic_publish_folder,))
+            copy_file(path, publish_path)
+
+            # update the file info for the new publish path
+            file_info = publisher.util.get_file_path_components(publish_path)
+        else:
+            # no parent. publish in place
+            publish_path = path
+
+        # this plugin may be running after a parent has already been published.
+        # use the same publish version to build a simple association to the
+        # parent on disk. if no publish version available, fall back to any
+        # version discovered in the file name itself. otherwise, the version
+        # number will not be set.
+        publish_version = item.parent.properties.get("publish_version")
+        if not publish_version:
+            publish_version = file_info["version"]
+
+        # get the publish id from the parent publish if possible
+        parent_publish_id = \
+            item.parent.properties.get("sg_publish_data", {}).get("id")
 
         # Create the TankPublishedFile entity in Shotgun
         args = {
             "tk": self.parent.sgtk,
             "context": item.context,
             "comment": item.description,
-            "path": file_info["path"],
+            "path": publish_path,
             "name": "%s.%s" % (file_info["prefix"], file_info["extension"]),
-            "version_number": file_info["version"],
+            "version_number": publish_version,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
             "dependency_ids": [parent_publish_id]
         }
+        log.debug("Publishing: %s" % (args,))
 
+        # create the publish and update this item's data
         item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
+
+        # add publish version and publish version folder to the item properties.
+        # child items can choose to also write to the same location and use the
+        # same version to keep a tight association of files published together.
+        item.properties["publish_version"] = publish_version
+        item.properties["publish_folder"] = file_info["folder"]
 
     def finalize(self, log, settings, item):
         """
@@ -191,7 +230,7 @@ class AlembicCachePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # remove the source path
+        # remove the source path so that we don't publish it again next time.
         path = item.properties["path"]
         log.info("Deleting %s" % item.properties["path"])
         sgtk.util.filesystem.safe_delete_file(path)

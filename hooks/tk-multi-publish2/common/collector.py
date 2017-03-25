@@ -43,10 +43,10 @@ class GenericSceneCollector(HookBaseClass):
         publisher.engine.logger.debug("Processing file: %s" % (path,))
 
         # break down the path into the necessary pieces for processing
-        components = publisher.util.get_file_path_components(path)
+        file_info = publisher.util.get_file_path_components(path)
 
         # use the extension to determine category (image, video, etc.)
-        file_extension = components["extension"]
+        file_extension = file_info["extension"]
 
         # get display info for the extension
         (display, name) = publisher.util.get_file_type_info(file_extension)
@@ -61,7 +61,7 @@ class GenericSceneCollector(HookBaseClass):
         file_item = parent_item.create_item(
             category,
             display,
-            components["filename"]
+            file_info["filename"]
         )
         file_item.set_icon_from_path(publisher.get_icon_path(icon_name))
         if thumbnail:

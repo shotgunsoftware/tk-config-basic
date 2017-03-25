@@ -26,13 +26,13 @@ maya.project:
     tk-multi-publish2:
       collector: "{config}/tk-multi-publish2/common/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.publish_to_shotgun'
-        - '@common.settings.tk-multi-publish2.send_to_shotgun_review'
+        - '@common.settings.tk-multi-publish2.file_publisher'
+        - '@common.settings.tk-multi-publish2.version_creator'
         - name: Publish current Maya Scene
           hook: "{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
           settings: {}
         - name: Playblast to Shotgun Review
-          hook: "{config}/tk-multi-publish2/maya.basic/playblast_publisher.py"
+          hook: "{config}/tk-multi-publish2/maya.basic/playblast_version_creator.py"
           settings: {}
         - '@common.settings.tk-multi-publish2.alembic_publisher'
       location:

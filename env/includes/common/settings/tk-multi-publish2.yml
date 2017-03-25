@@ -21,21 +21,21 @@ publish_type_to_extensions: &file_types
   - [Texture, tiff, tx, tga, dds]
   - [Image, jpeg, jpg, png]
 
-common.settings.tk-multi-publish2.publish_to_shotgun:
+common.settings.tk-multi-publish2.file_publisher:
   name: Publish to Shotgun
   hook: "{config}/tk-multi-publish2/common/file_publisher.py"
   settings:
     Publish all file types: false
     File Types: *file_types
 
-common.settings.tk-multi-publish2.publish_to_shotgun_publish_all:
+common.settings.tk-multi-publish2.file_publisher_all:
   name: Publish to Shotgun
   hook: "{config}/tk-multi-publish2/common/file_publisher.py"
   settings:
     Publish all file types: true
     File Types: *file_types
 
-common.settings.tk-multi-publish2.send_to_shotgun_review:
+common.settings.tk-multi-publish2.version_creator:
   name: Send to Shotgun review
   hook: "{config}/tk-multi-publish2/common/version_creator.py"
   settings: {}

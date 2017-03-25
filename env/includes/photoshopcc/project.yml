@@ -25,8 +25,8 @@ photoshopcc.project:
     tk-multi-publish2:
       collector: "{config}/tk-multi-publish2/common/collector.py:{config}/tk-multi-publish2/photoshopcc.basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.publish_to_shotgun'
-        - '@common.settings.tk-multi-publish2.send_to_shotgun_review'
+        - '@common.settings.tk-multi-publish2.file_publisher'
+        - '@common.settings.tk-multi-publish2.version_creator'
         - name: Publish PS Document to Shotgun
           hook: "{config}/tk-multi-publish2/photoshopcc.basic/document_publisher.py"
           settings: {}
