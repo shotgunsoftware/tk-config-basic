@@ -13,6 +13,6 @@
 
 location:
   path: https://github.com/shotgunsoftware/tk-core.git
-  version: 432879a9607e67be4b9b1410d130213793d9a19e
+  version: 38ecdd798e9fade54980283d144737e46280a886
   type: git_branch
   branch: develop/zero_config
