@@ -16,7 +16,6 @@ includes:
 - ../common/frameworks.yml
 
 desktop.site:
-  debug_logging: true
   apps:
   location:
     path: https://github.com/shotgunsoftware/tk-desktop.git

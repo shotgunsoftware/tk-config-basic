@@ -48,8 +48,6 @@ desktop.project:
 
     tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
 
-  debug_logging: True
-
   collapse_rules:
   - {button_label: $app, match: Launch $app, menu_label: None}
   default_group: Studio
