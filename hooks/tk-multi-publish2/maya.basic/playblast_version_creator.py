@@ -23,7 +23,7 @@ class MayaPlayblastReviewPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        return self.parent.get_icon_path("shotgun")
+        return self.parent.get_icon_path("review")
 
     @property
     def name(self):

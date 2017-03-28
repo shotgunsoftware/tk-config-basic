@@ -36,6 +36,9 @@ class MayaSceneCollector(HookBaseClass):
 
         if path.endswith(".ma") or path.endswith(".mb"):
 
+            # override the type
+            item.type = "maya.file"
+
             folder = os.path.dirname(path)
             if os.path.basename(folder) == "scenes":
 
@@ -117,7 +120,7 @@ class MayaSceneCollector(HookBaseClass):
         :returns: List of alembic cache items
         """
 
-        # use the workspace_root property on the parent to locate alembic caches
+        # use the project_root property on the parent to locate alembic caches
         items = []
 
         # ensure the alembic cache dir exists
@@ -162,7 +165,7 @@ class MayaSceneCollector(HookBaseClass):
         :returns: List of movie items
         """
 
-        # use the workspace_root property on the parent to extract movies
+        # use the project_root property on the parent to extract movies
         items = []
 
         # ensure the movies dir exists

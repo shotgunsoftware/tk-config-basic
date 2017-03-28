@@ -12,12 +12,12 @@ import os
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
-from sgtk.util.filesystem import ensure_folder_exists, copy_file
+from sgtk.util.filesystem import copy_file
 
 
-class AlembicCachePublishPlugin(HookBaseClass):
+class GenericFilePublishPlugin(HookBaseClass):
     """
-    Plugin for creating publishes for alembic files that exist on disk
+    Plugin for creating generic publishes in Shotgun
     """
 
     @property
@@ -25,14 +25,14 @@ class AlembicCachePublishPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        return self.parent.get_icon_path("shotgun")
+        return self.parent.get_icon_path("publish")
 
     @property
     def name(self):
         """
         One line display name describing the plugin
         """
-        return "Publish Alembic"
+        return "Publish files to Shotgun"
 
     @property
     def description(self):
@@ -40,12 +40,9 @@ class AlembicCachePublishPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return (
-            "Publishes an alembic cache. This will create a versioned snapshot "
-            "of the file in a <tt>publish</tt> folder in the same "
-            "folder as the file. The associated version number will come from "
-            "the parent item's publish version."
-        )
+        return """
+        Publishes files to shotgun.
+        """
 
     @property
     def settings(self):
@@ -63,14 +60,26 @@ class AlembicCachePublishPlugin(HookBaseClass):
                     "description": "One line description of the setting"
             }
 
-        The type string should be one of the data types that toolkit accepts as
-        part of its environment configuration.
+        The type string should be one of the data types that toolkit accepts
+        as part of its environment configuration.
         """
         return {
-            "Publish Type": {
-                "type": "shotgun_publish_type",
-                "default": "Alembic Cache",
-                "description": "SG publish type to associate publishes with."
+            "File Types": {
+                "type": "list",
+                "default": "[]",
+                "description": (
+                    "List of file types to include. Each entry in the list "
+                    "is a list in which the first entry is the Shotgun "
+                    "published file type and subsequent entries are file "
+                    "extensions that should be associated.")
+            },
+            "Publish all file types": {
+                "type": "bool",
+                "default": False,
+                "description": (
+                    "If set to True, all files will be published, even if "
+                    "their extension has not been declared in the file types "
+                    "setting.")
             },
         }
 
@@ -83,7 +92,7 @@ class AlembicCachePublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["cache.alembic"]
+        return ["generic.file.*"]
 
     def accept(self, log, settings, item):
         """
@@ -110,17 +119,22 @@ class AlembicCachePublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        if "path" not in item.properties:
-            log.error("Unknown file path for alembic cache.")
-            return {"accepted": False}
+        file_path = item.properties["path"]
 
-        return {"accepted": True, "required": False, "enabled": True}
+        # get the extension without a "."
+        extension = os.path.splitext(file_path)[-1].lstrip(".")
+
+        if self._get_matching_publish_type(extension, settings):
+            return {"accepted": True, "required": False, "enabled": True}
+        else:
+            return {"accepted": False}
 
     def validate(self, log, settings, item):
         """
-        Validates the given item to check that it is ok to publish. Returns a
-        boolean to indicate validity. Use the logger to output further details
-        around why validation has failed.
+        Validates the given item to check that it is ok to publish.
+
+        Returns a boolean to indicate validity. Use the logger to output further
+        details around why validation has failed.
 
         :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
@@ -131,12 +145,17 @@ class AlembicCachePublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
+        if "path" not in item.properties:
+            log.error("Unknown file path for item.")
+            return False
+
         return True
 
     def publish(self, log, settings, item):
         """
-        Executes the publish logic for the given item and settings. Use the
-        logger to give the user status updates.
+        Executes the publish logic for the given item and settings.
+
+        Use the logger to give the user status updates.
 
         :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
@@ -145,35 +164,22 @@ class AlembicCachePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        publisher = self.parent
         path = item.properties["path"]
+        publisher = self.parent
 
-        # extract the components of the alembic cache path
+        # get the publish path components
         file_info = publisher.util.get_file_path_components(path)
 
         # if the parent item has a publish folder, we'll copy the cache there
         # prior to publishing
-        publish_folder = item.parent.properties.get("publish_folder")
+        publish_folder = item.parent.properties.get("publish_version_folder")
         if publish_folder:
 
-            # build a folder structure in the publish path that matches the
-            # project root structure
-            alembic_publish_folder = os.path.join(
-                publish_folder,
-                "cache",
-                "alembic",
-            )
-            ensure_folder_exists(alembic_publish_folder)
-
-            # full path to where we'll copy alembic cache to and publish from
-            publish_path = os.path.join(
-                alembic_publish_folder,
-                file_info["filename"]
-            )
+            # full path to where we'll copy the file to and publish from
+            publish_path = os.path.join(publish_folder, file_info["filename"])
 
             # copy the source to the publish folder
-            log.info(
-                "Copying to publish folder: %s" % (alembic_publish_folder,))
+            log.info("Copying to publish folder: %s" % (publish_folder,))
             copy_file(path, publish_path)
 
             # update the file info for the new publish path
@@ -191,46 +197,66 @@ class AlembicCachePublishPlugin(HookBaseClass):
         if not publish_version:
             publish_version = file_info["version"]
 
-        # get the publish id from the parent publish if possible
-        parent_publish_id = \
-            item.parent.properties.get("sg_publish_data", {}).get("id")
+        # determine the publish type
+        extension = file_info["extension"]
+
+        # get the publish type
+        publish_type = self._get_matching_publish_type(extension, settings)
 
         # Create the TankPublishedFile entity in Shotgun
+        # note - explicitly calling
         args = {
             "tk": self.parent.sgtk,
             "context": item.context,
             "comment": item.description,
             "path": publish_path,
-            "name": "%s.%s" % (file_info["prefix"], file_info["extension"]),
+            "name": "%s.%s" % (file_info["prefix"], extension),
             "version_number": publish_version,
             "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": settings["Publish Type"].value,
-            "dependency_ids": [parent_publish_id]
+            "published_file_type": publish_type,
         }
         log.debug("Publishing: %s" % (args,))
 
-        # create the publish and update this item's data
+        # create the publish and stash it in the item properties for other
+        # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
-
-        # add publish version and publish version folder to the item properties.
-        # child items can choose to also write to the same location and use the
-        # same version to keep a tight association of files published together.
-        item.properties["publish_version"] = publish_version
-        item.properties["publish_folder"] = file_info["folder"]
 
     def finalize(self, log, settings, item):
         """
-        Execute the finalization pass. This pass executes once all the publish
-        tasks have completed, and can for example be used to version up files.
+        Execute the finalization pass. This pass executes once
+        all the publish tasks have completed, and can for example
+        be used to version up files.
 
         :param log: Logger to output feedback to.
-        :param settings: Dictionary of Settings. The keys are strings, matching
-            the keys returned in the settings property. The values are `Setting`
-            instances.
+        :param settings: Dictionary of Settings. The keys are strings, matching the keys
+            returned in the settings property. The values are `Setting` instances.
         :param item: Item to process
         """
+        pass
 
-        # remove the source path so that we don't publish it again next time.
-        path = item.properties["path"]
-        log.info("Deleting %s" % item.properties["path"])
-        sgtk.util.filesystem.safe_delete_file(path)
+    def _get_matching_publish_type(self, extension, settings):
+        """
+        Get a publish type for the supplied extension and publish settings.
+
+        :param extension: The file extension to find a publish type for
+        :param settings: The publish settings defining the publish types
+
+        :return: A publish type or None if one could not be found.
+        """
+
+        # ensure lowercase and no dot
+        extension = extension.lstrip(".").lower()
+
+        for type_def in settings["File Types"].value:
+
+            publish_type = type_def[0]
+            file_extensions = type_def[1:]
+
+            if extension in file_extensions:
+                return publish_type
+
+        if settings["Publish all file types"].value:
+            # publish type is based on extension
+            return "%s File" % extension.capitalize()
+
+        return None

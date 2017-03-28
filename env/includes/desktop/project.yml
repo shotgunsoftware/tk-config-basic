@@ -21,7 +21,7 @@ desktop.project:
   apps:
 
     tk-multi-publish2:
-      collector: "{config}/tk-multi-publish2/common/collector.py"
+      collector: "{config}/tk-multi-publish2/basic/collector.py"
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher_all'
         - '@common.settings.tk-multi-publish2.version_creator'

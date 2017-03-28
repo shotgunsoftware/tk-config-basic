@@ -45,12 +45,12 @@ class GenericSceneCollector(HookBaseClass):
         # break down the path into the necessary pieces for processing
         file_info = publisher.util.get_file_path_components(path)
 
-        # use the extension to determine category (image, video, etc.)
+        # use the extension to determine item type (image, video, etc.)
         file_extension = file_info["extension"]
 
         # get display info for the extension
         (display, name) = publisher.util.get_file_type_info(file_extension)
-        category = "file.%s" % (name,)
+        item_type = "generic.file.%s" % (name,)
         icon_name = name
         thumbnail = None
 
@@ -59,7 +59,7 @@ class GenericSceneCollector(HookBaseClass):
 
         # create and populate the item
         file_item = parent_item.create_item(
-            category,
+            item_type,
             display,
             file_info["filename"]
         )

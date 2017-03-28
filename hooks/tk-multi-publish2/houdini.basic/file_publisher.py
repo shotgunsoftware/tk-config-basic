@@ -7,18 +7,17 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
+import sgtk
 import os
 
-import sgtk
 from sgtk.util.filesystem import ensure_folder_exists, copy_file
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
+class HoudiniFilePublishPlugin(HookBaseClass):
     """
-    Plugin for publishing Photoshop documents in Shotgun.
+    Plugin for publishing a houdini file
     """
 
     @property
@@ -33,7 +32,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish PS Document to Shotgun"
+        return "Publish Houdini File"
 
     @property
     def description(self):
@@ -41,9 +40,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return """
-        Publishes Photoshop documents to shotgun.
-        """
+        return (
+            "Publishes a houdini file."
+        )
 
     @property
     def settings(self):
@@ -66,13 +65,10 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         return {
             "Publish Type": {
-                "type": "str",
-                "default": "Photoshop Image",
-                "description": (
-                    "The shotgun publish file type to use when publishing "
-                    "items with this plugin."
-                )
-            }
+                "type": "shotgun_publish_type",
+                "default": "Houdini File",
+                "description": "SG publish type to associate publishes with."
+            },
         }
 
     @property
@@ -84,7 +80,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["photoshop.document"]
+        return ["houdini.file"]
 
     def accept(self, log, settings, item):
         """
@@ -111,31 +107,25 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        # ensure there is a document in the item properties
-        if "document" not in item.properties:
-            return {"accepted": False}
-
         return {"accepted": True, "required": False, "enabled": True}
 
     def validate(self, log, settings, item):
         """
-        Validates the given item to check that it is ok to publish.
-
-        Returns a boolean to indicate validity. Use the logger to output further
-        details around why validation has failed.
+        Validates the given item to check that it is ok to publish. Returns a
+        boolean to indicate validity. Use the logger to output further details
+        around why validation has failed.
 
         :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
-
         :returns: True if item is valid, False otherwise.
         """
-
-        document = item.properties["document"]
-        if not document.saved:
-            log.error("Document '%s' not saved." % (document.name,))
+        if item.properties["path"] is None:
+            # TODO: try to get path here in order to allow saving while
+            # the publisher is open
+            log.error("Please save your scene before you continue!")
             return False
 
         # ensure the publish destination is created and that we can determine
@@ -150,7 +140,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         log.info("Validating publish folder and version...")
         publisher = self.parent
 
-        path = os.path.abspath(document.fullName.fsName)
+        path = item.properties["path"]
         file_info = publisher.util.get_file_path_components(path)
 
         # ensure the publish folder exists
@@ -179,12 +169,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        document = item.properties["document"]
-
         publisher = self.parent
 
-        # should be saved if we're here
-        path = os.path.abspath(document.fullName.fsName)
+        path = item.properties["path"]
         file_info = publisher.util.get_file_path_components(path)
 
         # retrieve the publish folder and version populated during validation
@@ -249,3 +236,4 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
         pass
+

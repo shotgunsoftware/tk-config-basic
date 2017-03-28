@@ -7,18 +7,17 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
+import sgtk
 import os
 
-import sgtk
 from sgtk.util.filesystem import ensure_folder_exists, copy_file
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
+class MayaFilePublishPlugin(HookBaseClass):
     """
-    Plugin for publishing Photoshop documents in Shotgun.
+    Plugin for publishing a maya file
     """
 
     @property
@@ -33,7 +32,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish PS Document to Shotgun"
+        return "Publish Maya File"
 
     @property
     def description(self):
@@ -41,9 +40,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return """
-        Publishes Photoshop documents to shotgun.
-        """
+        return (
+            "Publishes a maya file."
+        )
 
     @property
     def settings(self):
@@ -66,13 +65,10 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         return {
             "Publish Type": {
-                "type": "str",
-                "default": "Photoshop Image",
-                "description": (
-                    "The shotgun publish file type to use when publishing "
-                    "items with this plugin."
-                )
-            }
+                "type": "shotgun_publish_type",
+                "default": "Maya File",
+                "description": "SG publish type to associate publishes with."
+            },
         }
 
     @property
@@ -84,7 +80,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["photoshop.document"]
+        return ["maya.file"]
 
     def accept(self, log, settings, item):
         """
@@ -111,32 +107,49 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        # ensure there is a document in the item properties
-        if "document" not in item.properties:
-            return {"accepted": False}
+        # if we have a project root, check for a valid, serialized context.
+        # warn if not.
+        if "project_root" in item.properties:
+
+            project_root = item.properties["project_root"]
+            context_file = os.path.join(project_root, "shotgun.context")
+
+            log.debug("Looking for context file in %s" % context_file)
+            if os.path.exists(context_file):
+                try:
+                    with open(context_file, "rb") as fh:
+                        context_str = fh.read()
+                    context_obj = sgtk.Context.deserialize(context_str)
+                    item.context = context_obj
+                except Exception, e:
+                    log.warning(
+                        "Could not read saved context %s: %s" %
+                        (context_file, e)
+                    )
 
         return {"accepted": True, "required": False, "enabled": True}
 
     def validate(self, log, settings, item):
         """
-        Validates the given item to check that it is ok to publish.
-
-        Returns a boolean to indicate validity. Use the logger to output further
-        details around why validation has failed.
+        Validates the given item to check that it is ok to publish. Returns a
+        boolean to indicate validity. Use the logger to output further details
+        around why validation has failed.
 
         :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
-
         :returns: True if item is valid, False otherwise.
         """
-
-        document = item.properties["document"]
-        if not document.saved:
-            log.error("Document '%s' not saved." % (document.name,))
+        if item.properties["path"] is None:
+            # TODO: try to get path here in order to allow saving while
+            # the publisher is open
+            log.error("Please save your scene before you continue!")
             return False
+
+        if not item.properties.get("project_root"):
+            log.warning("Your scene is not part of a maya project.")
 
         # ensure the publish destination is created and that we can determine
         # the next available publish version. We do this before the actual
@@ -150,11 +163,18 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         log.info("Validating publish folder and version...")
         publisher = self.parent
 
-        path = os.path.abspath(document.fullName.fsName)
+        path = item.properties["path"]
         file_info = publisher.util.get_file_path_components(path)
 
+        # place the publish folder in the project root if known, otherwise next
+        # to the maya file.
+        publish_root = item.properties.get(
+            "project_root",
+            file_info["folder"]
+        )
+
         # ensure the publish folder exists
-        publish_folder = os.path.join(file_info["folder"], "publish")
+        publish_folder = os.path.join(publish_root, "publish")
         log.debug("Ensuring publish folder exists: '%s'" % (publish_folder,))
         ensure_folder_exists(publish_folder)
 
@@ -179,12 +199,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        document = item.properties["document"]
-
         publisher = self.parent
 
-        # should be saved if we're here
-        path = os.path.abspath(document.fullName.fsName)
+        path = item.properties["path"]
         file_info = publisher.util.get_file_path_components(path)
 
         # retrieve the publish folder and version populated during validation
@@ -198,11 +215,14 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             "v%03d" % (publish_version,)
         )
 
-        ensure_folder_exists(publish_version_folder)
+        # build a folder structure in the publish path that matches the
+        # project root structure for scene files.
+        publish_scenes_folder = os.path.join(publish_version_folder, "scenes")
+        ensure_folder_exists(publish_scenes_folder)
 
         # get the full destination path for the file to publish
         publish_path = os.path.join(
-            publish_version_folder,
+            publish_scenes_folder,
             file_info["filename"]
         )
 
@@ -213,20 +233,18 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         # update the file info for the new publish path
         file_info = publisher.util.get_file_path_components(publish_path)
 
-        # determine the publish type
-        extension = file_info["extension"]
-
         # Create the TankPublishedFile entity in Shotgun
-        # note - explicitly calling
         args = {
             "tk": self.parent.sgtk,
             "context": item.context,
             "comment": item.description,
             "path": publish_path,
-            "name": "%s.%s" % (file_info["prefix"], extension),
+            "name": "%s.%s" % (file_info["prefix"], file_info["extension"]),
             "version_number": publish_version,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
+            # TODO: need to update core for this to work
+            #"dependency_paths": self._maya_find_additional_scene_dependencies(),
         }
         log.debug("Publishing: %s" % (args,))
 
@@ -235,6 +253,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
 
         # add the full path to the publish version folder to the item properties
+        # child items can publish here as well
         item.properties["publish_version_folder"] = publish_version_folder
 
     def finalize(self, log, settings, item):
@@ -248,4 +267,14 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             instances.
         :param item: Item to process
         """
-        pass
+
+        # try to save the associated context into the project root. since the
+        # project root isn't required, bail if not known.
+        if "project_root" not in item.properties:
+            return
+
+        project_root = item.properties["project_root"]
+        context_file = os.path.join(project_root, "shotgun.context")
+        with open(context_file, "wb") as fh:
+            fh.write(item.context.serialize(with_user_credentials=False))
+

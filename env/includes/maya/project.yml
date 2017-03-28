@@ -20,16 +20,18 @@ includes:
 
 maya.project:
   apps:
-
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-publish2:
-      collector: "{config}/tk-multi-publish2/common/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
+      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher'
         - '@common.settings.tk-multi-publish2.version_creator'
+        - name: Publish Maya File
+          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py"
+          settings: {}
         - name: Publish current Maya Scene
-          hook: "{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
+          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py:{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
           settings: {}
         - name: Playblast to Shotgun Review
           hook: "{config}/tk-multi-publish2/maya.basic/playblast_version_creator.py"

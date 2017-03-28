@@ -23,24 +23,24 @@ publish_type_to_extensions: &file_types
 
 common.settings.tk-multi-publish2.file_publisher:
   name: Publish to Shotgun
-  hook: "{config}/tk-multi-publish2/common/file_publisher.py"
+  hook: "{config}/tk-multi-publish2/basic/file_publisher.py"
   settings:
     Publish all file types: false
     File Types: *file_types
 
 common.settings.tk-multi-publish2.file_publisher_all:
   name: Publish to Shotgun
-  hook: "{config}/tk-multi-publish2/common/file_publisher.py"
+  hook: "{config}/tk-multi-publish2/basic/file_publisher.py"
   settings:
     Publish all file types: true
     File Types: *file_types
 
 common.settings.tk-multi-publish2.version_creator:
   name: Send to Shotgun review
-  hook: "{config}/tk-multi-publish2/common/version_creator.py"
+  hook: "{config}/tk-multi-publish2/basic/version_creator.py"
   settings: {}
 
 common.settings.tk-multi-publish2.alembic_publisher:
   name: Publish alembic to Shotgun
-  hook: "{config}/tk-multi-publish2/common/alembic_publisher.py"
+  hook: "{config}/tk-multi-publish2/basic/alembic_publisher.py"
   settings: {}
