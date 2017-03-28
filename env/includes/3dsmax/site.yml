@@ -23,41 +23,6 @@ includes:
 
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
-    tk-multi-publish2:
-
-      collector: "{config}/3dsmax/publish/collector.py"
-
-      publish_plugins:
-
-          - name: Publish to Shotgun
-            hook: "{self}/file_publisher.py"
-            settings:
-              Publish all file types: false
-              File Types:
-              - [Nuke Script, nk]
-              - [Photoshop Image, psd, psb]
-              - [3dsmax Scene, max]
-              - [Houdini Scene, hip]
-              - [Maya Scene, ma, mb]
-              - [Hiero Project, hrox]
-              - [Alembic Cache]
-              - [Rendered Image, dpx, exr]
-              - [Texture, tiff, tx, tga, dds]
-              - [Image, jpeg, jpg, png]
-
-          - name: Publish current 3dsMax Scene
-            hook: "{config}/3dsmax/publish/scene_publisher.py"
-            settings: {}
-
-          - name: Send to Shotgun review
-            hook: "{self}/version_creator.py"
-            settings: {}
-
-      location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.0.10
-
     tk-multi-loader2:
       action_mappings:
         3dsmax Scene: [import, reference]
@@ -105,7 +70,7 @@ includes:
 
   location:
     path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git
-    version: 882ab2ab7a5d42d4e6fec5109a12b814227bde0e
+    version: 62e318129b44d059f42442e29c16779f89844ac2
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
