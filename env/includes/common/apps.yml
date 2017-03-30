@@ -25,6 +25,6 @@ common.apps.tk-multi-launchapp:
   use_software_entity: true
   location:
     path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-    version: 059a037210da65cf4d7a0478178ffd734872c691
+    version: 8211a6306717c4e2494c7cd78f4927949299b31f
     type: git_branch
     branch: develop/software_entity
