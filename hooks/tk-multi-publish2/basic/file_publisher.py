@@ -12,8 +12,6 @@ import os
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
-from sgtk.util.filesystem import copy_file
-
 
 class GenericFilePublishPlugin(HookBaseClass):
     """
@@ -41,7 +39,15 @@ class GenericFilePublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Publishes files to shotgun.
+        Publishes files/folders to shotgun. Supports any file or folder type
+        if the "Publish all file types" setting is <tt>True</tt>, otherwise
+        limited by the extensions in the "File Types" setting.
+
+        This plugin will recognize version numbers of the form <tt>.v###</tt>
+        in the file or folder name and will publish with that version number to
+        Shotgun. If the "Auto Version" setting is <tt>True</tt>, the plugin will
+        automatically copy thie file/folder to the next version number after
+        publishing.
         """
 
     @property
@@ -81,6 +87,15 @@ class GenericFilePublishPlugin(HookBaseClass):
                     "their extension has not been declared in the file types "
                     "setting.")
             },
+            "Auto Version": {
+                "type": "bool",
+                "default": True,
+                "description": (
+                    "If set to True, the file will be automatically saved to "
+                    "the next version after publish."
+                )
+            },
+            # TODO: revisit default states for settings ^
         }
 
     @property
@@ -92,7 +107,7 @@ class GenericFilePublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["generic.file.*"]
+        return ["file.*"]
 
     def accept(self, log, settings, item):
         """
@@ -119,10 +134,11 @@ class GenericFilePublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        file_path = item.properties["path"]
+        publisher = self.parent
 
-        # get the extension without a "."
-        extension = os.path.splitext(file_path)[-1].lstrip(".")
+        path = item.properties["path"]
+        path_info = publisher.util.get_file_path_components(path)
+        extension = path_info["extension"]
 
         if self._get_matching_publish_type(extension, settings):
             return {"accepted": True, "required": False, "enabled": True}
@@ -145,9 +161,32 @@ class GenericFilePublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        if "path" not in item.properties:
-            log.error("Unknown file path for item.")
+        publisher = self.parent
+        path = item.properties.get("path")
+        if not path:
+            log.error("Unknown path for item.")
             return False
+
+        # get the would-be publish name for this path.
+        path_info = publisher.util.get_file_path_components(path)
+        publish_name = self._get_display_name(path_info)
+
+        # see if there are any other publishes of this path. Note the name,
+        # context, and path *must* match the values supplied to register_publish
+        # in the publish phase in order for this to return an accurate list of
+        # previous publishes of this file.
+        publishes = publisher.util.get_publishes(
+            item.context,
+            path,
+            publish_name
+        )
+
+        if publishes:
+            log.warn(
+                "Found %s publishes in Shotgun with the path '%s'. If you "
+                "continue, these other publishes will no longer be available "
+                "to other users." % (len(publishes), path)
+            )
 
         return True
 
@@ -168,50 +207,24 @@ class GenericFilePublishPlugin(HookBaseClass):
         publisher = self.parent
 
         # get the publish path components
-        file_info = publisher.util.get_file_path_components(path)
-
-        # if the parent item has a publish folder, we'll copy the cache there
-        # prior to publishing
-        publish_folder = item.parent.properties.get("publish_version_folder")
-        if publish_folder:
-
-            # full path to where we'll copy the file to and publish from
-            publish_path = os.path.join(publish_folder, file_info["filename"])
-
-            # copy the source to the publish folder
-            log.info("Copying to publish folder: %s" % (publish_folder,))
-            copy_file(path, publish_path)
-
-            # update the file info for the new publish path
-            file_info = publisher.util.get_file_path_components(publish_path)
-        else:
-            # no parent. publish in place
-            publish_path = path
-
-        # this plugin may be running after a parent has already been published.
-        # use the same publish version to build a simple association to the
-        # parent on disk. if no publish version available, fall back to any
-        # version discovered in the file name itself. otherwise, the version
-        # number will not be set.
-        publish_version = item.parent.properties.get("publish_version")
-        if not publish_version:
-            publish_version = file_info["version"]
+        path_info = publisher.util.get_file_path_components(path)
 
         # determine the publish type
-        extension = file_info["extension"]
+        extension = path_info["extension"]
 
         # get the publish type
         publish_type = self._get_matching_publish_type(extension, settings)
 
-        # Create the TankPublishedFile entity in Shotgun
-        # note - explicitly calling
+        display_name = self._get_display_name(path_info)
+
+        # arguments for publish registration
         args = {
-            "tk": self.parent.sgtk,
+            "tk": publisher.sgtk,
             "context": item.context,
             "comment": item.description,
-            "path": publish_path,
-            "name": "%s.%s" % (file_info["prefix"], extension),
-            "version_number": publish_version,
+            "path": path,
+            "name": display_name,
+            "version_number": path_info["version"],
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": publish_type,
         }
@@ -228,11 +241,34 @@ class GenericFilePublishPlugin(HookBaseClass):
         be used to version up files.
 
         :param log: Logger to output feedback to.
-        :param settings: Dictionary of Settings. The keys are strings, matching the keys
-            returned in the settings property. The values are `Setting` instances.
+        :param settings: Dictionary of Settings. The keys are strings, matching
+            the keys returned in the settings property. The values are `Setting`
+            instances.
         :param item: Item to process
         """
-        pass
+
+        publisher = self.parent
+        path = item.properties["path"]
+
+        # get the data for the publish that was just created in SG
+        publish_data = item.properties["sg_publish_data"]
+
+        # ensure other publishes have their status cleared
+        log.info("Clearing status of previous publishes...")
+        publisher.util.clear_status_for_other_publishes(
+            item.context, publish_data)
+
+        # auto version the file if the setting is enabled and a version exists
+        # in the file name. bump the version number by 1
+        path_info = publisher.util.get_file_path_components(path)
+        if settings["Auto Version"].value and path_info["version"]:
+            new_version = path_info["version"] + 1
+            log.info("Bumping the version to %s..." % (new_version,))
+            publisher.util.copy_path_to_version(
+                path,
+                new_version,
+                padding=path_info["version_padding"]
+            )
 
     def _get_matching_publish_type(self, extension, settings):
         """
@@ -245,18 +281,48 @@ class GenericFilePublishPlugin(HookBaseClass):
         """
 
         # ensure lowercase and no dot
-        extension = extension.lstrip(".").lower()
+        if extension:
+            extension = extension.lstrip(".").lower()
 
-        for type_def in settings["File Types"].value:
+            for type_def in settings["File Types"].value:
 
-            publish_type = type_def[0]
-            file_extensions = type_def[1:]
+                publish_type = type_def[0]
+                file_extensions = type_def[1:]
 
-            if extension in file_extensions:
-                return publish_type
+                if extension in file_extensions:
+                    # found a matching type in settings. use it!
+                    return publish_type
 
         if settings["Publish all file types"].value:
-            # publish type is based on extension
-            return "%s File" % extension.capitalize()
+            # we're publishing anything and everything!
 
+            if extension:
+                # publish type is based on extension
+                publish_type = "%s File" % extension.capitalize()
+            else:
+                # no extension, assume it is a folder
+                publish_type = "Folder"
+
+            return publish_type
+
+        # no publish type identified!
         return None
+
+    def _get_display_name(self, path_info):
+        """
+        Convenience method to ensure returned display name is consistent when
+        doing validation as well as actually creating a publish.
+
+        :param path_info: A dictionary of the form returned by the publisher's
+            util.get_file_path_components()
+
+        :return: A display name for the given path info
+        """
+
+        path = path_info["path"]
+        if os.path.isdir(path):
+            display_name = path_info["filename"]
+        else:
+            display_name = "%s.%s" % (path_info["prefix"], path_info["extension"])
+
+        return display_name
