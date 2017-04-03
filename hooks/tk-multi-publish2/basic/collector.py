@@ -76,7 +76,7 @@ class GenericSceneCollector(HookBaseClass):
             display,
             file_info["filename"]
         )
-        file_item.set_icon_from_path(publisher.get_icon_path(icon_name))
+        file_item.set_icon_from_path(publisher.util.get_builtin_icon(icon_name))
 
         # if it is an image, use the path to generate the thumbnail
         if name == "image":
@@ -113,7 +113,8 @@ class GenericSceneCollector(HookBaseClass):
                 "Generic Folder",
                 folder_info["filename"]
             )
-            folder_item.set_icon_from_path(publisher.get_icon_path("folder"))
+            folder_item.set_icon_from_path(
+                publisher.util.get_builtin_icon("folder"))
 
             # all we know about the file is its path. set the path in its
             # properties for the plugins to use for processing
@@ -133,8 +134,7 @@ class GenericSceneCollector(HookBaseClass):
                 seq_path_info["filename"]
             )
             img_seq_item.set_icon_from_path(
-                publisher.get_icon_path("image_sequence")
-            )
+                publisher.util.get_builtin_icon("image_sequence"))
 
             # all we know about the file is its path. set the path in its
             # properties for the plugins to use for processing

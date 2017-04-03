@@ -23,7 +23,7 @@ class GenericFilePublishPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        return self.parent.get_icon_path("publish")
+        return self.parent.util.get_builtin_icon("publish")
 
     @property
     def name(self):
@@ -178,14 +178,15 @@ class GenericFilePublishPlugin(HookBaseClass):
         publishes = publisher.util.get_publishes(
             item.context,
             path,
-            publish_name
+            publish_name,
+            filters=["sg_status_list", "is_not", None]
         )
 
         if publishes:
             log.warn(
-                "Found %s publishes in Shotgun with the path '%s'. If you "
-                "continue, these other publishes will no longer be available "
-                "to other users." % (len(publishes), path)
+                "Found %s active publishes in Shotgun with the path '%s'. If "
+                "you continue, these other publishes will no longer be "
+                "available to other users." % (len(publishes), path)
             )
 
         return True

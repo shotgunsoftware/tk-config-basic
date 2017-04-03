@@ -23,7 +23,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        return self.parent.get_icon_path("review")
+        return self.parent.util.get_builtin_icon("review")
 
     @property
     def name(self):
