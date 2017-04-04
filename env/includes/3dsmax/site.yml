@@ -16,17 +16,18 @@ includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
 
-maya.site:
-  apps:
 
+3dsmax.site:
+  apps:
     tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
     tk-multi-loader2:
       action_mappings:
-        Maya Scene: [reference, import]
-        Photoshop Image: [texture_node]
-        Rendered Image: [texture_node]
-      actions_hook: '{self}/tk-maya_actions.py'
+        3dsmax Scene: [import, reference]
+        Alembic Cache: [import]
+      actions_hook: '{self}/tk-3dsmaxplus_actions.py'
       entities:
       - caption: Project
         type: Hierarchy
@@ -49,34 +50,28 @@ maya.site:
         version: v1.3.0
         type: app_store
         name: tk-multi-shotgunpanel
-      actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
+      shotgun_fields_hook: '{self}/shotgun_fields.py'
+      actions_hook: '{self}/general_actions.py'
       action_mappings:
         PublishedFile:
-        - actions: [reference, import]
-          filters: {published_file_type: Maya Scene}
-        - actions: [texture_node]
-          filters: {published_file_type: Rendered Image}
-        - actions: [texture_node]
-          filters: {published_file_type: Photoshop Image}
-        - actions: [udim_texture_node]
-          filters: {published_file_type: UDIM Image}
-        - actions: [publish_clipboard]
+        - actions:
+          - publish_clipboard
           filters: {}
         Task:
-        - actions: [assign_task, task_to_ip]
+        - actions:
+          - assign_task
+          - task_to_ip
           filters: {}
         Version:
-        - actions: [quicktime_clipboard, sequence_clipboard]
+        - actions:
+          - quicktime_clipboard
+          - sequence_clipboard
           filters: {}
+
   location:
-    path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 67a0a9dce1e31d1f2b19caa7a2d8ce55730d16c1
+    path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git
+    version: 28f792b57211694f2d70b0b16ba30c0b306296cf
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
-  run_at_startup:
-  - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
-  automatic_context_switch: false
-
-

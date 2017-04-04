@@ -20,3 +20,18 @@ common.apps.tk-multi-about:
     version: v0.2.2
     type: app_store
     name: tk-multi-about
+
+common.apps.tk-multi-pythonconsole:
+  location:
+    version: v1.0.7
+    type: app_store
+    name: tk-multi-pythonconsole
+
+
+common.apps.tk-multi-launchapp:
+  use_software_entity: true
+  location:
+    path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
+    version: 8211a6306717c4e2494c7cd78f4927949299b31f
+    type: git_branch
+    branch: develop/software_entity

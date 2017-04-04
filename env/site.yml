@@ -20,6 +20,7 @@ includes:
 - includes/desktop/site.yml
 - includes/shell/all.yml
 - includes/photoshopcc/site.yml
+- includes/3dsmax/site.yml
 
 engines:
   tk-houdini: '@houdini.site'
@@ -28,4 +29,5 @@ engines:
   tk-desktop: '@desktop.site'
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.site'
+  tk-3dsmaxplus: '@3dsmax.site'
 

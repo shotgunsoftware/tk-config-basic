@@ -15,28 +15,40 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
-- ../common/settings/tk-multi-publish2.yml
 
 
-maya.project:
+3dsmax.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-publish2:
-      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
+      collector: "{config}/3dsmax/publish/collector.py"
+
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
-        - name: Publish Maya File
-          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py"
-          settings: {}
-        - name: Publish current Maya Scene
-          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py:{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
-          settings: {}
-        - name: Playblast to Shotgun Review
-          hook: "{config}/tk-multi-publish2/maya.basic/playblast_version_creator.py"
-          settings: {}
-        - '@common.settings.tk-multi-publish2.alembic_publisher'
+          - name: Publish to Shotgun
+            hook: "{self}/file_publisher.py"
+            settings:
+              Publish all file types: false
+              File Types:
+              - [Nuke Script, nk]
+              - [Photoshop Image, psd, psb]
+              - [3dsmax Scene, max]
+              - [Houdini Scene, hip]
+              - [Maya Scene, ma, mb]
+              - [Hiero Project, hrox]
+              - [Alembic Cache]
+              - [Rendered Image, dpx, exr]
+              - [Texture, tiff, tx, tga, dds]
+              - [Image, jpeg, jpg, png]
+
+          - name: Publish current 3dsMax Scene
+            hook: "{config}/3dsmax/publish/scene_publisher.py"
+            settings: {}
+
+          - name: Send to Shotgun review
+            hook: "{self}/version_creator.py"
+            settings: {}
+
       location:
         type: app_store
         name: tk-multi-publish2
@@ -44,10 +56,10 @@ maya.project:
 
     tk-multi-loader2:
       action_mappings:
-        Maya Scene: [reference, import]
-        Photoshop Image: [texture_node]
-        Rendered Image: [texture_node]
-      actions_hook: '{self}/tk-maya_actions.py'
+        3dsmax Scene: [import, reference]
+        Alembic Cache: [import]
+      actions_hook: '{self}/tk-3dsmaxplus_actions.py'
+      download_thumbnails: true
       entities:
       - caption: Current Project
         type: Hierarchy
@@ -71,36 +83,32 @@ maya.project:
         version: v1.3.0
         type: app_store
         name: tk-multi-shotgunpanel
-      actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
+      shotgun_fields_hook: '{self}/shotgun_fields.py'
+      actions_hook: '{self}/general_actions.py'
       action_mappings:
         PublishedFile:
-        - actions: [reference, import]
-          filters: {published_file_type: Maya Scene}
-        - actions: [texture_node]
-          filters: {published_file_type: Rendered Image}
-        - actions: [texture_node]
-          filters: {published_file_type: Photoshop Image}
-        - actions: [udim_texture_node]
-          filters: {published_file_type: UDIM Image}
-        - actions: [publish_clipboard]
+        - actions:
+          - publish_clipboard
           filters: {}
         Task:
-        - actions: [assign_task, task_to_ip]
+        - actions:
+          - assign_task
+          - task_to_ip
           filters: {}
         Version:
-        - actions: [quicktime_clipboard, sequence_clipboard]
+        - actions:
+          - quicktime_clipboard
+          - sequence_clipboard
           filters: {}
 
   location:
-    path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 67a0a9dce1e31d1f2b19caa7a2d8ce55730d16c1
+    path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git
+    version: 28f792b57211694f2d70b0b16ba30c0b306296cf
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
-  run_at_startup:
-  - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
-  automatic_context_switch: false
+
 
 
 

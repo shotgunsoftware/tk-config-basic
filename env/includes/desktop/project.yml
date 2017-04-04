@@ -15,7 +15,7 @@
 includes:
 - ../common/frameworks.yml
 - ../common/settings/tk-multi-publish2.yml
-
+- ../common/apps.yml
 
 desktop.project:
   apps:
@@ -27,21 +27,12 @@ desktop.project:
         - '@common.settings.tk-multi-publish2.file_publisher_all'
         - '@common.settings.tk-multi-publish2.version_creator'
       location:
-        #type: app_store
-        #name: tk-multi-publish2
-        #version: v0.0.9
-        type: dev
-        path: /Users/josh/dev/sg/zero_config/tk-multi-publish2
+        type: app_store
+        name: tk-multi-publish2
+        version: v0.0.10
 
-    tk-multi-launchapp:
-      use_software_entity: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-        version: de33d6915cba76de8f459da5e5257215389dde50
-        type: git_branch
-        branch: develop/software_entity
+    tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
 
-  debug_logging: true
   collapse_rules:
   - {button_label: $app, match: Launch $app, menu_label: None}
   default_group: Studio
@@ -65,6 +56,6 @@ desktop.project:
     name: Finishing Tools
   location:
     path: https://github.com/shotgunsoftware/tk-desktop.git
-    version: d1f95875ef3303fca29ed817626462132f6a945e
+    version: 664c2c4419e3a7f3e495279fbbf844e975fca909
     type: git_branch
     branch: develop/zero_config

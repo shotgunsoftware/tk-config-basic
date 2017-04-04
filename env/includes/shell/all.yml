@@ -14,17 +14,11 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/apps.yml
 
 shell.all:
   apps:
-
-    tk-multi-launchapp:
-      use_software_entity: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-        version: 699d14107cb052981c0a1bb6b0c2b3fdb5797b91
-        type: git_branch
-        branch: develop/software_entity
+    tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
 
   location:
     version: v0.5.1

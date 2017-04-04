@@ -22,6 +22,8 @@ photoshopcc.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-publish2:
       collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/photoshopcc.basic/collector.py"
       publish_plugins:
@@ -31,11 +33,9 @@ photoshopcc.project:
           hook: "{config}/tk-multi-publish2/photoshopcc.basic/document_publisher.py"
           settings: {}
       location:
-        #type: app_store
-        #name: tk-multi-publish2
-        #version: v0.0.9
-        type: dev
-        path: /Users/josh/dev/sg/zero_config/tk-multi-publish2
+        type: app_store
+        name: tk-multi-publish2
+        version: v0.0.10
 
     tk-multi-loader2:
       action_mappings:

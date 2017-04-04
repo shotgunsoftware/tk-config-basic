@@ -21,6 +21,8 @@ photoshopcc.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-loader2:
       action_mappings:
         Photoshop Image: [add_as_a_layer, open_file]
