@@ -119,7 +119,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         file_path = item.properties["path"]
 
         file_info = publisher.util.get_file_path_components(file_path)
-        extension = file_info["extension"]
+        extension = file_info["extension"].lower()
 
         valid_extensions = []
 
