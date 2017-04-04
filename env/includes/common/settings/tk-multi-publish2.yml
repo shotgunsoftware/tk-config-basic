@@ -8,15 +8,14 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-# used to lookup publish type by file extension.
 publish_type_to_extensions: &file_types
+  - [Alembic Cache, abc]
+  - [3dsmax Scene, max]
+  - [Hiero Project, hrox]
+  - [Houdini Scene, hip, hipnc]
+  - [Maya Scene, ma, mb]
   - [Nuke Script, nk]
   - [Photoshop Image, psd, psb]
-  - [3dsmax Scene, max]
-  - [Houdini Scene, hip]
-  - [Maya Scene, ma, mb]
-  - [Hiero Project, hrox]
-  - [Alembic Cache, abc]
   - [Rendered Image, dpx, exr]
   - [Texture, tiff, tx, tga, dds]
   - [Image, jpeg, jpg, png]
@@ -35,6 +34,7 @@ common.settings.tk-multi-publish2.file_publisher_all:
   settings:
     Publish all file types: true
     File Types: *file_types
+    Auto Version: True
 
 common.settings.tk-multi-publish2.version_creator:
   name: Send to Shotgun review

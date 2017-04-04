@@ -23,7 +23,8 @@ class GenericFilePublishPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        return self.parent.util.get_builtin_icon("publish")
+        config_path = self.parent.sgtk.pipeline_configuration.get_path()
+        return os.path.join(config_path, "config", "icons", "publish.png")
 
     @property
     def name(self):
