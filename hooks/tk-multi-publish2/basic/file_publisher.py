@@ -7,13 +7,16 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-import sgtk
+
 import os
+
+import sgtk
+from sgtk.util.filesystem import copy_file, copy_folder
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class GenericFilePublishPlugin(HookBaseClass):
+class BasicFilePublishPlugin(HookBaseClass):
     """
     Plugin for creating generic publishes in Shotgun
     """
@@ -141,7 +144,7 @@ class GenericFilePublishPlugin(HookBaseClass):
         path_info = publisher.util.get_file_path_components(path)
         extension = path_info["extension"]
 
-        if self._get_matching_publish_type(extension, settings):
+        if self._get_publish_type(extension, settings):
             return {"accepted": True, "required": False, "enabled": True}
         else:
             return {"accepted": False}
@@ -168,15 +171,21 @@ class GenericFilePublishPlugin(HookBaseClass):
             log.error("Unknown path for item.")
             return False
 
-        # get the would-be publish name for this path.
-        path_info = publisher.util.get_file_path_components(path)
-        publish_name = self._get_display_name(path_info)
+        # get the publish name for this file path. this will ensure we get a
+        # consistent publish name when looking up existing publishes.
+        publish_name = publisher.execute_hook_method(
+            "path_info",
+            "get_publish_name",
+            path=path
+        )
 
-        # see if there are any other publishes of this path. Note the name,
-        # context, and path *must* match the values supplied to register_publish
-        # in the publish phase in order for this to return an accurate list of
-        # previous publishes of this file.
-        publishes = publisher.util.get_publishes(
+        log.info("Publish name will be: %s" % (publish_name,))
+
+        # see if there are any other publishes of this path with a status.
+        # Note the name, context, and path *must* match the values supplied to
+        # register_publish in the publish phase in order for this to return an
+        # accurate list of previous publishes of this file.
+        publishes = publisher.util.get_conflicting_publishes(
             item.context,
             path,
             publish_name,
@@ -185,9 +194,10 @@ class GenericFilePublishPlugin(HookBaseClass):
 
         if publishes:
             log.warn(
-                "Found %s active publishes in Shotgun with the path '%s'. If "
-                "you continue, these other publishes will no longer be "
-                "available to other users." % (len(publishes), path)
+                "Found %s conflicting publishes in Shotgun with the path '%s'. "
+                "If you continue, these conflicting publishes will no longer "
+                "be available to other users via the loader." %
+                (len(publishes), path)
             )
 
         return True
@@ -215,9 +225,19 @@ class GenericFilePublishPlugin(HookBaseClass):
         extension = path_info["extension"]
 
         # get the publish type
-        publish_type = self._get_matching_publish_type(extension, settings)
+        publish_type = self._get_publish_type(extension, settings)
 
-        display_name = self._get_display_name(path_info)
+        # get the publish name for this file path. this will ensure we get a
+        # consistent name across version publishes of this file.
+        publish_name = publisher.execute_hook_method(
+            "path_info",
+            "get_publish_name",
+            path=path
+        )
+
+        # extract the version number for publishing. use 1 if no version in path
+        version_number = publisher.execute_hook_method(
+            "path_info", "get_version_number", path=path) or 1
 
         # arguments for publish registration
         args = {
@@ -225,8 +245,8 @@ class GenericFilePublishPlugin(HookBaseClass):
             "context": item.context,
             "comment": item.description,
             "path": path,
-            "name": display_name,
-            "version_number": path_info["version"],
+            "name": publish_name,
+            "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": publish_type,
         }
@@ -255,24 +275,43 @@ class GenericFilePublishPlugin(HookBaseClass):
         # get the data for the publish that was just created in SG
         publish_data = item.properties["sg_publish_data"]
 
-        # ensure other publishes have their status cleared
-        log.info("Clearing status of previous publishes...")
-        publisher.util.clear_status_for_other_publishes(
+        # ensure conflicting publishes have their status cleared
+        log.info("Clearing status of conflicting publishes...")
+        publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
 
-        # auto version the file if the setting is enabled and a version exists
-        # in the file name. bump the version number by 1
-        path_info = publisher.util.get_file_path_components(path)
-        if settings["Auto Version"].value and path_info["version"]:
-            new_version = path_info["version"] + 1
-            log.info("Bumping the version to %s..." % (new_version,))
-            publisher.util.copy_path_to_version(
-                path,
-                new_version,
-                padding=path_info["version_padding"]
-            )
+        if not settings["Auto Version"].value:
+            return
 
-    def _get_matching_publish_type(self, extension, settings):
+        log.info("Auto versioning path: %s ..." % (path,))
+
+        # if we're here, auto version was requested. get the path to the next
+        # version.
+        next_version_path = publisher.execute_hook_method(
+            "path_info",
+            "get_next_version_path",
+            path=path
+        )
+
+        if not next_version_path:
+            log.warn("Could not determine next version path for: %s" % (path,))
+            return
+
+        if os.path.exists(next_version_path):
+            log.warn("Path already exists: %s" % (next_version_path,))
+            return
+
+        # if here, all good to copy the file/folder.
+        if os.path.isdir(path):
+            # folder
+            copy_folder(path, next_version_path)
+        else:
+            # file
+            copy_file(path, next_version_path)
+
+        log.info("Copied published path to: %s ..." % (next_version_path,))
+
+    def _get_publish_type(self, extension, settings):
         """
         Get a publish type for the supplied extension and publish settings.
 
@@ -309,22 +348,3 @@ class GenericFilePublishPlugin(HookBaseClass):
 
         # no publish type identified!
         return None
-
-    def _get_display_name(self, path_info):
-        """
-        Convenience method to ensure returned display name is consistent when
-        doing validation as well as actually creating a publish.
-
-        :param path_info: A dictionary of the form returned by the publisher's
-            util.get_file_path_components()
-
-        :return: A display name for the given path info
-        """
-
-        path = path_info["path"]
-        if os.path.isdir(path):
-            display_name = path_info["filename"]
-        else:
-            display_name = "%s.%s" % (path_info["prefix"], path_info["extension"])
-
-        return display_name

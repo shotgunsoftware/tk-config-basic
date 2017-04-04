@@ -67,9 +67,9 @@ COMMON_FILE_INFO = {
 }
 
 
-class GenericSceneCollector(HookBaseClass):
+class BasicSceneCollector(HookBaseClass):
     """
-    A generic collector that handles files and general objects.
+    A basic collector that handles files and general objects.
     """
 
     def process_current_scene(self, parent_item):
@@ -92,6 +92,10 @@ class GenericSceneCollector(HookBaseClass):
         :param path: Path to analyze
         :returns: The main item that was created
         """
+
+        # make sure the path is normalized. no trailing separator, separators
+        # are appropriate for the current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(path)
 
         # handle files and folders differently
         if os.path.isdir(path):
@@ -149,7 +153,11 @@ class GenericSceneCollector(HookBaseClass):
 
         # see if the folder contains one or more image sequences. the paths
         # returned will contain frame formatting strings such as "%04d"
-        img_seq_paths = publisher.util.get_image_sequence_paths(folder)
+        img_seq_paths = publisher.execute_hook_method(
+            "path_info",
+            "get_image_sequence_paths",
+            folder=folder
+        )
 
         if not img_seq_paths:
 

@@ -175,12 +175,16 @@ class ShotgunReviewPlugin(HookBaseClass):
         publisher = self.parent
         path = item.properties["path"]
 
-        # get all the publish file components
-        file_info = publisher.util.get_file_path_components(path)
+        # get the publish name for this file path.
+        publish_name = publisher.execute_hook_method(
+            "path_info",
+            "get_publish_name",
+            path=path
+        )
 
         version_data = {
             "project": item.context.project,
-            "code": file_info["prefix"],
+            "code": publish_name,
             "description": item.description,
             "entity": self._get_version_entity(item)
         }
@@ -201,7 +205,8 @@ class ShotgunReviewPlugin(HookBaseClass):
 
         if settings["Upload"].value:
             log.info("Uploading content...")
-            self.parent.shotgun.upload("Version",
+            self.parent.shotgun.upload(
+                "Version",
                 version["id"],
                 path,
                 "sg_uploaded_movie"
@@ -242,4 +247,3 @@ class ShotgunReviewPlugin(HookBaseClass):
             return item.context.project
         else:
             return None
-
