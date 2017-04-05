@@ -25,7 +25,6 @@ engines:
   tk-houdini: '@houdini.project'
   tk-maya: '@maya.project'
   tk-nuke: '@nuke.project'
-  tk-nukestudio: '@nuke.project'
   tk-desktop: '@desktop.project'
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.project'

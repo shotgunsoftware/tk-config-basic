@@ -26,7 +26,6 @@ engines:
   tk-houdini: '@houdini.site'
   tk-maya: '@maya.site'
   tk-nuke: '@nuke.site'
-  tk-nukestudio: '@nuke.site'
   tk-desktop: '@desktop.site'
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.site'
