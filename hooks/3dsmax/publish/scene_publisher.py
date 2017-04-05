@@ -64,7 +64,7 @@ class SceneHook(HookBaseClass):
         return {
             "Publish Type": {
                 "type": "shotgun_publish_type",
-                "default": "3dsMax Scene",
+                "default": "3dsmax Scene",
                 "description": "Shotgun publish type to associate publishes with."
             },
         }
