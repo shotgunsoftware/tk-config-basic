@@ -27,22 +27,13 @@ maya.project:
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher'
         - '@common.settings.tk-multi-publish2.version_creator'
-        - name: Publish Maya File
-          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py"
-          settings: {}
         - name: Publish current Maya Scene
-          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py:{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
+          hook: "{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
           settings: {}
-        - name: Playblast to Shotgun Review
-          hook: "{config}/tk-multi-publish2/maya.basic/playblast_version_creator.py"
-          settings: {}
-        - '@common.settings.tk-multi-publish2.alembic_publisher'
       location:
-        #type: app_store
-        #name: tk-multi-publish2
-        #version: v0.0.10
-        type: dev
-        path: /Users/josh/dev/sg/zero_config/tk-multi-publish2
+        type: app_store
+        name: tk-multi-publish2
+        version: v0.0.11
 
     tk-multi-loader2:
       action_mappings:

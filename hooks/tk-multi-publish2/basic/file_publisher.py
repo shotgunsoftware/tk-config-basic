@@ -11,7 +11,7 @@
 import os
 
 import sgtk
-from sgtk.util.filesystem import copy_file, copy_folder
+
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -26,8 +26,14 @@ class BasicFilePublishPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        config_path = self.parent.sgtk.pipeline_configuration.get_path()
-        return os.path.join(config_path, "config", "icons", "publish.png")
+
+        # look for icon one level up from this hook's folder in "icons" folder
+        return os.path.join(
+            self.disk_location,
+            os.pardir,
+            "icons",
+            "publish.png"
+        )
 
     @property
     def name(self):
@@ -43,15 +49,14 @@ class BasicFilePublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Publishes files/folders to shotgun. Supports any file or folder type
-        if the "Publish all file types" setting is <tt>True</tt>, otherwise
-        limited by the extensions in the "File Types" setting.
+        Publishes files/folders to shotgun. Supports any file or folder type if
+        the "Publish all file types" setting is enabled, otherwise limited by
+        the extensions in the "File Types" setting.
 
-        This plugin will recognize version numbers of the form <tt>.v###</tt>
-        in the file or folder name and will publish with that version number to
-        Shotgun. If the "Auto Version" setting is <tt>True</tt>, the plugin will
-        automatically copy thie file/folder to the next version number after
-        publishing.
+        This plugin will recognize version numbers in the file or folder name
+        and will publish with that version number to Shotgun. If the "Auto
+        Version" setting is enabled, the plugin will automatically copy the
+        file/folder to the next version number after publishing.
         """
 
     @property
@@ -271,32 +276,17 @@ class BasicFilePublishPlugin(HookBaseClass):
         publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
 
-        if not settings["Auto Version"].value:
-            return
-
-        log.info("Auto versioning path: %s ..." % (path,))
-
-        # if we're here, auto version was requested. get the path to the next
-        # version.
-        next_version_path = publisher.util.get_next_version_path(path)
-
-        if not next_version_path:
-            log.warn("Could not determine next version path for: %s" % (path,))
-            return
-
-        if os.path.exists(next_version_path):
-            log.warn("Path already exists: %s" % (next_version_path,))
-            return
-
-        # if here, all good to copy the file/folder.
-        if os.path.isdir(path):
-            # folder
-            copy_folder(path, next_version_path)
-        else:
-            # file
-            copy_file(path, next_version_path)
-
-        log.info("Copied published path to: %s ..." % (next_version_path,))
+        # do the auto versioning if it is enabled
+        if settings["Auto Version"].value:
+            version_info = publisher.util.create_next_version_path(path)
+            if version_info["success"]:
+                log.info(
+                    "Copied %s to %s." %
+                    (path, version_info["next_version_path"])
+                )
+            else:
+                reason = version_info["reason"]
+                log.warn("Unable to Auto Version. %s" % (reason,))
 
     def _get_publish_type(self, extension, settings):
         """

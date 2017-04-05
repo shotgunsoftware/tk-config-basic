@@ -50,11 +50,9 @@ includes:
             settings: {}
 
       location:
-        #type: app_store
-        #name: tk-multi-publish2
-        #version: v0.0.10
-        type: dev
-        path: /Users/josh/dev/sg/zero_config/tk-multi-publish2
+        type: app_store
+        name: tk-multi-publish2
+        version: v0.0.11
 
     tk-multi-loader2:
       action_mappings:

@@ -123,7 +123,6 @@ class BasicSceneCollector(HookBaseClass):
 
         # get info for the extension
         (display_name, item_type, icon_path) = self._get_item_info(filename)
-        publisher.logger.debug("ICON PATH: %s" % (icon_path,))
 
         # create and populate the item
         file_item = parent_item.create_item(item_type, display_name, filename)
@@ -149,8 +148,6 @@ class BasicSceneCollector(HookBaseClass):
         publisher = self.parent
         publisher.logger.debug("Collecting folder: %s" % (folder,))
 
-        config_path = self.parent.sgtk.pipeline_configuration.get_path()
-
         # see if the folder contains one or more image sequences. the paths
         # returned will contain frame formatting strings such as "%04d"
         img_seq_paths = publisher.util.get_image_sequence_paths(folder)
@@ -166,8 +163,16 @@ class BasicSceneCollector(HookBaseClass):
                 "Generic Folder",
                 folder_info["filename"]
             )
+
+            # look for icon one level up from this hook's folder
             folder_item.set_icon_from_path(
-                os.path.join(config_path, "config", "icons", "folder.png"))
+                os.path.join(
+                    self.disk_location,
+                    os.pardir,
+                    "icons",
+                    "folder.png"
+                )
+            )
 
             # all we know about the file is its path. set the path in its
             # properties for the plugins to use for processing
@@ -186,10 +191,12 @@ class BasicSceneCollector(HookBaseClass):
                 "Image Sequence",
                 seq_path_info["filename"]
             )
+
+            # look for icon one level up from this hook's folder
             img_seq_item.set_icon_from_path(
                 os.path.join(
-                    config_path,
-                    "config",
+                    self.disk_location,
+                    os.pardir,
                     "icons",
                     "image_sequence.png"
                 )
@@ -221,8 +228,6 @@ class BasicSceneCollector(HookBaseClass):
         (_, extension) = os.path.splitext(filename)
         ext_no_dot = extension.lstrip(".")
 
-        config_path = self.parent.sgtk.pipeline_configuration.get_path()
-
         # look for the extension in the common file type info dict
         for display_name in COMMON_FILE_INFO:
             type_info = COMMON_FILE_INFO[display_name]
@@ -234,7 +239,11 @@ class BasicSceneCollector(HookBaseClass):
                 item_type = type_info["item_type"]
                 icon_name = type_info["icon"]
                 icon_path = os.path.join(
-                    config_path, "config", "icons", icon_name)
+                    self.disk_location,
+                    os.pardir,
+                    "icons",
+                    icon_name
+                )
 
                 # got everything we need. go ahead and return
                 return display_name, item_type, icon_path
@@ -266,8 +275,13 @@ class BasicSceneCollector(HookBaseClass):
             item_type = "file.unknown"
             icon_name = "file.png"
 
-        # construct a full path to the icon given the anem defined above
-        icon_path = os.path.join(config_path, "config", "icons", icon_name)
+        # construct a full path to the icon given the name defined above
+        icon_path = os.path.join(
+            self.disk_location,
+            os.pardir,
+            "icons",
+            icon_name
+        )
 
         # everything should be populated, no matter what.
         return display_name, item_type, icon_path

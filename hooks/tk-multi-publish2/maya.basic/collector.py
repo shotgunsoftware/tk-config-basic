@@ -16,7 +16,8 @@ HookBaseClass = sgtk.get_hook_baseclass()
 
 class MayaSceneCollector(HookBaseClass):
     """
-    Collector that operates on the maya scene
+    Collector that operates on the maya scene. Should inherit from the basic
+    collector hook.
     """
 
     def process_file(self, parent_item, path):
@@ -34,17 +35,19 @@ class MayaSceneCollector(HookBaseClass):
         # run base class logic to set basic properties for us
         item = super(MayaSceneCollector, self).process_file(parent_item, path)
 
-        if path.endswith(".ma") or path.endswith(".mb"):
+        if item.type == "file.maya":
 
-            # override the type
-            item.type = "maya.file"
+            publisher = self.parent
+            file_info = publisher.util.get_file_path_components(path)
 
-            folder = os.path.dirname(path)
+            # this is a maya file. see if we can find associated files to
+            # publish from the project root
+            folder = file_info["folder"]
             if os.path.basename(folder) == "scenes":
 
-                # assume parent level is workspace root
+                # assume parent level is workspace root. add it to properties
                 project_root = os.path.dirname(folder)
-                item.properties["project_root"] = os.path.dirname(folder)
+                item.properties["project_root"] = project_root
 
                 # collect associated files
                 self.collect_alembic_caches(item, project_root)
@@ -59,14 +62,15 @@ class MayaSceneCollector(HookBaseClass):
 
         :param parent_item: Root item instance
         """
+
         # create an item representing the current maya scene
         item = self.collect_current_maya_scene(parent_item)
+        project_root = item.properties["project_root"]
 
-        # look for playblasts
-        self.collect_playblasts(item, item.properties["project_root"])
-
-        # look for caches
-        self.collect_alembic_caches(item, item.properties["project_root"])
+        # if we can determine a project root, collect other files to publish
+        if project_root:
+            self.collect_playblasts(item, project_root)
+            self.collect_alembic_caches(item, project_root)
 
     def collect_current_maya_scene(self, parent_item):
         """
@@ -83,16 +87,10 @@ class MayaSceneCollector(HookBaseClass):
 
         # determine the display name for the item
         if path:
-            path = os.path.abspath(path)
-            display_name = os.path.basename(path)
+            file_info = publisher.util.get_file_path_components(path)
+            display_name = file_info["filename"]
         else:
             display_name = "Untitled Scene"
-            # more pythonic empty file path
-            path = None
-
-        # discover the project root which helps in discovery of other
-        # publishable items
-        project_root = cmds.workspace(q=True, rootDirectory=True)
 
         # create the scene item for the publish hierarchy
         scene_item = parent_item.create_item(
@@ -101,9 +99,18 @@ class MayaSceneCollector(HookBaseClass):
             display_name
         )
 
-        scene_item.properties["path"] = path
+        # discover the project root which helps in discovery of other
+        # publishable items
+        project_root = cmds.workspace(q=True, rootDirectory=True)
         scene_item.properties["project_root"] = project_root
-        scene_item.set_icon_from_path(publisher.get_icon_path("maya"))
+
+        icon_path = os.path.join(
+            self.disk_location,
+            os.pardir,
+            "icons",
+            "maya.png"
+        )
+        scene_item.set_icon_from_path(icon_path)
 
         return scene_item
 
@@ -116,42 +123,30 @@ class MayaSceneCollector(HookBaseClass):
 
         :param parent_item: Parent Item instance
         :param str project_root: The maya project root to search for alembics
-
-        :returns: List of alembic cache items
         """
-
-        # use the project_root property on the parent to locate alembic caches
-        items = []
 
         # ensure the alembic cache dir exists
         cache_dir = os.path.join(project_root, "cache", "alembic")
         if not os.path.exists(cache_dir):
-            return items
-
-        publisher = self.parent
+            return
 
         # look for alembic files in the cache folder
         for filename in os.listdir(cache_dir):
             cache_path = os.path.join(cache_dir, filename)
 
-            # ensure this is an alembic cache
-            if not cache_path.endswith(".abc"):
+            # do some early pre-processing to ensure the file is of the right
+            # type. use the base class item info method to see what the item
+            # type would be.
+            (display_name, item_type, icon_path) = self._get_item_info(filename)
+            if item_type != "file.alembic":
                 continue
 
-            # get file path parts for display
-            file_info = publisher.util.get_file_path_components(cache_path)
-
-            # create and populate the item
-            item = parent_item.create_item(
-                "cache.alembic",
-                "Alembic Cache",
-                file_info["filename_no_ext"]
+            # allow the base class to collect and create the item. it knows how
+            # to handle alembic files
+            super(MayaSceneCollector, self).process_file(
+                parent_item,
+                cache_path
             )
-            item.properties["path"] = cache_path
-            item.set_icon_from_path(publisher.get_icon_path("alembic"))
-            items.append(item)
-
-        return items
 
     def collect_playblasts(self, parent_item, project_root):
         """
@@ -162,39 +157,30 @@ class MayaSceneCollector(HookBaseClass):
 
         :param parent_item: Parent Item instance
         :param str project_root: The maya project root to search for playblasts
-        :returns: List of movie items
         """
-
-        # use the project_root property on the parent to extract movies
-        items = []
 
         # ensure the movies dir exists
         movies_dir = os.path.join(project_root, "movies")
         if not os.path.exists(movies_dir):
-            return items
-
-        publisher = self.parent
+            return
 
         # look for movie files in the movies folder
         for filename in os.listdir(movies_dir):
-            movie_path = os.path.join(movies_dir, filename)
 
-            # get file path parts for type checking and display
-            file_info = publisher.util.get_file_path_components(movie_path)
-
-            # ensure the file is of type video
-            if not publisher.util.is_video(file_info["extension"]):
+            # do some early pre-processing to ensure the file is of the right
+            # type. use the base class item info method to see what the item
+            # type would be.
+            (display_name, item_type, icon_path) = self._get_item_info(filename)
+            if item_type != "file.movie":
                 continue
 
-            # create the item
-            item = parent_item.create_item(
-                "maya.playblast",
-                "Maya Playblast",  # override the display for specificity
-                file_info["filename_no_ext"]
-            )
-            item.properties["path"] = movie_path
-            item.set_icon_from_path(publisher.get_icon_path("movie"))
-            items.append(item)
+            movie_path = os.path.join(movies_dir, filename)
 
-        return items
+            # allow the base class to collect and create the item. it knows how
+            # to handle movie files
+            super(MayaSceneCollector, self).process_file(
+                parent_item,
+                movie_path
+            )
+
 

@@ -22,22 +22,6 @@ houdini.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
-    tk-multi-publish2:
-      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/houdini.basic/collector.py"
-      publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
-        - name: Publish Houdini File
-          hook: "{config}/tk-multi-publish2/houdini.basic/file_publisher.py"
-          settings: {}
-        - '@common.settings.tk-multi-publish2.alembic_publisher'
-      location:
-        #type: app_store
-        #name: tk-multi-publish2
-        #version: v0.0.10
-        type: dev
-        path: /Users/josh/dev/sg/zero_config/tk-multi-publish2
-
     tk-multi-loader2:
         action_mappings:
           Alembic Cache: [import]

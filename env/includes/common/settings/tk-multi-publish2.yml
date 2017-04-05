@@ -19,6 +19,7 @@ publish_type_to_extensions: &file_types
   - [Rendered Image, dpx, exr]
   - [Texture, tiff, tx, tga, dds]
   - [Image, jpeg, jpg, png]
+  - [Movie, mov, mp4]
 
 common.settings.tk-multi-publish2.file_publisher:
   name: Publish to Shotgun

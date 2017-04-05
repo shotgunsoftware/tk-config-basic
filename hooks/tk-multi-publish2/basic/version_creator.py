@@ -23,8 +23,14 @@ class ShotgunReviewPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        config_path = self.parent.sgtk.pipeline_configuration.get_path()
-        return os.path.join(config_path, "config", "icons", "review.png")
+
+        # look for icon one level up from this hook's folder in "icons" folder
+        return os.path.join(
+            self.disk_location,
+            os.pardir,
+            "icons",
+            "review.png"
+        )
 
     @property
     def name(self):

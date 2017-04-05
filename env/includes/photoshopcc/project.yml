@@ -24,21 +24,6 @@ photoshopcc.project:
 
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
-    tk-multi-publish2:
-      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/photoshopcc.basic/collector.py"
-      publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
-        - name: Publish PS Document to Shotgun
-          hook: "{config}/tk-multi-publish2/photoshopcc.basic/document_publisher.py"
-          settings: {}
-      location:
-        #type: app_store
-        #name: tk-multi-publish2
-        #version: v0.0.10
-        type: dev
-        path: /Users/josh/dev/sg/zero_config/tk-multi-publish2
-
     tk-multi-loader2:
       action_mappings:
         Photoshop Image: [add_as_a_layer, open_file]
