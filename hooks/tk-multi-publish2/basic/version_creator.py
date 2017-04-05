@@ -176,11 +176,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         path = item.properties["path"]
 
         # get the publish name for this file path.
-        publish_name = publisher.execute_hook_method(
-            "path_info",
-            "get_publish_name",
-            path=path
-        )
+        publish_name = publisher.util.get_publish_name(path)
 
         version_data = {
             "project": item.context.project,

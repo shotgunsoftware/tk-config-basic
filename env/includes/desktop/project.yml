@@ -22,14 +22,15 @@ desktop.project:
 
     tk-multi-publish2:
       collector: "{config}/tk-multi-publish2/basic/collector.py"
-      path_info: "{config}/tk-multi-publish2/basic/path_info.py"
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher_all'
         - '@common.settings.tk-multi-publish2.version_creator'
       location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.0.10
+        #type: app_store
+        #name: tk-multi-publish2
+        #version: v0.0.10
+        type: dev
+        path: /Users/josh/dev/sg/zero_config/tk-multi-publish2
 
     tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
 

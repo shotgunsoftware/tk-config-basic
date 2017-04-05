@@ -32,9 +32,11 @@ houdini.project:
           settings: {}
         - '@common.settings.tk-multi-publish2.alembic_publisher'
       location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.0.10
+        #type: app_store
+        #name: tk-multi-publish2
+        #version: v0.0.10
+        type: dev
+        path: /Users/josh/dev/sg/zero_config/tk-multi-publish2
 
     tk-multi-loader2:
         action_mappings:

@@ -153,11 +153,7 @@ class BasicSceneCollector(HookBaseClass):
 
         # see if the folder contains one or more image sequences. the paths
         # returned will contain frame formatting strings such as "%04d"
-        img_seq_paths = publisher.execute_hook_method(
-            "path_info",
-            "get_image_sequence_paths",
-            folder=folder
-        )
+        img_seq_paths = publisher.util.get_image_sequence_paths(folder)
 
         if not img_seq_paths:
 

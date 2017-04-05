@@ -173,11 +173,7 @@ class BasicFilePublishPlugin(HookBaseClass):
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
-        publish_name = publisher.execute_hook_method(
-            "path_info",
-            "get_publish_name",
-            path=path
-        )
+        publish_name = publisher.util.get_publish_name(path)
 
         log.info("Publish name will be: %s" % (publish_name,))
 
@@ -229,15 +225,10 @@ class BasicFilePublishPlugin(HookBaseClass):
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
-        publish_name = publisher.execute_hook_method(
-            "path_info",
-            "get_publish_name",
-            path=path
-        )
+        publish_name = publisher.util.get_publish_name(path)
 
         # extract the version number for publishing. use 1 if no version in path
-        version_number = publisher.execute_hook_method(
-            "path_info", "get_version_number", path=path) or 1
+        version_number = publisher.util.get_version_number(path) or 1
 
         # arguments for publish registration
         args = {
@@ -287,11 +278,7 @@ class BasicFilePublishPlugin(HookBaseClass):
 
         # if we're here, auto version was requested. get the path to the next
         # version.
-        next_version_path = publisher.execute_hook_method(
-            "path_info",
-            "get_next_version_path",
-            path=path
-        )
+        next_version_path = publisher.util.get_next_version_path(path)
 
         if not next_version_path:
             log.warn("Could not determine next version path for: %s" % (path,))
