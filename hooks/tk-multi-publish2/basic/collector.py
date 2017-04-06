@@ -130,7 +130,8 @@ class BasicSceneCollector(HookBaseClass):
         # if the supplied path is an image, use the original path to generate
         # the thumbnail. type could also be "file.image.sequence" so we won't
         # use the evaluated path which could include a frame format spec
-        if item_type.startswith("file.image"):
+        if (item_type.startswith("file.image") or
+            item_type.startswith("file.texture")):
             file_item.set_thumbnail_from_path(path)
 
         # all we know about the file is its path. set the path in its

@@ -42,7 +42,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish Maya Scene"
+        return "Maya Scene Publisher"
 
     @property
     def description(self):
@@ -53,7 +53,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         return """
         Publishes the current maya scene.
 
-        This plugin will recognize version numbers in the file name and will
+        This plugin will recognize a version number in the file name and will
         publish with that version number to Shotgun. If the "Auto Version"
         setting is enabled, the plugin will automatically copy the file to the
         next version number after publishing.
@@ -167,8 +167,10 @@ class MayaScenePublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        # get the path to the current file
-        path = cmds.file(query=True, sn=True)
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(
+            os.path.abspath(cmds.file(query=True, sn=True)))
 
         if not path:
             log.error("Scene is not saved.")
@@ -223,8 +225,10 @@ class MayaScenePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # get the path to the current file
-        path = cmds.file(query=True, sn=True)
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(
+            os.path.abspath(cmds.file(query=True, sn=True)))
 
         publisher = self.parent
 
