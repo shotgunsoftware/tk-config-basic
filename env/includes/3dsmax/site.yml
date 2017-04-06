@@ -9,15 +9,15 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Photoshop Integration when it
-# is running in its project level configuration
+# this configuration defines the behavior of the Maya Integration when it
+# is running in its site level configuration
 
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
 
 
-photoshopcc.site:
+3dsmax.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
@@ -25,10 +25,9 @@ photoshopcc.site:
 
     tk-multi-loader2:
       action_mappings:
-        Photoshop Image: [add_as_a_layer, open_file]
-        Rendered Image: [add_as_a_layer, open_file]
-        Image: [add_as_a_layer, open_file]
-      actions_hook: '{self}/tk-photoshopcc_actions.py'
+        3dsmax Scene: [import, reference]
+        Alembic Cache: [import]
+      actions_hook: '{self}/tk-3dsmaxplus_actions.py'
       entities:
       - caption: Project
         type: Hierarchy
@@ -69,10 +68,10 @@ photoshopcc.site:
           - sequence_clipboard
           filters: {}
 
-  shelf_favorites: []
-  debug_logging: true
   location:
-    path: https://github.com/shotgunsoftware/tk-photoshopcc.git
-    version: ce1d2dc901586cd580440647b4fb94cf7f970aa1
+    path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git
+    version: 52e7b1b57d987b7cdfc815c408d9ee3143d376c9
     type: git_branch
     branch: develop/zero_config
+  menu_favourites: []
+  launch_builtin_plugins: [basic]

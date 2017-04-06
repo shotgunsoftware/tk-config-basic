@@ -15,17 +15,12 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
 
 
 houdini.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
-
-    tk-multi-publish2:
-      location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.0.9
 
     tk-multi-loader2:
         action_mappings:
@@ -72,7 +67,7 @@ houdini.project:
             filters: {}
   location:
     path: https://github.com/shotgunsoftware/tk-houdini.git
-    version: ac3dffda4a5644ab036580f5891845b3fb2badd9
+    version: 1668744e9ee0d12bbdc0fba9b81fabed4edcbe64
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []

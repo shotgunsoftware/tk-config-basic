@@ -40,3 +40,9 @@ frameworks:
       type: app_store
       name: tk-framework-widget
 
+  tk-framework-desktopserver_v1.x.x:
+    location:
+      path: https://github.com/shotgunsoftware/tk-framework-desktopserver.git
+      version: 8fe23ca2b6ef0bd3ca591b0d59c41f843ebbe4bb
+      type: git_branch
+      branch: develop/zero_config

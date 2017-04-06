@@ -14,37 +14,21 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/settings/tk-multi-publish2.yml
 - ../common/apps.yml
 
 desktop.project:
   apps:
 
     tk-multi-publish2:
-      collector: "{self}/collector.py"
+      collector: "{config}/tk-multi-publish2/basic/collector.py"
       publish_plugins:
-        - name: Publish to Shotgun
-          hook: "{self}/file_publisher.py"
-          settings:
-            Publish all file types: false
-            File Types:
-            - [Nuke Script, nk]
-            - [Photoshop Image, psd, psb]
-            - [3dsmax Scene, max]
-            - [Houdini Scene, hip]
-            - [Maya Scene, ma, mb]
-            - [Hiero Project, hrox]
-            - [Alembic Cache]
-            - [Rendered Image, dpx, exr]
-            - [Texture, tiff, tx, tga, dds]
-            - [Image, jpeg, jpg, png]
-
-        - name: Send to Shotgun review
-          hook: "{self}/version_creator.py"
-          settings: {}
+        - '@common.settings.tk-multi-publish2.file_publisher_all'
+        - '@common.settings.tk-multi-publish2.version_creator'
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.9
+        version: v0.0.11
 
     tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
 
@@ -71,6 +55,6 @@ desktop.project:
     name: Finishing Tools
   location:
     path: https://github.com/shotgunsoftware/tk-desktop.git
-    version: 664c2c4419e3a7f3e495279fbbf844e975fca909
+    version: aa2dcfc58fadc1edd522342f5e9d036f17e2a46c
     type: git_branch
     branch: develop/zero_config

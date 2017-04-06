@@ -47,7 +47,6 @@ houdini.site:
           version: v1.3.0
           type: app_store
           name: tk-multi-shotgunpanel
-        actions_hook: '{self}/general_actions.py'
         action_mappings:
           PublishedFile:
           - actions:
@@ -63,9 +62,12 @@ houdini.site:
             - quicktime_clipboard
             - sequence_clipboard
             filters: {}
+        actions_hook: '{self}/general_actions.py'
+        shotgun_fields_hook: '{self}/shotgun_fields.py'
+
   location:
     path: https://github.com/shotgunsoftware/tk-houdini.git
-    version: ac3dffda4a5644ab036580f5891845b3fb2badd9
+    version: 1668744e9ee0d12bbdc0fba9b81fabed4edcbe64
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
