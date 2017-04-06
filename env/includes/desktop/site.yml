@@ -19,6 +19,6 @@ desktop.site:
   apps:
   location:
     path: https://github.com/shotgunsoftware/tk-desktop.git
-    version: 664c2c4419e3a7f3e495279fbbf844e975fca909
+    version: aa2dcfc58fadc1edd522342f5e9d036f17e2a46c
     type: git_branch
     branch: develop/zero_config
