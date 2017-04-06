@@ -86,7 +86,7 @@ maya.project:
 
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: e69f9d4e40fba5635624d4d5d71d80fe15e05874
+    version: 9084f82533115e8c9656f2b5ad12b87b8d89df1e
     type: git_branch
     branch: develop/zero_config
   menu_favourites: []
