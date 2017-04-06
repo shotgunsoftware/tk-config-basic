@@ -17,10 +17,9 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaScenePublishPlugin(HookBaseClass):
+class MayaSessionPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open maya scene. Should inherit from the maya file
-    publisher.
+    Plugin for publishing an open maya session.
     """
 
     @property
@@ -42,7 +41,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Maya Scene Publisher"
+        return "Maya Session Publisher"
 
     @property
     def description(self):
@@ -51,7 +50,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Publishes the current maya scene.
+        Publishes the current maya session.
 
         This plugin will recognize a version number in the file name and will
         publish with that version number to Shotgun. If the "Auto Version"
@@ -104,7 +103,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["maya.scene"]
+        return ["maya.session"]
 
     def accept(self, log, settings, item):
         """
@@ -173,7 +172,7 @@ class MayaScenePublishPlugin(HookBaseClass):
             os.path.abspath(cmds.file(query=True, sn=True)))
 
         if not path:
-            log.error("Scene is not saved.")
+            log.error("Session is not saved.")
             return False
 
         # ensure we have an updated project root
@@ -182,7 +181,7 @@ class MayaScenePublishPlugin(HookBaseClass):
 
         # warn if no project root could be determined.
         if not project_root:
-            log.warning("Your scene is not part of a maya project.")
+            log.warning("Your session is not part of a maya project.")
 
         publisher = self.parent
 
@@ -250,7 +249,7 @@ class MayaScenePublishPlugin(HookBaseClass):
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
             # TODO: need to update core for this to work
-            #"dependency_paths": self._maya_find_additional_scene_dependencies(),
+            #"dependency_paths": self._maya_find_additional_session_dependencies(),
         }
         log.debug("Publishing: %s" % (args,))
 
@@ -306,9 +305,9 @@ class MayaScenePublishPlugin(HookBaseClass):
                 reason = version_info["reason"]
                 log.warn("Unable to Auto Version. %s" % (reason,))
 
-    def _maya_find_additional_scene_dependencies(self):
+    def _maya_find_additional_session_dependencies(self):
         """
-        Find additional dependencies from the scene
+        Find additional dependencies from the session
         """
         # default implementation looks for references and
         # textures (file nodes) and returns any paths that
@@ -328,7 +327,7 @@ class MayaScenePublishPlugin(HookBaseClass):
 
         # now look at file texture nodes
         for file_node in cmds.ls(l=True, type="file"):
-            # ensure this is actually part of this scene and not referenced
+            # ensure this is actually part of this session and not referenced
             if cmds.referenceQuery(file_node, isNodeReferenced=True):
                 # this is embedded in another reference, so don't include it in
                 # the breakdown

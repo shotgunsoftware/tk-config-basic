@@ -26,7 +26,7 @@ class HoudiniSessionCollector(HookBaseClass):
 
         :param parent_item: Root item instance
         """
-        # create an item representing the current maya session
+        # create an item representing the current houdini session
         item = self.collect_current_houdini_session(parent_item)
 
         # look for caches
@@ -47,22 +47,25 @@ class HoudiniSessionCollector(HookBaseClass):
 
         # determine the display name for the item
         if path:
-            path = os.path.abspath(path)
-            display_name = os.path.basename(path)
+            display_name = publisher.util.get_publish_name(path)
         else:
-            display_name = "untitled.hip"
-            # more pythonic empty file path
-            path = None
+            display_name = "Current Houdini Session"
 
         # create the session item for the publish hierarchy
         session_item = parent_item.create_item(
-            "houdini.file",
-            "Current Houdini File",
+            "houdini.session",
+            "Current Houdini Session",
             display_name
         )
 
-        session_item.properties["path"] = path
-        session_item.set_icon_from_path(publisher.get_icon_path("houdini"))
+        # get the icon path to display for this item
+        icon_path = os.path.join(
+            self.disk_location,
+            os.pardir,
+            "icons",
+            "houdini.png"
+        )
+        session_item.set_icon_from_path(icon_path)
 
         return session_item
 
@@ -102,56 +105,20 @@ class HoudiniSessionCollector(HookBaseClass):
             # get the output cache path
             cache_path = alembic_node.parm("filename").eval()
 
-            if os.path.exists(cache_path):
-                publisher.logger.debug("Path exists: %s" % (cache_path,))
-
-                node_name = alembic_node.name()
-
-                # get file path parts for display
-                file_info = publisher.util.get_file_path_components(cache_path)
-
-                # create and populate the item
-                item = parent_item.create_item(
-                    "cache.alembic",
-                    "Alembic Cache",
-                    "%s > %s" % (node_name, file_info["filename_no_ext"])
-                )
-                item.properties["path"] = cache_path
-                item.set_icon_from_path(publisher.get_icon_path("alembic"))
-                items.append(item)
-            else:
-                publisher.logger.debug("Path doesn't exist: %s" % (cache_path,))
-
-        return items
-
-
-
-
-
-
-
-        publisher = self.parent
-
-        # look for alembic files in the cache folder
-        for filename in os.listdir(cache_dir):
-            cache_path = os.path.join(cache_dir, filename)
-
-            # ensure this is an alembic cache
-            if not cache_path.endswith(".abc"):
+            # ensure the alembic cache dir exists
+            if not os.path.exists(cache_path):
                 continue
 
-            # get file path parts for display
-            file_info = publisher.util.get_file_path_components(cache_path)
+            # do some early pre-processing to ensure the file is of the right
+            # type. use the base class item info method to see what the item
+            # type would be.
+            item_info = self._get_item_info(cache_path)
+            if item_info["item_type"] != "file.alembic":
+                continue
 
-            # create and populate the item
-            item = parent_item.create_item(
-                "cache.alembic",
-                "Alembic Cache",
-                file_info["filename_no_ext"]
+            # allow the base class to collect and create the item. it knows how
+            # to handle alembic files
+            super(HoudiniSessionCollector, self).process_file(
+                parent_item,
+                cache_path
             )
-            item.properties["path"] = cache_path
-            item.set_icon_from_path(publisher.get_icon_path("alembic"))
-            items.append(item)
-
-        return items
-
