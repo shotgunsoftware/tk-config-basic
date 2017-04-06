@@ -68,7 +68,7 @@ nuke.site:
   
   location:
     path: https://github.com/shotgunsoftware/tk-nuke.git
-    version: 7e76161464e85c4c876135766e1fd534a5948905
+    version: b4b339878efde21edbf1b98f606ad6f18d0e5906
     type: git_branch
     branch: develop/zero_config
 
