@@ -7,9 +7,12 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-import sgtk
+
 import os
+
 import hou
+
+import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -54,7 +57,7 @@ class HoudiniSessionCollector(HookBaseClass):
         # create the session item for the publish hierarchy
         session_item = parent_item.create_item(
             "houdini.session",
-            "Current Houdini Session",
+            "Houdini File",
             display_name
         )
 
@@ -74,7 +77,6 @@ class HoudiniSessionCollector(HookBaseClass):
         Creates items for all alembic output rops.
 
         :param parent_item: Parent Item instance
-        :param str project_root: The houdini project root to search for alembics
 
         :returns: List of alembic cache items
         """

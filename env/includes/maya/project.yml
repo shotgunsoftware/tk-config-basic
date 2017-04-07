@@ -28,7 +28,7 @@ maya.project:
         - '@common.settings.tk-multi-publish2.file_publisher'
         - '@common.settings.tk-multi-publish2.version_creator'
         - name: Maya Scene Publisher
-          hook: "{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
+          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py"
           settings: {}
       location:
         #type: app_store

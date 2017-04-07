@@ -7,8 +7,8 @@
 # By accessing, using, copying or modifying this work you indicate your
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
-import os
 
+import os
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
@@ -43,7 +43,7 @@ class PhotoshopCCSceneCollector(HookBaseClass):
             # create a publish item for the document
             document_item = parent_item.create_item(
                 "photoshop.document",
-                "Photoshop Document",
+                "Photoshop Image",
                 document.name
             )
 

@@ -28,7 +28,7 @@ houdini.project:
         - '@common.settings.tk-multi-publish2.file_publisher'
         - '@common.settings.tk-multi-publish2.version_creator'
         - name: Houdini Scene Publisher
-          hook: "{config}/tk-multi-publish2/houdini.basic/scene_publisher.py"
+          hook: "{config}/tk-multi-publish2/houdini.basic/file_publisher.py"
           settings: {}
       location:
         #type: app_store

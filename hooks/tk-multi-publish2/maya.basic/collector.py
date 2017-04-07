@@ -7,9 +7,10 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-import sgtk
+
 import os
 import maya.cmds as cmds
+import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -22,10 +23,7 @@ class MayaSessionCollector(HookBaseClass):
 
     def process_file(self, parent_item, path):
         """
-        Analyzes the given file and creates one or more items
-        to represent it. Extends the base processing
-        capabilities with a maya file detection which
-        determines the maya project.
+        Analyzes the given file and creates one or more items to represent it.
 
         :param parent_item: Root item instance
         :param path: Path to analyze
@@ -57,7 +55,7 @@ class MayaSessionCollector(HookBaseClass):
 
     def process_current_scene(self, parent_item):
         """
-        Analyzes the current session open in a DCC and parents a subtree of
+        Analyzes the current session open in Maya and parents a subtree of
         items under the parent_item passed in.
 
         :param parent_item: Root item instance
@@ -89,12 +87,12 @@ class MayaSessionCollector(HookBaseClass):
         if path:
             display_name = publisher.util.get_publish_name(path)
         else:
-            display_name = "Current Houdini Session"
+            display_name = "Current Maya Session"
 
         # create the session item for the publish hierarchy
         session_item = parent_item.create_item(
             "maya.session",
-            "Current Maya Session",
+            "Maya File",
             display_name
         )
 

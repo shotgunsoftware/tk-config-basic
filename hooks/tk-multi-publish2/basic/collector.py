@@ -10,7 +10,6 @@
 
 import mimetypes
 import os
-
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
@@ -210,7 +209,7 @@ class BasicSceneCollector(HookBaseClass):
         type_display = "File"
         item_type = "file.unknown"
         icon_name = "file.png"
-        display_name = publisher.util.get_publish_name(path)
+        display_name = filename
 
         # keep track if a common type was identified for the extension
         common_type_found = False
