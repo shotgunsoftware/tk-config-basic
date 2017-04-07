@@ -10,14 +10,16 @@
 
 import os
 
+import maya.cmds as cmds
+
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
+class MayaSessionPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing Photoshop documents in Shotgun.
+    Plugin for publishing an open maya session.
     """
 
     @property
@@ -39,7 +41,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Photoshop Document Publisher"
+        return "Maya Session Publisher"
 
     @property
     def description(self):
@@ -48,7 +50,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Publishes open Photoshop Documents.
+        Publishes the current maya session.
 
         This plugin will recognize a version number in the file name and will
         publish with that version number to Shotgun. If the "Auto Version"
@@ -77,12 +79,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         return {
             "Publish Type": {
-                "type": "str",
-                "default": "Photoshop Image",
-                "description": (
-                    "The shotgun publish file type to use when publishing "
-                    "items with this plugin."
-                )
+                "type": "shotgun_publish_type",
+                "default": "Maya Scene",
+                "description": "SG publish type to associate publishes with."
             },
             "Auto Version": {
                 "type": "bool",
@@ -104,7 +103,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["photoshop.document"]
+        return ["maya.session"]
 
     def accept(self, log, settings, item):
         """
@@ -131,50 +130,58 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        document = item.properties.get("document")
+        # if we have a project root, check for a valid, serialized context.
+        # warn if not.
+        if "project_root" in item.properties:
 
-        # ensure there is a document in the item properties
-        if not document:
-            return {"accepted": False}
+            project_root = item.properties["project_root"]
+            context_file = os.path.join(project_root, "shotgun.context")
 
-        # only the active document should be enabled
-        try:
-            engine = self.parent.engine
-            enabled = document.name == engine.adobe.app.activeDocument.name
-        except RuntimeError:
-            enabled = False
+            log.debug("Looking for context file in %s" % context_file)
+            if os.path.exists(context_file):
+                try:
+                    with open(context_file, "rb") as fh:
+                        context_str = fh.read()
+                    context_obj = sgtk.Context.deserialize(context_str)
+                    item.context = context_obj
+                except Exception, e:
+                    log.warning(
+                        "Could not read saved context %s: %s" %
+                        (context_file, e)
+                    )
 
-        # TODO: this will disable the publish item int he hierarchy.
-            # would be good to indicate that the parent shouldn't be enabled.
-            # and the parent should also be collapsed
-
-        return {"accepted": True, "required": False, "enabled": enabled}
+        return {"accepted": True, "required": False, "enabled": True}
 
     def validate(self, log, settings, item):
         """
-        Validates the given item to check that it is ok to publish.
-
-        Returns a boolean to indicate validity. Use the logger to output further
-        details around why validation has failed.
+        Validates the given item to check that it is ok to publish. Returns a
+        boolean to indicate validity. Use the logger to output further details
+        around why validation has failed.
 
         :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
-
         :returns: True if item is valid, False otherwise.
         """
-
-        document = item.properties["document"]
-        if not document.saved:
-            log.error("Document '%s' not saved." % (document.name,))
-            return False
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
         path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(document.fullName.fsName))
+            os.path.abspath(cmds.file(query=True, sn=True)))
+
+        if not path:
+            log.error("Session is not saved.")
+            return False
+
+        # ensure we have an updated project root
+        project_root = cmds.workspace(q=True, rootDirectory=True)
+        item.properties["project_root"] = project_root
+
+        # warn if no project root could be determined.
+        if not project_root:
+            log.warning("Your session is not part of a maya project.")
 
         publisher = self.parent
 
@@ -217,15 +224,12 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        publisher = self.parent
-
-        # should be saved if we're here
-        document = item.properties["document"]
-
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
         path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(document.fullName.fsName))
+            os.path.abspath(cmds.file(query=True, sn=True)))
+
+        publisher = self.parent
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -244,6 +248,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
+            # TODO: need to update core for this to work
+            #"dependency_paths": self._maya_find_additional_session_dependencies(),
         }
         log.debug("Publishing: %s" % (args,))
 
@@ -266,9 +272,17 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
+        # try to save the associated context into the project root. since the
+        # project root isn't required, bail if not known.
+        if "project_root" in item.properties:
+            project_root = item.properties["project_root"]
+            context_file = os.path.join(project_root, "shotgun.context")
+            with open(context_file, "wb") as fh:
+                fh.write(item.context.serialize(with_user_credentials=False))
+
         publisher = self.parent
 
-        # get the path to the published file
+        # get the path to the file
         path = item.properties["path"]
 
         # get the data for the publish that was just created in SG
@@ -290,3 +304,40 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             else:
                 reason = version_info["reason"]
                 log.warn("Unable to Auto Version. %s" % (reason,))
+
+    def _maya_find_additional_session_dependencies(self):
+        """
+        Find additional dependencies from the session
+        """
+        # default implementation looks for references and
+        # textures (file nodes) and returns any paths that
+        # match a template defined in the configuration
+        ref_paths = set()
+
+        # first let's look at maya references
+        ref_nodes = cmds.ls(references=True)
+        for ref_node in ref_nodes:
+            # get the path:
+            ref_path = cmds.referenceQuery(ref_node, filename=True)
+            # make it platform dependent
+            # (maya uses C:/style/paths)
+            ref_path = ref_path.replace("/", os.path.sep)
+            if ref_path:
+                ref_paths.add(ref_path)
+
+        # now look at file texture nodes
+        for file_node in cmds.ls(l=True, type="file"):
+            # ensure this is actually part of this session and not referenced
+            if cmds.referenceQuery(file_node, isNodeReferenced=True):
+                # this is embedded in another reference, so don't include it in
+                # the breakdown
+                continue
+
+            # get path and make it platform dependent
+            # (maya uses C:/style/paths)
+            texture_path = cmds.getAttr(
+                "%s.fileTextureName" % file_node).replace("/", os.path.sep)
+            if texture_path:
+                ref_paths.add(texture_path)
+
+        return ref_paths

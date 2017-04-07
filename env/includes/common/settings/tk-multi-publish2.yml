@@ -8,6 +8,13 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
+# A mapping of SG publish types to file extensions. The file publishers will not
+# accept files whose extensions are not found in one of these lists when the
+# "Publish all file types" setting is False. When "Publish all file types" is
+# True, the publishers will use the publish type matching the extension if it
+# exists in this list, otherwise, the publish type will simply be the extension
+# itself. To associate other extensions with existing publish types or to add
+# new Publish types, simply update the list below.
 publish_type_to_extensions: &file_types
   - [Alembic Cache, abc]
   - [3dsmax Scene, max]
@@ -42,7 +49,3 @@ common.settings.tk-multi-publish2.version_creator:
   hook: "{config}/tk-multi-publish2/basic/version_creator.py"
   settings: {}
 
-common.settings.tk-multi-publish2.alembic_publisher:
-  name: Publish alembic to Shotgun
-  hook: "{config}/tk-multi-publish2/basic/alembic_publisher.py"
-  settings: {}
