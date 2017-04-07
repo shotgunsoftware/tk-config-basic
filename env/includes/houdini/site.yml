@@ -43,10 +43,6 @@ houdini.site:
           branch: develop/zero_config
 
     tk-multi-shotgunpanel:
-        location:
-          version: v1.3.0
-          type: app_store
-          name: tk-multi-shotgunpanel
         action_mappings:
           PublishedFile:
           - actions:
@@ -64,6 +60,13 @@ houdini.site:
             filters: {}
         actions_hook: '{self}/general_actions.py'
         shotgun_fields_hook: '{self}/shotgun_fields.py'
+        enable_context_switch: true
+        location:
+          path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
+          version: 0922a2e9a6d5b3a7d637990093efa537808715cf
+          type: git_branch
+          branch: develop/zero_config
+
 
   location:
     path: https://github.com/shotgunsoftware/tk-houdini.git
