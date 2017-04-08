@@ -33,13 +33,11 @@ frameworks:
       version: v0.1.6
       type: app_store
       name: tk-framework-adminui
-
   tk-framework-widget_v0.2.x:
     location:
       version: v0.2.4
       type: app_store
       name: tk-framework-widget
-
   tk-framework-desktopserver_v1.x.x:
     location:
       path: https://github.com/shotgunsoftware/tk-framework-desktopserver.git
