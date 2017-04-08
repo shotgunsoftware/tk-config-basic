@@ -12,9 +12,7 @@
 # core API that should be used at runtime.
 
 location:
-  type: dev
-  path: /Users/jeff/Documents/repositories/tk-core
-  # path: https://github.com/shotgunsoftware/tk-core.git
-  # version: 21bd4c32203c9d8ddbb99590b063e1f1b167aa76
-  # type: git_branch
-  # branch: develop/zero_config
+  path: https://github.com/shotgunsoftware/tk-core.git
+  version: 0d9e75d3ad683d62f6b2bd288159313ceee2a58d
+  type: git_branch
+  branch: develop/zero_config

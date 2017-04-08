@@ -15,7 +15,7 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
-
+- ../common/settings/tk-multi-publish2.yml
 
 
 maya.project:
@@ -23,10 +23,17 @@ maya.project:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-publish2:
+      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
+      publish_plugins:
+        - '@common.settings.tk-multi-publish2.file_publisher'
+        - '@common.settings.tk-multi-publish2.version_creator'
+        - name: Publish current Maya Scene
+          hook: "{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
+          settings: {}
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.9
+        version: v0.0.11
 
     tk-multi-loader2:
       action_mappings:
@@ -53,10 +60,6 @@ maya.project:
         branch: develop/zero_config
 
     tk-multi-shotgunpanel:
-      location:
-        version: v1.3.0
-        type: app_store
-        name: tk-multi-shotgunpanel
       actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
       action_mappings:
         PublishedFile:
@@ -76,14 +79,19 @@ maya.project:
         Version:
         - actions: [quicktime_clipboard, sequence_clipboard]
           filters: {}
+      enable_context_switch: true
+      location:
+        path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
+        version: 0922a2e9a6d5b3a7d637990093efa537808715cf
+        type: git_branch
+        branch: develop/zero_config
+
+
   location:
-    type: dev
-    path: /Users/jeff/Documents/repositories/tk-maya
-    name: tk-maya
-    # path: https://github.com/shotgunsoftware/tk-maya.git
-    # version: 67a0a9dce1e31d1f2b19caa7a2d8ce55730d16c1
-    # type: git_branch
-    # branch: develop/zero_config
+    path: https://github.com/shotgunsoftware/tk-maya.git
+    version: 9084f82533115e8c9656f2b5ad12b87b8d89df1e
+    type: git_branch
+    branch: develop/zero_config
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
