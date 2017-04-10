@@ -94,7 +94,9 @@ class ShotgunReviewPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["file.image", "file.movie"]
+
+        # we use "video" since that's the mimetype category.
+        return ["file.image", "file.video"]
 
     def accept(self, log, settings, item):
         """

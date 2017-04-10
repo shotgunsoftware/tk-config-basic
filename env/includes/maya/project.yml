@@ -27,13 +27,16 @@ maya.project:
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher'
         - '@common.settings.tk-multi-publish2.version_creator'
-        - name: Publish current Maya Scene
-          hook: "{config}/tk-multi-publish2/maya.basic/scene_publisher.py"
+        - name: Maya Scene Publisher
+          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py"
+          settings: {}
+        - name: Save the file to the next version
+          hook: "{config}/tk-multi-publish2/maya.basic/version_up.py"
           settings: {}
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.1.0
+        version: v0.1.1
 
     tk-multi-loader2:
       action_mappings:

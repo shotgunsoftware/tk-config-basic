@@ -15,44 +15,27 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
-
+- ../common/settings/tk-multi-publish2.yml
 
 3dsmax.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-publish2:
-      collector: "{config}/3dsmax/publish/collector.py"
-
+      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/3dsmax.basic/collector.py"
       publish_plugins:
-          - name: Publish to Shotgun
-            hook: "{self}/file_publisher.py"
-            settings:
-              Publish all file types: false
-              File Types:
-              - [Nuke Script, nk]
-              - [Photoshop Image, psd, psb]
-              - [3dsmax Scene, max]
-              - [Houdini Scene, hip]
-              - [Maya Scene, ma, mb]
-              - [Hiero Project, hrox]
-              - [Alembic Cache]
-              - [Rendered Image, dpx, exr]
-              - [Texture, tiff, tx, tga, dds]
-              - [Image, jpeg, jpg, png]
-
-          - name: Publish current 3dsMax Scene
-            hook: "{config}/3dsmax/publish/scene_publisher.py"
-            settings: {}
-
-          - name: Send to Shotgun review
-            hook: "{self}/version_creator.py"
-            settings: {}
-
+        - '@common.settings.tk-multi-publish2.file_publisher'
+        - '@common.settings.tk-multi-publish2.version_creator'
+        - name: 3ds Max Scene Publisher
+          hook: "{config}/tk-multi-publish2/3dsmax.basic/file_publisher.py"
+          settings: {}
+        - name: Save the file to the next version
+          hook: "{config}/tk-multi-publish2/3dsmax.basic/version_up.py"
+          settings: {}
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.1.0
+        version: v0.1.1
 
     tk-multi-loader2:
       action_mappings:

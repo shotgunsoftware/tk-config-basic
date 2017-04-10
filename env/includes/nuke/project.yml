@@ -15,11 +15,34 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
 
 
 nuke.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-publish2:
+      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/nuke.basic/collector.py"
+      publish_plugins:
+        - '@common.settings.tk-multi-publish2.file_publisher'
+        - '@common.settings.tk-multi-publish2.version_creator'
+        - name: Nuke Scene Publisher
+          hook: "{config}/tk-multi-publish2/nuke.basic/nuke_script_publisher.py"
+          settings: {}
+        - name: Nuke Studio Project Publisher
+          hook: "{config}/tk-multi-publish2/nuke.basic/nukestudio_project_publisher.py"
+          settings: {}
+        - name: Save the file to the next version
+          hook: "{config}/tk-multi-publish2/nuke.basic/nuke_version_up.py"
+          settings: {}
+        - name: Save the file to the next version
+          hook: "{config}/tk-multi-publish2/nuke.basic/nukestudio_version_up.py"
+          settings: {}
+      location:
+        type: app_store
+        name: tk-multi-publish2
+        version: v0.1.1
 
     tk-multi-loader2:
       action_mappings:

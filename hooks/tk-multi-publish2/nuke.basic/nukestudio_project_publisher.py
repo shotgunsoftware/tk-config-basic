@@ -1,26 +1,22 @@
 # Copyright (c) 2017 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-
-import maya.cmds as cmds
-
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaScenePublishPlugin(HookBaseClass):
+class NukeStudioProjectPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open maya scene. Should inherit from the maya file
-    publisher.
+    Plugin for publishing a Nuke Studio project.
     """
 
     @property
@@ -42,7 +38,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish Maya Scene"
+        return "Nuke Studio Project Publisher"
 
     @property
     def description(self):
@@ -51,12 +47,8 @@ class MayaScenePublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Publishes the current maya scene.
-
-        This plugin will recognize version numbers in the file name and will
-        publish with that version number to Shotgun. If the "Auto Version"
-        setting is enabled, the plugin will automatically copy the file to the
-        next version number after publishing.
+        This plugin will recognize a version number in the file name and will
+        publish with that version number to Shotgun.
         """
 
     @property
@@ -81,18 +73,9 @@ class MayaScenePublishPlugin(HookBaseClass):
         return {
             "Publish Type": {
                 "type": "shotgun_publish_type",
-                "default": "Maya Scene",
+                "default": "Nuke Studio Project",
                 "description": "SG publish type to associate publishes with."
             },
-            "Auto Version": {
-                "type": "bool",
-                "default": True,
-                "description": (
-                    "If set to True, the file will be automatically saved to "
-                    "the next version after publish."
-                )
-            },
-            # TODO: revisit default states for settings ^
         }
 
     @property
@@ -104,7 +87,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["maya.scene"]
+        return ["nukestudio.project"]
 
     def accept(self, log, settings, item):
         """
@@ -131,27 +114,31 @@ class MayaScenePublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        # if we have a project root, check for a valid, serialized context.
-        # warn if not.
-        if "project_root" in item.properties:
+        import hiero.core
 
-            project_root = item.properties["project_root"]
-            context_file = os.path.join(project_root, "shotgun.context")
+        project = item.properties.get("project")
 
-            log.debug("Looking for context file in %s" % context_file)
-            if os.path.exists(context_file):
-                try:
-                    with open(context_file, "rb") as fh:
-                        context_str = fh.read()
-                    context_obj = sgtk.Context.deserialize(context_str)
-                    item.context = context_obj
-                except Exception, e:
-                    log.warning(
-                        "Could not read saved context %s: %s" %
-                        (context_file, e)
-                    )
+        # ensure there is a document in the item properties
+        if not project:
+            log.warning("Nuke Studio Project item missing 'project' property.")
+            return {"accepted": False}
 
-        return {"accepted": True, "required": False, "enabled": True}
+        engine = self.parent.engine
+
+        # only the active project should be enabled
+        enabled = False
+
+        # get the active project. if it can be determined and matches this
+        # item's project, then it should be enabled.
+        active_project = hiero.ui.activeSequence().project()
+        if active_project and active_project.guid() == project.guid():
+            enabled = True
+
+        # TODO: this will disable the publish item in the hierarchy.
+            # would be good to indicate that the parent shouldn't be enabled.
+            # and the parent should also be collapsed
+
+        return {"accepted": True, "required": False, "enabled": enabled}
 
     def validate(self, log, settings, item):
         """
@@ -167,20 +154,15 @@ class MayaScenePublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        # get the path to the current file
-        path = cmds.file(query=True, sn=True)
+        project = item.properties.get("project")
 
-        if not path:
-            log.error("Scene is not saved.")
+        if not project.path():
+            log.error("Project '%s' has not been saved." % (project.name(),))
             return False
 
-        # ensure we have an updated project root
-        project_root = cmds.workspace(q=True, rootDirectory=True)
-        item.properties["project_root"] = project_root
-
-        # warn if no project root could be determined.
-        if not project_root:
-            log.warning("Your scene is not part of a maya project.")
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(os.path.abspath(project.path()))
 
         publisher = self.parent
 
@@ -223,10 +205,23 @@ class MayaScenePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # get the path to the current file
-        path = cmds.file(query=True, sn=True)
-
         publisher = self.parent
+
+        project = item.properties.get("project")
+
+        # there doesn't appear to be a way to determine if the project has
+        # unsaved changes. at least if we're here we have a path. so go ahead
+        # and force the save.
+        try:
+            project.save()
+        except Exception, e:
+            log.error("Failed to ensure the project '%s' was saved. %s" %
+                project.name(), e)
+            return
+
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(os.path.abspath(project.path()))
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -245,8 +240,6 @@ class MayaScenePublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
-            # TODO: need to update core for this to work
-            #"dependency_paths": self._maya_find_additional_scene_dependencies(),
         }
         log.debug("Publishing: %s" % (args,))
 
@@ -269,18 +262,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # try to save the associated context into the project root. since the
-        # project root isn't required, bail if not known.
-        if "project_root" in item.properties:
-            project_root = item.properties["project_root"]
-            context_file = os.path.join(project_root, "shotgun.context")
-            with open(context_file, "wb") as fh:
-                fh.write(item.context.serialize(with_user_credentials=False))
-
         publisher = self.parent
-
-        # get the path to the file
-        path = item.properties["path"]
 
         # get the data for the publish that was just created in SG
         publish_data = item.properties["sg_publish_data"]
@@ -290,51 +272,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
 
-        # do the auto versioning if it is enabled
-        if settings["Auto Version"].value:
-            version_info = publisher.util.create_next_version_path(path)
-            if version_info["success"]:
-                log.info(
-                    "Copied %s to %s." %
-                    (path, version_info["next_version_path"])
-                )
-            else:
-                reason = version_info["reason"]
-                log.warn("Unable to Auto Version. %s" % (reason,))
-
-    def _maya_find_additional_scene_dependencies(self):
         """
-        Find additional dependencies from the scene
+        project = item.properties["project"]
+        project.saveAs(next_version_path)
         """
-        # default implementation looks for references and
-        # textures (file nodes) and returns any paths that
-        # match a template defined in the configuration
-        ref_paths = set()
-
-        # first let's look at maya references
-        ref_nodes = cmds.ls(references=True)
-        for ref_node in ref_nodes:
-            # get the path:
-            ref_path = cmds.referenceQuery(ref_node, filename=True)
-            # make it platform dependent
-            # (maya uses C:/style/paths)
-            ref_path = ref_path.replace("/", os.path.sep)
-            if ref_path:
-                ref_paths.add(ref_path)
-
-        # now look at file texture nodes
-        for file_node in cmds.ls(l=True, type="file"):
-            # ensure this is actually part of this scene and not referenced
-            if cmds.referenceQuery(file_node, isNodeReferenced=True):
-                # this is embedded in another reference, so don't include it in
-                # the breakdown
-                continue
-
-            # get path and make it platform dependent
-            # (maya uses C:/style/paths)
-            texture_path = cmds.getAttr(
-                "%s.fileTextureName" % file_node).replace("/", os.path.sep)
-            if texture_path:
-                ref_paths.add(texture_path)
-
-        return ref_paths

@@ -1,24 +1,22 @@
 # Copyright (c) 2017 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-
 import sgtk
-
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class BasicFilePublishPlugin(HookBaseClass):
+class NukeSessionPublishPlugin(HookBaseClass):
     """
-    Plugin for creating generic publishes in Shotgun
+    Plugin for publishing an open nuke session.
     """
 
     @property
@@ -40,7 +38,7 @@ class BasicFilePublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish files to Shotgun"
+        return "Nuke Session Publisher"
 
     @property
     def description(self):
@@ -49,17 +47,14 @@ class BasicFilePublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Publishes files/folders to shotgun. Supports any file or folder type if
-        the "Publish all file types" setting is enabled, otherwise limited by
-        the extensions in the "File Types" setting. This plugin will recognize
-        version numbers in the file or folder name and will publish with that
-        version number to Shotgun.
+        This plugin will recognize a version number in the file name and will
+        publish with that version number to Shotgun.
         """
 
     @property
     def settings(self):
         """
-        Dictionary defining the settings that this plugin expects to recieve
+        Dictionary defining the settings that this plugin expects to receive
         through the settings parameter in the accept, validate, publish and
         finalize methods.
 
@@ -72,26 +67,14 @@ class BasicFilePublishPlugin(HookBaseClass):
                     "description": "One line description of the setting"
             }
 
-        The type string should be one of the data types that toolkit accepts
-        as part of its environment configuration.
+        The type string should be one of the data types that toolkit accepts as
+        part of its environment configuration.
         """
         return {
-            "File Types": {
-                "type": "list",
-                "default": "[]",
-                "description": (
-                    "List of file types to include. Each entry in the list "
-                    "is a list in which the first entry is the Shotgun "
-                    "published file type and subsequent entries are file "
-                    "extensions that should be associated.")
-            },
-            "Publish all file types": {
-                "type": "bool",
-                "default": False,
-                "description": (
-                    "If set to True, all files will be published, even if "
-                    "their extension has not been declared in the file types "
-                    "setting.")
+            "Publish Type": {
+                "type": "shotgun_publish_type",
+                "default": "Nuke Script",
+                "description": "SG publish type to associate publishes with."
             },
         }
 
@@ -104,7 +87,7 @@ class BasicFilePublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["file.*"]
+        return ["nuke.session"]
 
     def accept(self, log, settings, item):
         """
@@ -131,38 +114,34 @@ class BasicFilePublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        publisher = self.parent
-
-        path = item.properties["path"]
-        path_info = publisher.util.get_file_path_components(path)
-        extension = path_info["extension"]
-
-        if self._get_publish_type(extension, settings):
-            return {"accepted": True, "required": False, "enabled": True}
-        else:
-            return {"accepted": False}
+        return {"accepted": True, "required": False, "enabled": True}
 
     def validate(self, log, settings, item):
         """
-        Validates the given item to check that it is ok to publish.
-
-        Returns a boolean to indicate validity. Use the logger to output further
-        details around why validation has failed.
+        Validates the given item to check that it is ok to publish. Returns a
+        boolean to indicate validity. Use the logger to output further details
+        around why validation has failed.
 
         :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
-
         :returns: True if item is valid, False otherwise.
         """
 
-        publisher = self.parent
-        path = item.properties.get("path")
-        if not path:
-            log.error("Unknown path for item.")
+        import nuke
+
+        # make sure the session is completely saved
+        if nuke.root().modified():
+            log.error("The current session has unsaved changes.")
             return False
+
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(nuke.root().name())
+
+        publisher = self.parent
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
@@ -193,9 +172,8 @@ class BasicFilePublishPlugin(HookBaseClass):
 
     def publish(self, log, settings, item):
         """
-        Executes the publish logic for the given item and settings.
-
-        Use the logger to give the user status updates.
+        Executes the publish logic for the given item and settings. Use the
+        logger to give the user status updates.
 
         :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
@@ -204,17 +182,13 @@ class BasicFilePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        path = item.properties["path"]
+        import nuke
+
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(nuke.root().name())
+
         publisher = self.parent
-
-        # get the publish path components
-        path_info = publisher.util.get_file_path_components(path)
-
-        # determine the publish type
-        extension = path_info["extension"]
-
-        # get the publish type
-        publish_type = self._get_publish_type(extension, settings)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -232,7 +206,7 @@ class BasicFilePublishPlugin(HookBaseClass):
             "name": publish_name,
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": publish_type,
+            "published_file_type": settings["Publish Type"].value,
         }
         log.debug("Publishing: %s" % (args,))
 
@@ -240,11 +214,13 @@ class BasicFilePublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
 
+        # now that we've published. keep a handle on the path that was published
+        item.properties["path"] = path
+
     def finalize(self, log, settings, item):
         """
-        Execute the finalization pass. This pass executes once
-        all the publish tasks have completed, and can for example
-        be used to version up files.
+        Execute the finalization pass. This pass executes once all the publish
+        tasks have completed, and can for example be used to version up files.
 
         :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
@@ -262,41 +238,3 @@ class BasicFilePublishPlugin(HookBaseClass):
         log.info("Clearing status of conflicting publishes...")
         publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
-
-    def _get_publish_type(self, extension, settings):
-        """
-        Get a publish type for the supplied extension and publish settings.
-
-        :param extension: The file extension to find a publish type for
-        :param settings: The publish settings defining the publish types
-
-        :return: A publish type or None if one could not be found.
-        """
-
-        # ensure lowercase and no dot
-        if extension:
-            extension = extension.lstrip(".").lower()
-
-            for type_def in settings["File Types"].value:
-
-                publish_type = type_def[0]
-                file_extensions = type_def[1:]
-
-                if extension in file_extensions:
-                    # found a matching type in settings. use it!
-                    return publish_type
-
-        if settings["Publish all file types"].value:
-            # we're publishing anything and everything!
-
-            if extension:
-                # publish type is based on extension
-                publish_type = "%s File" % extension.capitalize()
-            else:
-                # no extension, assume it is a folder
-                publish_type = "Folder"
-
-            return publish_type
-
-        # no publish type identified!
-        return None
