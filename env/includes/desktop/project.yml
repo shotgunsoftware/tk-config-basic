@@ -28,7 +28,7 @@ desktop.project:
       location:
         type: app_store
         name: tk-multi-publish2
-        version: v0.0.11
+        version: v0.1.0
 
     tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
 
