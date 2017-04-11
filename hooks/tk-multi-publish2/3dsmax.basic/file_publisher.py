@@ -74,7 +74,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
         return {
             "Publish Type": {
                 "type": "shotgun_publish_type",
-                "default": "Maya Scene",
+                "default": "3dsmax Scene",
                 "description": "SG publish type to associate publishes with."
             },
         }
@@ -209,8 +209,6 @@ class MaxSessionPublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
-            "dependency_paths":
-                self._maya_find_additional_session_dependencies(),
         }
         log.debug("Publishing: %s" % (args,))
 
