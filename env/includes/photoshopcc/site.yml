@@ -67,7 +67,7 @@ photoshopcc.site:
       enable_context_switch: true
       location:
         path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-        version: 0922a2e9a6d5b3a7d637990093efa537808715cf
+        version: e9d553aa3abb7be9c9d031065681e12956dc651b
         type: git_branch
         branch: develop/zero_config
 
