@@ -63,7 +63,7 @@ class NukeStudioVersionUpPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["nukestudio.session"]
+        return ["nukestudio.project"]
 
     @property
     def settings(self):
@@ -201,6 +201,7 @@ class NukeStudioVersionUpPlugin(HookBaseClass):
 
         project = item.properties.get("project")
         project.saveAs(next_version_path)
+        log.info("Saved to: %s" % (next_version_path,))
 
     def finalize(self, log, settings, item):
         """
