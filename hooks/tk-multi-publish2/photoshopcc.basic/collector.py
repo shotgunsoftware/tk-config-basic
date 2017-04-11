@@ -52,3 +52,5 @@ class PhotoshopCCSceneCollector(HookBaseClass):
             # add the document object to the properties so that the publish
             # plugins know which open document to associate with this item
             document_item.properties["document"] = document
+
+        # TODO: only the active document should be enabled

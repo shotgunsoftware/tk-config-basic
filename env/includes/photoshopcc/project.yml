@@ -32,6 +32,9 @@ photoshopcc.project:
         - name: Photoshop Document Publisher
           hook: "{config}/tk-multi-publish2/photoshopcc.basic/document_publisher.py"
           settings: {}
+        - name: Send document to Shotgun review
+          hook: "{config}/tk-multi-publish2/photoshopcc.basic/version_creator.py"
+          settings: {}
         - name: Save the file to the next version
           hook: "{config}/tk-multi-publish2/photoshopcc.basic/version_up.py"
           settings: {}

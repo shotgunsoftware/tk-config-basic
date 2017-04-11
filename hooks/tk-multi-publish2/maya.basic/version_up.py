@@ -165,11 +165,9 @@ class MayaVersionUpPlugin(HookBaseClass):
         # nothing to do if the next version path can't be determined or if it
         # already exists.
         if not next_version_path:
-            log.error("Could not determine the next version path.")
-            return False
+            log.warn("Could not determine the next version path.")
         elif os.path.exists(next_version_path):
-            log.error("The next version of the path already exists")
-            return False
+            log.warn("The next version of the path already exists")
 
         # insert the path into the properties for use during the publish phase
         item.properties["next_version_path"] = next_version_path
@@ -189,7 +187,16 @@ class MayaVersionUpPlugin(HookBaseClass):
         :param item: Item to process
         """
 
+        # get the next version path and save the document
         next_version_path = item.properties["next_version_path"]
+
+        if not next_version_path:
+            log.warn("Could not determine the next version.")
+            return
+
+        if os.path.exists(next_version_path):
+            log.warn("The next version path already exists.")
+            return
 
         # first rename the scene as file_path:
         cmds.file(rename=next_version_path)

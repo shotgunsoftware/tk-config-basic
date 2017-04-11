@@ -9,15 +9,16 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-
+import tempfile
+import uuid
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
+class PhotoshopReviewPlugin(HookBaseClass):
     """
-    Plugin for publishing Photoshop documents in Shotgun.
+    Plugin for sending photoshop documents to shotgun for review.
     """
 
     @property
@@ -31,7 +32,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             self.disk_location,
             os.pardir,
             "icons",
-            "publish.png"
+            "review.png"
         )
 
     @property
@@ -39,7 +40,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Photoshop Document Publisher"
+        return "Send document to Shotgun review"
 
     @property
     def description(self):
@@ -48,14 +49,14 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will recognize a version number in the file name and will
-        publish with that version number to Shotgun.
+        This plugin exports and uploads a jpg copy of the Photoshop document to
+        Shotgun for review.
         """
 
     @property
     def settings(self):
         """
-        Dictionary defining the settings that this plugin expects to receive
+        Dictionary defining the settings that this plugin expects to recieve
         through the settings parameter in the accept, validate, publish and
         finalize methods.
 
@@ -71,16 +72,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         The type string should be one of the data types that toolkit accepts as
         part of its environment configuration.
         """
-        return {
-            "Publish Type": {
-                "type": "str",
-                "default": "Photoshop Image",
-                "description": (
-                    "The shotgun publish file type to use when publishing "
-                    "items with this plugin."
-                )
-            },
-        }
+        return {}
+        # TODO: consider exposing jpg export options
 
     @property
     def item_filters(self):
@@ -91,6 +84,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
+
+        # we use "video" since that's the mimetype category.
         return ["photoshop.document"]
 
     def accept(self, log, settings, item):
@@ -118,11 +113,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        document = item.properties.get("document")
-
-        # ensure there is a document in the item properties
-        if not document:
-            log.warning("Photoshop document item missing 'document' property.")
+        if "document" not in item.properties:
             return {"accepted": False}
 
         return {"accepted": True, "required": False, "enabled": True}
@@ -143,43 +134,6 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        document = item.properties["document"]
-        if not document.saved:
-            log.error("Document '%s' has not been saved." % (document.name,))
-            return False
-
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(document.fullName.fsName))
-
-        publisher = self.parent
-
-        # get the publish name for this file path. this will ensure we get a
-        # consistent publish name when looking up existing publishes.
-        publish_name = publisher.util.get_publish_name(path)
-
-        log.info("Publish name will be: %s" % (publish_name,))
-
-        # see if there are any other publishes of this path with a status.
-        # Note the name, context, and path *must* match the values supplied to
-        # register_publish in the publish phase in order for this to return an
-        # accurate list of previous publishes of this file.
-        publishes = publisher.util.get_conflicting_publishes(
-            item.context,
-            path,
-            publish_name,
-            filters=["sg_status_list", "is_not", None]
-        )
-
-        if publishes:
-            log.warn(
-                "Found %s conflicting publishes in Shotgun with the path '%s'. "
-                "If you continue, these conflicting publishes will no longer "
-                "be available to other users via the loader." %
-                (len(publishes), path)
-            )
-
         return True
 
     def publish(self, log, settings, item):
@@ -195,41 +149,63 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
+        engine = publisher.engine
 
-        # should be saved if we're here
+        # path to a temp jpg file
+        jpg_path = os.path.join(
+            tempfile.gettempdir(),
+            "%s_sgtk.jpg" % uuid.uuid4().hex
+        )
+
+        # jpg file/options
+        jpg_file = engine.adobe.File(jpg_path)
+        jpg_options = engine.adobe.JPEGSaveOptions
+        jpg_options.quality = 12
+
+        # save a jpg copy of the document
         document = item.properties["document"]
+        document.saveAs(jpg_file, jpg_options, True)
 
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(document.fullName.fsName))
-
-        # get the publish name for this file path. this will ensure we get a
-        # consistent name across version publishes of this file.
+        # use the original path for the version display name
+        path = document.fullName.fsName
         publish_name = publisher.util.get_publish_name(path)
 
-        # extract the version number for publishing. use 1 if no version in path
-        version_number = publisher.util.get_version_number(path) or 1
-
-        # arguments for publish registration
-        args = {
-            "tk": publisher.sgtk,
-            "context": item.context,
-            "comment": item.description,
-            "path": path,
-            "name": publish_name,
-            "version_number": version_number,
-            "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": settings["Publish Type"].value,
+        # populate the version data to send to SG
+        version_data = {
+            "project": item.context.project,
+            "code": publish_name,
+            "description": item.description,
+            "entity": self._get_version_entity(item)
         }
-        log.debug("Publishing: %s" % (args,))
 
-        # create the publish and stash it in the item properties for other
-        # plugins to use.
-        item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
+        # if the file was published, add the publish data to the version
+        if "sg_publish_data" in item.properties:
+            publish_data = item.properties["sg_publish_data"]
+            version_data["published_files"] = [publish_data]
 
-        # now that we've published. keep a handle on the path that was published
-        item.properties["path"] = path
+        log.debug("Version data: %s" % (version_data,))
+
+        # create the version
+        log.info("Creating version for review...")
+        version = self.parent.shotgun.create("Version", version_data)
+
+        # stash the version info in the item just in case
+        item.properties["sg_version_data"] = version
+
+        # upload the jpg copy to SG
+        log.info("Uploading content...")
+        self.parent.shotgun.upload(
+            "Version",
+            version["id"],
+            jpg_path,
+            "sg_uploaded_movie"
+        )
+
+        # remove the tmp file
+        try:
+            os.remove(jpg_path)
+        except:
+            pass
 
     def finalize(self, log, settings, item):
         """
@@ -242,13 +218,18 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             instances.
         :param item: Item to process
         """
+        pass
 
-        publisher = self.parent
+    def _get_version_entity(self, item):
+        """
+        Returns the best entity to link the version to.
+        """
 
-        # get the data for the publish that was just created in SG
-        publish_data = item.properties["sg_publish_data"]
-
-        # ensure conflicting publishes have their status cleared
-        log.info("Clearing status of conflicting publishes...")
-        publisher.util.clear_status_for_conflicting_publishes(
-            item.context, publish_data)
+        if item.context.task:
+            return item.context.task
+        elif item.context.entity:
+            return item.context.entity
+        elif item.context.project:
+            return item.context.project
+        else:
+            return None

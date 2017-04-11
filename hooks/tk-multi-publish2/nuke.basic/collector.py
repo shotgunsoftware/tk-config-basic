@@ -107,3 +107,10 @@ class NukeSessionCollector(HookBaseClass):
             # add the project object to the properties so that the publish
             # plugins know which open project to associate with this item
             session_item.properties["project"] = project
+
+        # TODO: only the current project should be enabled
+        # get the active project. if it can be determined and matches this
+        # item's project, then it should be enabled.
+        #active_project = hiero.ui.activeSequence().project()
+        #if active_project and active_project.guid() == project.guid():
+            #enabled = True

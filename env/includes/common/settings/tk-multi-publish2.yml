@@ -34,7 +34,6 @@ common.settings.tk-multi-publish2.file_publisher:
   settings:
     Publish all file types: false
     File Types: *file_types
-    Auto Version: True
 
 common.settings.tk-multi-publish2.file_publisher_all:
   name: Publish to Shotgun
@@ -42,7 +41,6 @@ common.settings.tk-multi-publish2.file_publisher_all:
   settings:
     Publish all file types: true
     File Types: *file_types
-    Auto Version: True
 
 common.settings.tk-multi-publish2.version_creator:
   name: Send to Shotgun review

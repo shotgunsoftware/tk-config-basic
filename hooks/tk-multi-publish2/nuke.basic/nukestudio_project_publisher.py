@@ -114,8 +114,6 @@ class NukeStudioProjectPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        import hiero.core
-
         project = item.properties.get("project")
 
         # ensure there is a document in the item properties
@@ -123,22 +121,7 @@ class NukeStudioProjectPublishPlugin(HookBaseClass):
             log.warning("Nuke Studio Project item missing 'project' property.")
             return {"accepted": False}
 
-        engine = self.parent.engine
-
-        # only the active project should be enabled
-        enabled = False
-
-        # get the active project. if it can be determined and matches this
-        # item's project, then it should be enabled.
-        active_project = hiero.ui.activeSequence().project()
-        if active_project and active_project.guid() == project.guid():
-            enabled = True
-
-        # TODO: this will disable the publish item in the hierarchy.
-            # would be good to indicate that the parent shouldn't be enabled.
-            # and the parent should also be collapsed
-
-        return {"accepted": True, "required": False, "enabled": enabled}
+        return {"accepted": True, "required": False, "enabled": True}
 
     def validate(self, log, settings, item):
         """

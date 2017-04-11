@@ -166,11 +166,9 @@ class NukeStudioVersionUpPlugin(HookBaseClass):
         # nothing to do if the next version path can't be determined or if it
         # already exists.
         if not next_version_path:
-            log.error("Could not determine the next version path.")
-            return False
+            log.warn("Could not determine the next version path.")
         elif os.path.exists(next_version_path):
-            log.error("The next version of the path already exists")
-            return False
+            log.warn("The next version of the path already exists")
 
         # insert the path into the properties for use during the publish phase
         item.properties["next_version_path"] = next_version_path
@@ -190,10 +188,18 @@ class NukeStudioVersionUpPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        project = item.properties.get("project")
-
-        # get the next version path and save the project
+        # get the next version path and save the document
         next_version_path = item.properties["next_version_path"]
+
+        if not next_version_path:
+            log.warn("Could not determine the next version.")
+            return
+
+        if os.path.exists(next_version_path):
+            log.warn("The next version path already exists.")
+            return
+
+        project = item.properties.get("project")
         project.saveAs(next_version_path)
 
     def finalize(self, log, settings, item):

@@ -133,8 +133,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(MaxPlus.FileManager.GetFileNameAndPath()))
+        path = MaxPlus.FileManager.GetFileNameAndPath()
 
         if not path:
             log.error("Session is not saved.")
@@ -143,6 +142,8 @@ class MaxSessionPublishPlugin(HookBaseClass):
         if MaxPlus.FileManager.IsSaveRequired():
             log.error("Unsaved changes in the current session.")
             return False
+
+        sgtk.util.ShotgunPath.normalize(os.path.abspath(path))
 
         publisher = self.parent
 

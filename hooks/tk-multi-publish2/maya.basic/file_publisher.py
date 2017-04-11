@@ -133,12 +133,13 @@ class MayaSessionPublishPlugin(HookBaseClass):
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(cmds.file(query=True, sn=True)))
+        path = cmds.file(query=True, sn=True)
 
         if not path:
             log.error("Session is not saved.")
             return False
+
+        sgtk.util.ShotgunPath.normalize(os.path.abspath(path))
 
         # ensure we have an updated project root
         project_root = cmds.workspace(q=True, rootDirectory=True)

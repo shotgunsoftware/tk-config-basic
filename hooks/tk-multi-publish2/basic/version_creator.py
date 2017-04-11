@@ -193,6 +193,10 @@ class ShotgunReviewPlugin(HookBaseClass):
             "entity": self._get_version_entity(item)
         }
 
+        if "sg_publish_data" in item.properties:
+            publish_data = item.properties["sg_publish_data"]
+            version_data["published_files"] = [publish_data]
+
         if settings["Link Local File"].value:
             version_data["sg_path_to_movie"] = path
 
