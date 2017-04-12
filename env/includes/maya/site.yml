@@ -38,11 +38,7 @@ maya.site:
         filters:
         - [task_assignees, is, '{context.user}']
         hierarchy: [project, entity, content]
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
       actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
@@ -65,11 +61,7 @@ maya.site:
         - actions: [quicktime_clipboard, sequence_clipboard]
           filters: {}
       enable_context_switch: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-        version: e9d553aa3abb7be9c9d031065681e12956dc651b
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-shotgunpanel.location"
 
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git

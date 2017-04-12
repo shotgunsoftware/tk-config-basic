@@ -25,10 +25,7 @@ desktop.project:
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher_all'
         - '@common.settings.tk-multi-publish2.version_creator'
-      location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.1.1
+      location: "@common.apps.tk-multi-publish2.location"
 
     tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
 
