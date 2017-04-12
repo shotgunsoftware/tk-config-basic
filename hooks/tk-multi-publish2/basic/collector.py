@@ -98,9 +98,11 @@ class BasicSceneCollector(HookBaseClass):
 
         # handle files and folders differently
         if os.path.isdir(path):
-            self._collect_folder(parent_item, path)
+            item = self._collect_folder(parent_item, path)
         else:
-            self._collect_file(parent_item, path)
+            item = self._collect_file(parent_item, path)
+
+        return item
 
     def _collect_file(self, parent_item, path):
         """
@@ -138,6 +140,8 @@ class BasicSceneCollector(HookBaseClass):
         # evaluated path in case it was altered to account for frame sequence
         file_item.properties["path"] = item_info["path"]
 
+        return file_item
+
     def _collect_folder(self, parent_item, folder):
         """
         Process the supplied folder path.
@@ -166,6 +170,8 @@ class BasicSceneCollector(HookBaseClass):
         # all we know about the file is its path. set the path in its
         # properties for the plugins to use for processing
         folder_item.properties["path"] = folder
+
+        return folder_item
 
     def _get_item_info(self, path):
         """
