@@ -48,8 +48,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will recognize a version number in the file name and will
-        publish with that version number to Shotgun.
+        This plugin will publish an open Photoshop document. The plugin requires
+        the document be saved to a file before validation will succeed. The file
+        will be published in place.
         """
 
     @property

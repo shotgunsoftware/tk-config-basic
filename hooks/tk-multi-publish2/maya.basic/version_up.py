@@ -112,14 +112,15 @@ class MayaVersionUpPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(cmds.file(query=True, sn=True)))
+        path = cmds.file(query=True, sn=True)
 
         if not path:
             log.error("The current session has not been saved.")
             return {"accepted": False}
+
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(os.path.abspath(path))
 
         publisher = self.parent
 
