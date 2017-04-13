@@ -39,10 +39,7 @@ nuke.project:
         - name: Save the file to the next version
           hook: "{config}/tk-multi-publish2/nuke.basic/nukestudio_version_up.py"
           settings: {}
-      location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.1.1
+      location: "@common.apps.tk-multi-publish2.location"
 
     tk-multi-loader2:
       action_mappings:
@@ -62,17 +59,15 @@ nuke.project:
         - [project, is, '{context.project}']
         - [task_assignees, is, '{context.user}']
         hierarchy: [entity, content]
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
       action_mappings:
         PublishedFile:
         - actions: [read_node]
           filters: {published_file_type: Rendered Image}
+        - actions: [read_node]
+          filters: {published_file_type: Alembic Cache}
         - actions: [script_import]
           filters: {published_file_type: Nuke Script}
         Task:
@@ -80,12 +75,7 @@ nuke.project:
           filters: {}
       actions_hook: '{self}/general_actions.py:{self}/tk-nuke_actions.py'
       enable_context_switch: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-        version: e9d553aa3abb7be9c9d031065681e12956dc651b
-        type: git_branch
-        branch: develop/zero_config
-
+      location: "@common.apps.tk-multi-shotgunpanel.location"
 
   menu_favourites: []
   run_at_startup:
