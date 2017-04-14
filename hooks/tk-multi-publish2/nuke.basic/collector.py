@@ -33,12 +33,15 @@ class NukeSessionCollector(HookBaseClass):
 
         if hasattr(engine, "studio_enabled") and engine.studio_enabled:
             # running nuke studio
-            self._process_current_nukestudio_session(parent_item)
+            self.collect_current_nukestudio_session(parent_item)
         else:
             # running nuke
-            self._process_current_nuke_session(parent_item)
+            self.collect_current_nuke_session(parent_item)
 
-    def _process_current_nuke_session(self, parent_item):
+        self.collect_write_geom_nodes(parent_item)
+        self.collect_write_nodes(parent_item)
+
+    def collect_current_nuke_session(self, parent_item):
         """
         Analyzes the current session open in Nuke and parents a subtree of items
         under the parent_item passed in.
@@ -76,7 +79,7 @@ class NukeSessionCollector(HookBaseClass):
         )
         session_item.set_icon_from_path(icon_path)
 
-    def _process_current_nukestudio_session(self, parent_item):
+    def collect_current_nukestudio_session(self, parent_item):
         """
         Analyzes the current session open in NukeStudio and parents a subtree of
         items under the parent_item passed in.
@@ -114,3 +117,63 @@ class NukeSessionCollector(HookBaseClass):
         #active_project = hiero.ui.activeSequence().project()
         #if active_project and active_project.guid() == project.guid():
             #enabled = True
+
+    def collect_write_geom_nodes(self, parent_item):
+        """
+        Scan the current session for write geo nodes that have written files to
+        disk
+
+        :param parent_item: The parent item for any write geo nodes collected
+        """
+
+        # iterate over all the write geo nodes in the file and see if they
+        # reference files that have been written to disk.
+        for node in self._get_nodes_of_type("WriteGeo"):
+
+            # evaluate the file path and any frame expressions/format
+            file_path = node["file"].evaluate()
+
+            if os.path.exists(file_path):
+                # file exists, let the basic collector handle it
+                item = super(NukeSessionCollector, self).process_file(
+                    parent_item, file_path)
+
+                # the item has been created. update the display name to include
+                # the nuke node to make it clear to the user how it was
+                # collected within the current session.
+                item.name = "%s (%s)" % (item.name, node.name())
+
+    def collect_write_nodes(self, parent_item):
+        """
+        Scan the current session for write nodes that have written files to disk
+
+        :param parent_item: The parent item for any write nodes collected
+        """
+
+        # iterate over all the write nodes in the file and see if they reference
+        # files that have been written to disk.
+        for node in self._get_nodes_of_type("Write"):
+
+            # evaluate the file path and any frame expressions/format
+            file_path = node["file"].evaluate()
+
+            if os.path.exists(file_path):
+                # file exists, let the basic collector handle it
+                item = super(NukeSessionCollector, self).process_file(
+                    parent_item, file_path)
+
+                # the item has been created. update the display name to include
+                # the nuke node to make it clear to the user how it was
+                # collected within the current session.
+                item.name = "%s (%s)" % (item.name, node.name())
+
+    def _get_nodes_of_type(self, node_type):
+        """
+        Return a list of all nodes in the current session of the supplied type.
+
+        :param node_type: The type of node to look for.
+        :return: A list of nuke.Node objects.
+        """
+
+        import nuke
+        return [n for n in nuke.allNodes() if n.Class() == node_type]

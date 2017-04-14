@@ -9,12 +9,22 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-
 import hou
-
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
+
+# A dict of dicts organized by category, type and output file parm
+_HOUDINI_OUTPUTS = {
+    # rops
+    hou.ropNodeTypeCategory(): {
+        "alembic": "filename",    # alembic cache
+        "comp": "copoutput",      # composite
+        "ifd": "vm_picture",      # mantra render node
+        "opengl": "picture",      # opengl render
+        "wren": "wr_picture",     # wren wireframe
+    },
+}
 
 
 class HoudiniSessionCollector(HookBaseClass):
@@ -32,8 +42,7 @@ class HoudiniSessionCollector(HookBaseClass):
         # create an item representing the current houdini session
         item = self.collect_current_houdini_session(parent_item)
 
-        # look for caches
-        self.collect_alembic_caches(item)
+        self.collect_node_outputs(item)
 
     def collect_current_houdini_session(self, parent_item):
         """
@@ -73,55 +82,46 @@ class HoudiniSessionCollector(HookBaseClass):
 
         return session_item
 
-    def collect_alembic_caches(self, parent_item):
+    def collect_node_outputs(self, parent_item):
         """
-        Creates items for all alembic output rops.
+        Creates items for known output nodes
 
         :param parent_item: Parent Item instance
-
-        :returns: List of alembic cache items
         """
-
-        # use the property on the parent to locate alembic caches
-        items = []
 
         publisher = self.parent
 
-        # get all rop/sop alembic nodes in the session
-        alembic_nodes = hou.nodeType(
-            hou.ropNodeTypeCategory(),
-            "alembic"
-        ).instances()
+        for node_category in _HOUDINI_OUTPUTS:
+            for node_type in _HOUDINI_OUTPUTS[node_category]:
 
-        publisher.logger.debug(
-            "Found alembic nodes: %s" %
-            ([n.path() for n in alembic_nodes])
-        )
+                path_parm_name = _HOUDINI_OUTPUTS[node_category][node_type]
 
-        for alembic_node in alembic_nodes:
+                # get all the nodes for the category and type
+                nodes = hou.nodeType(node_category, node_type).instances()
 
-            publisher.logger.debug(
-                "Processing alembic node: %s" %
-                (alembic_node.path(),)
-            )
+                publisher.logger.debug(
+                    "Found %s nodes: %s" %
+                    (node_type, [n.path() for n in nodes])
+                )
 
-            # get the output cache path
-            cache_path = alembic_node.parm("filename").eval()
+                for node in nodes:
 
-            # ensure the alembic cache dir exists
-            if not os.path.exists(cache_path):
-                continue
+                    publisher.logger.debug(
+                        "Processing %s..." % (node.path(),))
 
-            # do some early pre-processing to ensure the file is of the right
-            # type. use the base class item info method to see what the item
-            # type would be.
-            item_info = self._get_item_info(cache_path)
-            if item_info["item_type"] != "file.alembic":
-                continue
+                    # get the evaluated path parm value
+                    path = node.parm(path_parm_name).eval()
 
-            # allow the base class to collect and create the item. it knows how
-            # to handle alembic files
-            super(HoudiniSessionCollector, self).process_file(
-                parent_item,
-                cache_path
-            )
+                    # ensure the output path exists
+                    if not os.path.exists(path):
+                        continue
+
+                    # allow the base class to collect and create the item. it
+                    # should know how to handle the output path
+                    item = super(HoudiniSessionCollector, self).process_file(
+                        parent_item, path)
+
+                    # the item has been created. update the display name to
+                    # include the node path to make it clear to the user how it
+                    # was collected within the current session.
+                    item.name = "%s (%s)" % (item.name, node.path())

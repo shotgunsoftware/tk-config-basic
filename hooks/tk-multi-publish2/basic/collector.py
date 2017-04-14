@@ -58,9 +58,9 @@ COMMON_FILE_INFO = {
         "icon": "image_sequence.png",
         "item_type": "file.image",
     },
-    "Texture": {
-        "extensions": ["tiff", "tx", "tga", "dds"],
-        "icon": "image.png",
+    "Texture Image": {
+        "extensions": ["tiff", "tx", "tga", "dds", "rat"],
+        "icon": "texture.png",
         "item_type": "file.texture",
     },
 }
@@ -260,6 +260,7 @@ class BasicSceneCollector(HookBaseClass):
                 type_display = "%s Sequence" % (type_display,)
                 item_type = "%s.%s" % (item_type, "sequence")
                 icon_name = "image_sequence.png"
+                display_name = publisher.util.get_publish_name(path)
 
         # construct a full path to the icon given the name defined above
         icon_path = self._get_icon_path(icon_name)
