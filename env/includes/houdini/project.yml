@@ -38,6 +38,8 @@ houdini.project:
     tk-multi-loader2:
         action_mappings:
           Alembic Cache: [import]
+          Rendered Image: [file_cop]
+          Image: [file_cop]
         actions_hook: '{self}/tk-houdini_actions.py'
         entities:
         - caption: Project
@@ -54,11 +56,14 @@ houdini.project:
         location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
-        actions_hook: '{self}/general_actions.py'
+        actions_hook: '{self}/general_actions.py:{self}/tk-houdini_actions.py'
         action_mappings:
           PublishedFile:
-          - actions:
-            - publish_clipboard
+          - actions: [file_cop]
+            filters: {published_file_type: Rendered Image}
+          - actions: [file_cop]
+            filters: {published_file_type: Image}
+          - actions: [publish_clipboard]
             filters: {}
           Task:
           - actions:

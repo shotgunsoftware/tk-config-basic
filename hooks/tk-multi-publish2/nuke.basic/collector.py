@@ -13,6 +13,12 @@ import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
+# A look up of node types to parameters for finding outputs to publish
+_NUKE_OUTPUTS = {
+    "Write": "file",
+    "WriteGeo": "file",
+}
+
 
 class NukeSessionCollector(HookBaseClass):
     """
@@ -38,8 +44,7 @@ class NukeSessionCollector(HookBaseClass):
             # running nuke
             self.collect_current_nuke_session(parent_item)
 
-        self.collect_write_geom_nodes(parent_item)
-        self.collect_write_nodes(parent_item)
+        self.collect_node_outputs(parent_item)
 
     def collect_current_nuke_session(self, parent_item):
         """
@@ -118,62 +123,41 @@ class NukeSessionCollector(HookBaseClass):
         #if active_project and active_project.guid() == project.guid():
             #enabled = True
 
-    def collect_write_geom_nodes(self, parent_item):
+    def collect_node_outputs(self, parent_item):
         """
-        Scan the current session for write geo nodes that have written files to
-        disk
+        Scan known output node types in the session and see if they reference
+        files that have been written to disk.
 
         :param parent_item: The parent item for any write geo nodes collected
         """
 
-        # iterate over all the write geo nodes in the file and see if they
-        # reference files that have been written to disk.
-        for node in self._get_nodes_of_type("WriteGeo"):
-
-            # evaluate the file path and any frame expressions/format
-            file_path = node["file"].evaluate()
-
-            if os.path.exists(file_path):
-                # file exists, let the basic collector handle it
-                item = super(NukeSessionCollector, self).process_file(
-                    parent_item, file_path)
-
-                # the item has been created. update the display name to include
-                # the nuke node to make it clear to the user how it was
-                # collected within the current session.
-                item.name = "%s (%s)" % (item.name, node.name())
-
-    def collect_write_nodes(self, parent_item):
-        """
-        Scan the current session for write nodes that have written files to disk
-
-        :param parent_item: The parent item for any write nodes collected
-        """
-
-        # iterate over all the write nodes in the file and see if they reference
-        # files that have been written to disk.
-        for node in self._get_nodes_of_type("Write"):
-
-            # evaluate the file path and any frame expressions/format
-            file_path = node["file"].evaluate()
-
-            if os.path.exists(file_path):
-                # file exists, let the basic collector handle it
-                item = super(NukeSessionCollector, self).process_file(
-                    parent_item, file_path)
-
-                # the item has been created. update the display name to include
-                # the nuke node to make it clear to the user how it was
-                # collected within the current session.
-                item.name = "%s (%s)" % (item.name, node.name())
-
-    def _get_nodes_of_type(self, node_type):
-        """
-        Return a list of all nodes in the current session of the supplied type.
-
-        :param node_type: The type of node to look for.
-        :return: A list of nuke.Node objects.
-        """
-
         import nuke
-        return [n for n in nuke.allNodes() if n.Class() == node_type]
+
+        # iterate over all the known output types
+        for node_type in _NUKE_OUTPUTS:
+
+            # get all the instances of the node type
+            all_nodes_of_type = [n for n in nuke.allNodes()
+                if n.Class() == node_type]
+
+            # iterate over each instance
+            for node in all_nodes_of_type:
+
+                param_name = _NUKE_OUTPUTS[node_type]
+
+                # evaluate the output path parameter which may include frame
+                # expressions/format
+                file_path = node[param_name].evaluate()
+
+                if not file_path or not os.path.exists(file_path):
+                    # no file or file does not exist, nothing to do
+                    continue
+
+                # file exists, let the basic collector handle it
+                item = super(NukeSessionCollector, self).process_file(
+                    parent_item, file_path)
+
+                # the item has been created. update the display name to include
+                # the nuke node to make it clear to the user how it was
+                # collected within the current session.
+                item.name = "%s (%s)" % (item.name, node.name())

@@ -8,6 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
+import glob
 import os
 import maya.cmds as cmds
 import sgtk
@@ -64,6 +65,9 @@ class MayaSessionCollector(HookBaseClass):
         # create an item representing the current maya session
         item = self.collect_current_maya_session(parent_item)
         project_root = item.properties["project_root"]
+
+        # look at the render layers to find rendered images on disk
+        self.collect_rendered_images(item)
 
         # if we can determine a project root, collect other files to publish
         if project_root:
@@ -177,9 +181,47 @@ class MayaSessionCollector(HookBaseClass):
 
             # allow the base class to collect and create the item. it knows how
             # to handle movie files
-            super(MayaSessionCollector, self).process_file(
+            item = super(MayaSessionCollector, self).process_file(
                 parent_item,
                 movie_path
             )
 
+            # the item has been created. update the display name to include
+            # the an indication of what it is and why it was collected
+            item.name = "%s (%s)" % (item.name, "playblast")
 
+    def collect_rendered_images(self, parent_item):
+        """
+        Creates items for any rendered images that can be identified by
+        render layers in the file.
+
+        :param parent_item: Parent Item instance
+        :return:
+        """
+
+        # iterate over defined render layers and query the render settings for
+        # information about a potential render
+        for layer in cmds.ls(type="renderLayer"):
+
+            # use the render settings api to get a path where the frame number
+            # spec is replaced with a '*' which we can use to glob
+            (frame_glob,) = cmds.renderSettings(
+                genericFrameImageName="*",
+                fullPath=True,
+                layer=layer
+            )
+
+            # see if there are any files on disk that match this pattern
+            rendered_paths = glob.glob(frame_glob)
+
+            if rendered_paths:
+                # we only need one path to publish, so take the first one and
+                # let the base class collector handle it
+                item = super(MayaSessionCollector, self).process_file(
+                    parent_item,
+                    rendered_paths[0]
+                )
+
+                # the item has been created. update the display name to include
+                # the an indication of what it is and why it was collected
+                item.name = "%s (Render Layer: %s)" % (item.name, layer)

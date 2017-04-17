@@ -24,6 +24,8 @@ houdini.site:
     tk-multi-loader2:
         action_mappings:
           Alembic Cache: [import]
+          Rendered Image: [file_cop]
+          Image: [file_cop]
         actions_hook: '{self}/tk-houdini_actions.py'
         entities:
         - caption: Project
@@ -41,9 +43,12 @@ houdini.site:
     tk-multi-shotgunpanel:
         action_mappings:
           PublishedFile:
-          - actions:
-            - publish_clipboard
+          - actions: [publish_clipboard]
             filters: {}
+          - actions: [file_cop]
+            filters: {published_file_type: Rendered Image}
+          - actions: [file_cop]
+            filters: {published_file_type: Image}
           Task:
           - actions:
             - assign_task
@@ -54,7 +59,7 @@ houdini.site:
             - quicktime_clipboard
             - sequence_clipboard
             filters: {}
-        actions_hook: '{self}/general_actions.py'
+        actions_hook: '{self}/general_actions.py:{self}/tk-houdini_actions.py'
         shotgun_fields_hook: '{self}/shotgun_fields.py'
         enable_context_switch: true
         location: "@common.apps.tk-multi-shotgunpanel.location"
