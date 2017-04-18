@@ -94,7 +94,9 @@ class ShotgunReviewPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["file.image", "file.movie"]
+
+        # we use "video" since that's the mimetype category.
+        return ["file.image", "file.video"]
 
     def accept(self, log, settings, item):
         """
@@ -190,6 +192,10 @@ class ShotgunReviewPlugin(HookBaseClass):
             "description": item.description,
             "entity": self._get_version_entity(item)
         }
+
+        if "sg_publish_data" in item.properties:
+            publish_data = item.properties["sg_publish_data"]
+            version_data["published_files"] = [publish_data]
 
         if settings["Link Local File"].value:
             version_data["sg_path_to_movie"] = path

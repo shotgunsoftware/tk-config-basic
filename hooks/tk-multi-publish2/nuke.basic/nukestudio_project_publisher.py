@@ -1,23 +1,22 @@
 # Copyright (c) 2017 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-import hou
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class HoudiniSessionPublishPlugin(HookBaseClass):
+class NukeStudioProjectPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open houdini session.
+    Plugin for publishing a Nuke Studio project.
     """
 
     @property
@@ -39,7 +38,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Houdini Session Publisher"
+        return "Nuke Studio Project Publisher"
 
     @property
     def description(self):
@@ -48,8 +47,8 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will publish the current Houdini session. The plugin
-        requires the session be saved to a file before validation will succeed.
+        This plugin will publish an open Nuke Studio project. The plugin
+        requires the project be saved to a file before validation will succeed.
         The file will be published in place.
         """
 
@@ -75,7 +74,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         return {
             "Publish Type": {
                 "type": "shotgun_publish_type",
-                "default": "Houdini Scene",
+                "default": "Nuke Studio Project",
                 "description": "SG publish type to associate publishes with."
             },
         }
@@ -89,7 +88,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["houdini.session"]
+        return ["nukestudio.project"]
 
     def accept(self, log, settings, item):
         """
@@ -116,6 +115,13 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
+        project = item.properties.get("project")
+
+        # ensure there is a document in the item properties
+        if not project:
+            log.warning("Nuke Studio Project item missing 'project' property.")
+            return {"accepted": False}
+
         return {"accepted": True, "required": False, "enabled": True}
 
     def validate(self, log, settings, item):
@@ -132,14 +138,15 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        # make sure the session is completely saved
-        if hou.hipFile.hasUnsavedChanges():
-            log.error("The current session has unsaved changes.")
+        project = item.properties.get("project")
+
+        if not project.path():
+            log.error("Project '%s' has not been saved." % (project.name(),))
             return False
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(hou.hipFile.path())
+        path = sgtk.util.ShotgunPath.normalize(os.path.abspath(project.path()))
 
         publisher = self.parent
 
@@ -182,11 +189,23 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
+        publisher = self.parent
+
+        project = item.properties.get("project")
+
+        # there doesn't appear to be a way to determine if the project has
+        # unsaved changes. at least if we're here we have a path. so go ahead
+        # and force the save.
+        try:
+            project.save()
+        except Exception, e:
+            log.error("Failed to ensure the project '%s' was saved. %s" %
+                project.name(), e)
+            return
+
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(hou.hipFile.path())
-
-        publisher = self.parent
+        path = sgtk.util.ShotgunPath.normalize(os.path.abspath(project.path()))
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -236,3 +255,8 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         log.info("Clearing status of conflicting publishes...")
         publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
+
+        """
+        project = item.properties["project"]
+        project.saveAs(next_version_path)
+        """

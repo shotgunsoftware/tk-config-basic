@@ -9,18 +9,15 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-
 import maya.cmds as cmds
-
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaScenePublishPlugin(HookBaseClass):
+class MayaSessionPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open maya scene. Should inherit from the maya file
-    publisher.
+    Plugin for publishing an open maya session.
     """
 
     @property
@@ -42,7 +39,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish Maya Scene"
+        return "Maya Session Publisher"
 
     @property
     def description(self):
@@ -51,12 +48,9 @@ class MayaScenePublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Publishes the current maya scene.
-
-        This plugin will recognize version numbers in the file name and will
-        publish with that version number to Shotgun. If the "Auto Version"
-        setting is enabled, the plugin will automatically copy the file to the
-        next version number after publishing.
+        This plugin will publish the current Maya session. The plugin requires
+        the session be saved to a file before validation will succeed. The file
+        will be published in place.
         """
 
     @property
@@ -84,15 +78,6 @@ class MayaScenePublishPlugin(HookBaseClass):
                 "default": "Maya Scene",
                 "description": "SG publish type to associate publishes with."
             },
-            "Auto Version": {
-                "type": "bool",
-                "default": True,
-                "description": (
-                    "If set to True, the file will be automatically saved to "
-                    "the next version after publish."
-                )
-            },
-            # TODO: revisit default states for settings ^
         }
 
     @property
@@ -104,7 +89,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["maya.scene"]
+        return ["maya.session"]
 
     def accept(self, log, settings, item):
         """
@@ -131,26 +116,6 @@ class MayaScenePublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        # if we have a project root, check for a valid, serialized context.
-        # warn if not.
-        if "project_root" in item.properties:
-
-            project_root = item.properties["project_root"]
-            context_file = os.path.join(project_root, "shotgun.context")
-
-            log.debug("Looking for context file in %s" % context_file)
-            if os.path.exists(context_file):
-                try:
-                    with open(context_file, "rb") as fh:
-                        context_str = fh.read()
-                    context_obj = sgtk.Context.deserialize(context_str)
-                    item.context = context_obj
-                except Exception, e:
-                    log.warning(
-                        "Could not read saved context %s: %s" %
-                        (context_file, e)
-                    )
-
         return {"accepted": True, "required": False, "enabled": True}
 
     def validate(self, log, settings, item):
@@ -167,12 +132,15 @@ class MayaScenePublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        # get the path to the current file
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
         path = cmds.file(query=True, sn=True)
 
         if not path:
-            log.error("Scene is not saved.")
+            log.error("Session is not saved.")
             return False
+
+        sgtk.util.ShotgunPath.normalize(os.path.abspath(path))
 
         # ensure we have an updated project root
         project_root = cmds.workspace(q=True, rootDirectory=True)
@@ -180,7 +148,7 @@ class MayaScenePublishPlugin(HookBaseClass):
 
         # warn if no project root could be determined.
         if not project_root:
-            log.warning("Your scene is not part of a maya project.")
+            log.warning("Your session is not part of a maya project.")
 
         publisher = self.parent
 
@@ -223,8 +191,10 @@ class MayaScenePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # get the path to the current file
-        path = cmds.file(query=True, sn=True)
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(
+            os.path.abspath(cmds.file(query=True, sn=True)))
 
         publisher = self.parent
 
@@ -245,8 +215,8 @@ class MayaScenePublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
-            # TODO: need to update core for this to work
-            #"dependency_paths": self._maya_find_additional_scene_dependencies(),
+            "dependency_paths":
+                self._maya_find_additional_session_dependencies(),
         }
         log.debug("Publishing: %s" % (args,))
 
@@ -269,18 +239,7 @@ class MayaScenePublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # try to save the associated context into the project root. since the
-        # project root isn't required, bail if not known.
-        if "project_root" in item.properties:
-            project_root = item.properties["project_root"]
-            context_file = os.path.join(project_root, "shotgun.context")
-            with open(context_file, "wb") as fh:
-                fh.write(item.context.serialize(with_user_credentials=False))
-
         publisher = self.parent
-
-        # get the path to the file
-        path = item.properties["path"]
 
         # get the data for the publish that was just created in SG
         publish_data = item.properties["sg_publish_data"]
@@ -290,21 +249,9 @@ class MayaScenePublishPlugin(HookBaseClass):
         publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
 
-        # do the auto versioning if it is enabled
-        if settings["Auto Version"].value:
-            version_info = publisher.util.create_next_version_path(path)
-            if version_info["success"]:
-                log.info(
-                    "Copied %s to %s." %
-                    (path, version_info["next_version_path"])
-                )
-            else:
-                reason = version_info["reason"]
-                log.warn("Unable to Auto Version. %s" % (reason,))
-
-    def _maya_find_additional_scene_dependencies(self):
+    def _maya_find_additional_session_dependencies(self):
         """
-        Find additional dependencies from the scene
+        Find additional dependencies from the session
         """
         # default implementation looks for references and
         # textures (file nodes) and returns any paths that
@@ -324,7 +271,7 @@ class MayaScenePublishPlugin(HookBaseClass):
 
         # now look at file texture nodes
         for file_node in cmds.ls(l=True, type="file"):
-            # ensure this is actually part of this scene and not referenced
+            # ensure this is actually part of this session and not referenced
             if cmds.referenceQuery(file_node, isNodeReferenced=True):
                 # this is embedded in another reference, so don't include it in
                 # the breakdown

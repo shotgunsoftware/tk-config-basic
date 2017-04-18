@@ -26,6 +26,7 @@ nuke.site:
         Nuke Script: [script_import]
         Rendered Image: [read_node]
         Alembic Cache: [read_node]
+        Movie: [read_node]
       actions_hook: '{self}/tk-nuke_actions.py'
       entities:
       - caption: Project
@@ -38,17 +39,17 @@ nuke.site:
         filters:
         - [task_assignees, is, '{context.user}']
         hierarchy: [project, entity, content]
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
       action_mappings:
         PublishedFile:
         - actions: [read_node]
           filters: {published_file_type: Rendered Image}
+        - actions: [read_node]
+          filters: {published_file_type: Alembic Cache}
+        - actions: [read_node]
+          filters: {published_file_type: Movie}
         - actions: [script_import]
           filters: {published_file_type: Nuke Script}
         Task:
@@ -56,12 +57,7 @@ nuke.site:
           filters: {}
       actions_hook: '{self}/general_actions.py:{self}/tk-nuke_actions.py'
       enable_context_switch: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-        version: 0922a2e9a6d5b3a7d637990093efa537808715cf
-        type: git_branch
-        branch: develop/zero_config
-
+      location: "@common.apps.tk-multi-shotgunpanel.location"
 
   automatic_context_switch: false
   menu_favourites: []

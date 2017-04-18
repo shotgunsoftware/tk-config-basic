@@ -40,11 +40,7 @@ photoshopcc.site:
         filters:
         - [task_assignees, is, '{context.user}']
         hierarchy: [project, entity, content]
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
       shotgun_fields_hook: '{self}/shotgun_fields.py'
@@ -65,12 +61,7 @@ photoshopcc.site:
           - sequence_clipboard
           filters: {}
       enable_context_switch: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-        version: 0922a2e9a6d5b3a7d637990093efa537808715cf
-        type: git_branch
-        branch: develop/zero_config
-
+      location: "@common.apps.tk-multi-shotgunpanel.location"
 
   shelf_favorites: []
   debug_logging: true

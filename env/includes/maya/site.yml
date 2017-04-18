@@ -24,8 +24,9 @@ maya.site:
     tk-multi-loader2:
       action_mappings:
         Maya Scene: [reference, import]
-        Photoshop Image: [texture_node]
-        Rendered Image: [texture_node]
+        Photoshop Image: [udim_texture_node]
+        Rendered Image: [texture_node, image_plane]
+        Image: [texture_node, image_plane]
       actions_hook: '{self}/tk-maya_actions.py'
       entities:
       - caption: Project
@@ -38,11 +39,7 @@ maya.site:
         filters:
         - [task_assignees, is, '{context.user}']
         hierarchy: [project, entity, content]
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
       actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
@@ -50,9 +47,11 @@ maya.site:
         PublishedFile:
         - actions: [reference, import]
           filters: {published_file_type: Maya Scene}
-        - actions: [texture_node]
+        - actions: [texture_node, image_plane]
+          filters: {published_file_type: Image}
+        - actions: [texture_node, image_plane]
           filters: {published_file_type: Rendered Image}
-        - actions: [texture_node]
+        - actions: [texture_node, image_plane]
           filters: {published_file_type: Photoshop Image}
         - actions: [udim_texture_node]
           filters: {published_file_type: UDIM Image}
@@ -65,11 +64,7 @@ maya.site:
         - actions: [quicktime_clipboard, sequence_clipboard]
           filters: {}
       enable_context_switch: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-        version: 0922a2e9a6d5b3a7d637990093efa537808715cf
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-shotgunpanel.location"
 
   location:
     path: https://github.com/shotgunsoftware/tk-maya.git

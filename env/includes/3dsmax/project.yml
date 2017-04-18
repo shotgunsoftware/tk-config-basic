@@ -15,44 +15,26 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
-
+- ../common/settings/tk-multi-publish2.yml
 
 3dsmax.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-publish2:
-      collector: "{config}/3dsmax/publish/collector.py"
-
+      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/3dsmax.basic/collector.py"
       publish_plugins:
-          - name: Publish to Shotgun
-            hook: "{self}/file_publisher.py"
-            settings:
-              Publish all file types: false
-              File Types:
-              - [Nuke Script, nk]
-              - [Photoshop Image, psd, psb]
-              - [3dsmax Scene, max]
-              - [Houdini Scene, hip]
-              - [Maya Scene, ma, mb]
-              - [Hiero Project, hrox]
-              - [Alembic Cache]
-              - [Rendered Image, dpx, exr]
-              - [Texture, tiff, tx, tga, dds]
-              - [Image, jpeg, jpg, png]
-
-          - name: Publish current 3dsMax Scene
-            hook: "{config}/3dsmax/publish/scene_publisher.py"
-            settings: {}
-
-          - name: Send to Shotgun review
-            hook: "{self}/version_creator.py"
-            settings: {}
-
-      location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.0.11
+        - '@common.settings.tk-multi-publish2.file_publisher'
+        - '@common.settings.tk-multi-publish2.version_creator'
+        - name: 3ds Max Scene Publisher
+          hook: "{config}/tk-multi-publish2/3dsmax.basic/file_publisher.py"
+          settings: {}
+        - name: Save the file to the next version
+          hook: "{config}/tk-multi-publish2/3dsmax.basic/version_up.py"
+          settings: {}
+      location: "@common.apps.tk-multi-publish2.location"
 
     tk-multi-loader2:
       action_mappings:
@@ -72,11 +54,7 @@ includes:
         - [project, is, '{context.project}']
         - [task_assignees, is, '{context.user}']
         hierarchy: [entity, content]
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
       shotgun_fields_hook: '{self}/shotgun_fields.py'
@@ -97,11 +75,7 @@ includes:
           - sequence_clipboard
           filters: {}
       enable_context_switch: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-        version: 0922a2e9a6d5b3a7d637990093efa537808715cf
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-shotgunpanel.location"
 
   location:
     path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git

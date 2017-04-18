@@ -22,9 +22,24 @@ houdini.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-publish2:
+      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/houdini.basic/collector.py"
+      publish_plugins:
+        - '@common.settings.tk-multi-publish2.file_publisher'
+        - '@common.settings.tk-multi-publish2.version_creator'
+        - name: Houdini Scene Publisher
+          hook: "{config}/tk-multi-publish2/houdini.basic/file_publisher.py"
+          settings: {}
+        - name: Save the file to the next version
+          hook: "{config}/tk-multi-publish2/houdini.basic/version_up.py"
+          settings: {}
+      location: "@common.apps.tk-multi-publish2.location"
+
     tk-multi-loader2:
         action_mappings:
           Alembic Cache: [import]
+          Rendered Image: [file_cop]
+          Image: [file_cop]
         actions_hook: '{self}/tk-houdini_actions.py'
         entities:
         - caption: Project
@@ -38,18 +53,17 @@ houdini.project:
           - [project, is, '{context.project}']
           - [task_assignees, is, '{context.user}']
           hierarchy: [project, entity, content]
-        location:
-          path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-          version: c6cfb186fcebd59d6ca933ce61835b797de44f21
-          type: git_branch
-          branch: develop/zero_config
+        location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
-        actions_hook: '{self}/general_actions.py'
+        actions_hook: '{self}/general_actions.py:{self}/tk-houdini_actions.py'
         action_mappings:
           PublishedFile:
-          - actions:
-            - publish_clipboard
+          - actions: [file_cop]
+            filters: {published_file_type: Rendered Image}
+          - actions: [file_cop]
+            filters: {published_file_type: Image}
+          - actions: [publish_clipboard]
             filters: {}
           Task:
           - actions:
@@ -62,11 +76,7 @@ houdini.project:
             - sequence_clipboard
             filters: {}
         enable_context_switch: true
-        location:
-          path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-          version: 0922a2e9a6d5b3a7d637990093efa537808715cf
-          type: git_branch
-          branch: develop/zero_config
+        location: "@common.apps.tk-multi-shotgunpanel.location"
 
   location:
     path: https://github.com/shotgunsoftware/tk-houdini.git

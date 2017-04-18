@@ -11,7 +11,6 @@
 import os
 
 import sgtk
-from sgtk.util.filesystem import ensure_folder_exists, copy_file
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -26,14 +25,21 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         Path to an png icon on disk
         """
-        return self.parent.get_icon_path("publish")
+
+        # look for icon one level up from this hook's folder in "icons" folder
+        return os.path.join(
+            self.disk_location,
+            os.pardir,
+            "icons",
+            "publish.png"
+        )
 
     @property
     def name(self):
         """
         One line display name describing the plugin
         """
-        return "Publish PS Document to Shotgun"
+        return "Photoshop Document Publisher"
 
     @property
     def description(self):
@@ -42,7 +48,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Publishes Photoshop documents to shotgun.
+        This plugin will publish an open Photoshop document. The plugin requires
+        the document be saved to a file before validation will succeed. The file
+        will be published in place.
         """
 
     @property
@@ -72,7 +80,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
                     "The shotgun publish file type to use when publishing "
                     "items with this plugin."
                 )
-            }
+            },
         }
 
     @property
@@ -111,8 +119,11 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
+        document = item.properties.get("document")
+
         # ensure there is a document in the item properties
-        if "document" not in item.properties:
+        if not document:
+            log.warning("Photoshop document item missing 'document' property.")
             return {"accepted": False}
 
         return {"accepted": True, "required": False, "enabled": True}
@@ -135,35 +146,40 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
 
         document = item.properties["document"]
         if not document.saved:
-            log.error("Document '%s' not saved." % (document.name,))
+            log.error("Document '%s' has not been saved." % (document.name,))
             return False
 
-        # ensure the publish destination is created and that we can determine
-        # the next available publish version. We do this before the actual
-        # publish and before creating the version directory so that multiple
-        # documents from the same folder being published at the same time can
-        # share the same version number. this keeps a close association between
-        # files published from the same work area. we don't wait until the
-        # publish phase to determine the version because it would mean each
-        # file being published would bump the version independently.
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(
+            os.path.abspath(document.fullName.fsName))
 
-        log.info("Validating publish folder and version...")
         publisher = self.parent
 
-        path = os.path.abspath(document.fullName.fsName)
-        file_info = publisher.util.get_file_path_components(path)
+        # get the publish name for this file path. this will ensure we get a
+        # consistent publish name when looking up existing publishes.
+        publish_name = publisher.util.get_publish_name(path)
 
-        # ensure the publish folder exists
-        publish_folder = os.path.join(file_info["folder"], "publish")
-        log.debug("Ensuring publish folder exists: '%s'" % (publish_folder,))
-        ensure_folder_exists(publish_folder)
+        log.info("Publish name will be: %s" % (publish_name,))
 
-        # get the next available version within the publish folder
-        publish_version = publisher.util.get_next_version_folder(publish_folder)
+        # see if there are any other publishes of this path with a status.
+        # Note the name, context, and path *must* match the values supplied to
+        # register_publish in the publish phase in order for this to return an
+        # accurate list of previous publishes of this file.
+        publishes = publisher.util.get_conflicting_publishes(
+            item.context,
+            path,
+            publish_name,
+            filters=["sg_status_list", "is_not", None]
+        )
 
-        # add publish version and publish version folder to the item properties.
-        item.properties["publish_folder"] = publish_folder
-        item.properties["publish_version"] = publish_version
+        if publishes:
+            log.warn(
+                "Found %s conflicting publishes in Shotgun with the path '%s'. "
+                "If you continue, these conflicting publishes will no longer "
+                "be available to other users via the loader." %
+                (len(publishes), path)
+            )
 
         return True
 
@@ -179,52 +195,31 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        document = item.properties["document"]
-
         publisher = self.parent
 
         # should be saved if we're here
-        path = os.path.abspath(document.fullName.fsName)
-        file_info = publisher.util.get_file_path_components(path)
+        document = item.properties["document"]
 
-        # retrieve the publish folder and version populated during validation
-        publish_folder = item.properties["publish_folder"]
-        publish_version = item.properties["publish_version"]
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(
+            os.path.abspath(document.fullName.fsName))
 
-        # build the path to the next available version subfolder that we will
-        # copy the source file to and publish from
-        publish_version_folder = os.path.join(
-            publish_folder,
-            "v%03d" % (publish_version,)
-        )
+        # get the publish name for this file path. this will ensure we get a
+        # consistent name across version publishes of this file.
+        publish_name = publisher.util.get_publish_name(path)
 
-        ensure_folder_exists(publish_version_folder)
+        # extract the version number for publishing. use 1 if no version in path
+        version_number = publisher.util.get_version_number(path) or 1
 
-        # get the full destination path for the file to publish
-        publish_path = os.path.join(
-            publish_version_folder,
-            file_info["filename"]
-        )
-
-        # copy the source file to the new destination
-        log.info("Copying to publish folder: %s" % (publish_version_folder,))
-        copy_file(path, publish_path)
-
-        # update the file info for the new publish path
-        file_info = publisher.util.get_file_path_components(publish_path)
-
-        # determine the publish type
-        extension = file_info["extension"]
-
-        # Create the TankPublishedFile entity in Shotgun
-        # note - explicitly calling
+        # arguments for publish registration
         args = {
-            "tk": self.parent.sgtk,
+            "tk": publisher.sgtk,
             "context": item.context,
             "comment": item.description,
-            "path": publish_path,
-            "name": "%s.%s" % (file_info["prefix"], extension),
-            "version_number": publish_version,
+            "path": path,
+            "name": publish_name,
+            "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
         }
@@ -234,8 +229,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
 
-        # add the full path to the publish version folder to the item properties
-        item.properties["publish_version_folder"] = publish_version_folder
+        # now that we've published. keep a handle on the path that was published
+        item.properties["path"] = path
 
     def finalize(self, log, settings, item):
         """
@@ -248,4 +243,13 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             instances.
         :param item: Item to process
         """
-        pass
+
+        publisher = self.parent
+
+        # get the data for the publish that was just created in SG
+        publish_data = item.properties["sg_publish_data"]
+
+        # ensure conflicting publishes have their status cleared
+        log.info("Clearing status of conflicting publishes...")
+        publisher.util.clear_status_for_conflicting_publishes(
+            item.context, publish_data)

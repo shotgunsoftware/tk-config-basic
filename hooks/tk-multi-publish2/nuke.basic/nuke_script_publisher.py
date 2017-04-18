@@ -1,23 +1,22 @@
 # Copyright (c) 2017 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-import hou
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class HoudiniSessionPublishPlugin(HookBaseClass):
+class NukeSessionPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open houdini session.
+    Plugin for publishing an open nuke session.
     """
 
     @property
@@ -39,7 +38,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Houdini Session Publisher"
+        return "Nuke Session Publisher"
 
     @property
     def description(self):
@@ -48,9 +47,9 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will publish the current Houdini session. The plugin
-        requires the session be saved to a file before validation will succeed.
-        The file will be published in place.
+        This plugin will publish the current Nuke script. The plugin requires
+        the session be saved to a file before validation will succeed. The file
+        will be published in place.
         """
 
     @property
@@ -75,7 +74,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         return {
             "Publish Type": {
                 "type": "shotgun_publish_type",
-                "default": "Houdini Scene",
+                "default": "Nuke Script",
                 "description": "SG publish type to associate publishes with."
             },
         }
@@ -89,7 +88,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["houdini.session"]
+        return ["nuke.session"]
 
     def accept(self, log, settings, item):
         """
@@ -132,14 +131,16 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
+        import nuke
+
         # make sure the session is completely saved
-        if hou.hipFile.hasUnsavedChanges():
+        if nuke.root().modified():
             log.error("The current session has unsaved changes.")
             return False
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(hou.hipFile.path())
+        path = sgtk.util.ShotgunPath.normalize(nuke.root().name())
 
         publisher = self.parent
 
@@ -182,9 +183,11 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
+        import nuke
+
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(hou.hipFile.path())
+        path = sgtk.util.ShotgunPath.normalize(nuke.root().name())
 
         publisher = self.parent
 

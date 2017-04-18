@@ -24,6 +24,22 @@ photoshopcc.project:
 
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
+    tk-multi-publish2:
+      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/photoshopcc.basic/collector.py"
+      publish_plugins:
+        - '@common.settings.tk-multi-publish2.file_publisher'
+        - '@common.settings.tk-multi-publish2.version_creator'
+        - name: Photoshop Document Publisher
+          hook: "{config}/tk-multi-publish2/photoshopcc.basic/document_publisher.py"
+          settings: {}
+        - name: Send document to Shotgun review
+          hook: "{config}/tk-multi-publish2/photoshopcc.basic/version_creator.py"
+          settings: {}
+        - name: Save the file to the next version
+          hook: "{config}/tk-multi-publish2/photoshopcc.basic/version_up.py"
+          settings: {}
+      location: "@common.apps.tk-multi-publish2.location"
+
     tk-multi-loader2:
       action_mappings:
         Photoshop Image: [add_as_a_layer, open_file]
@@ -42,11 +58,8 @@ photoshopcc.project:
         - [project, is, '{context.project}']
         - [task_assignees, is, '{context.user}']
         hierarchy: [entity, content]
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-        version: c6cfb186fcebd59d6ca933ce61835b797de44f21
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-loader2.location"
+
     tk-multi-shotgunpanel:
       shotgun_fields_hook: '{self}/shotgun_fields.py'
       actions_hook: '{self}/general_actions.py'
@@ -66,11 +79,7 @@ photoshopcc.project:
           - sequence_clipboard
           filters: {}
       enable_context_switch: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-        version: 0922a2e9a6d5b3a7d637990093efa537808715cf
-        type: git_branch
-        branch: develop/zero_config
+      location: "@common.apps.tk-multi-shotgunpanel.location"
 
   shelf_favorites: []
   debug_logging: true

@@ -25,10 +25,7 @@ desktop.project:
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher_all'
         - '@common.settings.tk-multi-publish2.version_creator'
-      location:
-        type: app_store
-        name: tk-multi-publish2
-        version: v0.0.11
+      location: "@common.apps.tk-multi-publish2.location"
 
     tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
 
@@ -55,6 +52,6 @@ desktop.project:
     name: Finishing Tools
   location:
     path: https://github.com/shotgunsoftware/tk-desktop.git
-    version: 6a6fc411f5d09d629818b05e262334a95fd916c9
+    version: 1dc4856068212d12ecdeaf0d9e696ab8dd88fe29
     type: git_branch
     branch: develop/zero_config

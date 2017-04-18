@@ -24,6 +24,8 @@ houdini.site:
     tk-multi-loader2:
         action_mappings:
           Alembic Cache: [import]
+          Rendered Image: [file_cop]
+          Image: [file_cop]
         actions_hook: '{self}/tk-houdini_actions.py'
         entities:
         - caption: Project
@@ -36,18 +38,17 @@ houdini.site:
           filters:
           - [task_assignees, is, '{context.user}']
           hierarchy: [project, entity, content]
-        location:
-          path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-          version: c6cfb186fcebd59d6ca933ce61835b797de44f21
-          type: git_branch
-          branch: develop/zero_config
+        location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
         action_mappings:
           PublishedFile:
-          - actions:
-            - publish_clipboard
+          - actions: [publish_clipboard]
             filters: {}
+          - actions: [file_cop]
+            filters: {published_file_type: Rendered Image}
+          - actions: [file_cop]
+            filters: {published_file_type: Image}
           Task:
           - actions:
             - assign_task
@@ -58,14 +59,10 @@ houdini.site:
             - quicktime_clipboard
             - sequence_clipboard
             filters: {}
-        actions_hook: '{self}/general_actions.py'
+        actions_hook: '{self}/general_actions.py:{self}/tk-houdini_actions.py'
         shotgun_fields_hook: '{self}/shotgun_fields.py'
         enable_context_switch: true
-        location:
-          path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-          version: 0922a2e9a6d5b3a7d637990093efa537808715cf
-          type: git_branch
-          branch: develop/zero_config
+        location: "@common.apps.tk-multi-shotgunpanel.location"
 
 
   location:

@@ -15,6 +15,8 @@
 includes:
 - frameworks.yml
 
+# full app settings
+
 common.apps.tk-multi-about:
   location:
     version: v0.2.2
@@ -34,3 +36,23 @@ common.apps.tk-multi-launchapp:
     version: 8211a6306717c4e2494c7cd78f4927949299b31f
     type: git_branch
     branch: develop/software_entity
+
+
+# locations for common apps
+
+common.apps.tk-multi-publish2.location:
+  type: app_store
+  name: tk-multi-publish2
+  version: v0.2.0
+
+common.apps.tk-multi-loader2.location:
+  path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+  version: 144b086d2ba5af8dbef9f17888f7777dd0eb2d4b
+  type: git_branch
+  branch: develop/zero_config
+
+common.apps.tk-multi-shotgunpanel.location:
+  path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
+  version: eeec3c6af701affb7c6d6f938b542c03060032ba
+  type: git_branch
+  branch: develop/zero_config

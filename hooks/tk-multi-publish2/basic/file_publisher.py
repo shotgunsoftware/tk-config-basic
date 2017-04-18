@@ -51,12 +51,9 @@ class BasicFilePublishPlugin(HookBaseClass):
         return """
         Publishes files/folders to shotgun. Supports any file or folder type if
         the "Publish all file types" setting is enabled, otherwise limited by
-        the extensions in the "File Types" setting.
-
-        This plugin will recognize version numbers in the file or folder name
-        and will publish with that version number to Shotgun. If the "Auto
-        Version" setting is enabled, the plugin will automatically copy the
-        file/folder to the next version number after publishing.
+        the extensions in the "File Types" setting. This plugin will recognize
+        version numbers in the file or folder name and will publish with that
+        version number to Shotgun.
         """
 
     @property
@@ -96,15 +93,6 @@ class BasicFilePublishPlugin(HookBaseClass):
                     "their extension has not been declared in the file types "
                     "setting.")
             },
-            "Auto Version": {
-                "type": "bool",
-                "default": True,
-                "description": (
-                    "If set to True, the file will be automatically saved to "
-                    "the next version after publish."
-                )
-            },
-            # TODO: revisit default states for settings ^
         }
 
     @property
@@ -266,7 +254,6 @@ class BasicFilePublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = item.properties["path"]
 
         # get the data for the publish that was just created in SG
         publish_data = item.properties["sg_publish_data"]
@@ -275,18 +262,6 @@ class BasicFilePublishPlugin(HookBaseClass):
         log.info("Clearing status of conflicting publishes...")
         publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
-
-        # do the auto versioning if it is enabled
-        if settings["Auto Version"].value:
-            version_info = publisher.util.create_next_version_path(path)
-            if version_info["success"]:
-                log.info(
-                    "Copied %s to %s." %
-                    (path, version_info["next_version_path"])
-                )
-            else:
-                reason = version_info["reason"]
-                log.warn("Unable to Auto Version. %s" % (reason,))
 
     def _get_publish_type(self, extension, settings):
         """

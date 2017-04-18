@@ -7,25 +7,24 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-import sgtk
+
+import glob
 import os
 import maya.cmds as cmds
+import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaSceneCollector(HookBaseClass):
+class MayaSessionCollector(HookBaseClass):
     """
-    Collector that operates on the maya scene. Should inherit from the basic
+    Collector that operates on the maya session. Should inherit from the basic
     collector hook.
     """
 
     def process_file(self, parent_item, path):
         """
-        Analyzes the given file and creates one or more items
-        to represent it. Extends the base processing
-        capabilities with a maya file detection which
-        determines the maya project.
+        Analyzes the given file and creates one or more items to represent it.
 
         :param parent_item: Root item instance
         :param path: Path to analyze
@@ -33,7 +32,7 @@ class MayaSceneCollector(HookBaseClass):
         """
 
         # run base class logic to set basic properties for us
-        item = super(MayaSceneCollector, self).process_file(parent_item, path)
+        item = super(MayaSessionCollector, self).process_file(parent_item, path)
 
         if item.type == "file.maya":
 
@@ -57,27 +56,30 @@ class MayaSceneCollector(HookBaseClass):
 
     def process_current_scene(self, parent_item):
         """
-        Analyzes the current scene open in a DCC and parents a subtree of items
-        under the parent_item passed in.
+        Analyzes the current session open in Maya and parents a subtree of
+        items under the parent_item passed in.
 
         :param parent_item: Root item instance
         """
 
-        # create an item representing the current maya scene
-        item = self.collect_current_maya_scene(parent_item)
+        # create an item representing the current maya session
+        item = self.collect_current_maya_session(parent_item)
         project_root = item.properties["project_root"]
+
+        # look at the render layers to find rendered images on disk
+        self.collect_rendered_images(item)
 
         # if we can determine a project root, collect other files to publish
         if project_root:
             self.collect_playblasts(item, project_root)
             self.collect_alembic_caches(item, project_root)
 
-    def collect_current_maya_scene(self, parent_item):
+    def collect_current_maya_session(self, parent_item):
         """
-        Creates an item that represents the current maya scene.
+        Creates an item that represents the current maya session.
 
         :param parent_item: Parent Item instance
-        :returns: Item of type maya.scene
+        :returns: Item of type maya.session
         """
 
         publisher = self.parent
@@ -90,29 +92,30 @@ class MayaSceneCollector(HookBaseClass):
             file_info = publisher.util.get_file_path_components(path)
             display_name = file_info["filename"]
         else:
-            display_name = "Untitled Scene"
+            display_name = "Current Maya Session"
 
-        # create the scene item for the publish hierarchy
-        scene_item = parent_item.create_item(
-            "maya.scene",
-            "Current Maya Scene",
+        # create the session item for the publish hierarchy
+        session_item = parent_item.create_item(
+            "maya.session",
+            "Maya Session",
             display_name
         )
 
-        # discover the project root which helps in discovery of other
-        # publishable items
-        project_root = cmds.workspace(q=True, rootDirectory=True)
-        scene_item.properties["project_root"] = project_root
-
+        # get the icon path to display for this item
         icon_path = os.path.join(
             self.disk_location,
             os.pardir,
             "icons",
             "maya.png"
         )
-        scene_item.set_icon_from_path(icon_path)
+        session_item.set_icon_from_path(icon_path)
 
-        return scene_item
+        # discover the project root which helps in discovery of other
+        # publishable items
+        project_root = cmds.workspace(q=True, rootDirectory=True)
+        session_item.properties["project_root"] = project_root
+
+        return session_item
 
     def collect_alembic_caches(self, parent_item, project_root):
         """
@@ -137,13 +140,13 @@ class MayaSceneCollector(HookBaseClass):
             # do some early pre-processing to ensure the file is of the right
             # type. use the base class item info method to see what the item
             # type would be.
-            (display_name, item_type, icon_path) = self._get_item_info(filename)
-            if item_type != "file.alembic":
+            item_info = self._get_item_info(filename)
+            if item_info["item_type"] != "file.alembic":
                 continue
 
             # allow the base class to collect and create the item. it knows how
             # to handle alembic files
-            super(MayaSceneCollector, self).process_file(
+            super(MayaSessionCollector, self).process_file(
                 parent_item,
                 cache_path
             )
@@ -170,17 +173,55 @@ class MayaSceneCollector(HookBaseClass):
             # do some early pre-processing to ensure the file is of the right
             # type. use the base class item info method to see what the item
             # type would be.
-            (display_name, item_type, icon_path) = self._get_item_info(filename)
-            if item_type != "file.movie":
+            item_info = self._get_item_info(filename)
+            if item_info["item_type"] != "file.video":
                 continue
 
             movie_path = os.path.join(movies_dir, filename)
 
             # allow the base class to collect and create the item. it knows how
             # to handle movie files
-            super(MayaSceneCollector, self).process_file(
+            item = super(MayaSessionCollector, self).process_file(
                 parent_item,
                 movie_path
             )
 
+            # the item has been created. update the display name to include
+            # the an indication of what it is and why it was collected
+            item.name = "%s (%s)" % (item.name, "playblast")
 
+    def collect_rendered_images(self, parent_item):
+        """
+        Creates items for any rendered images that can be identified by
+        render layers in the file.
+
+        :param parent_item: Parent Item instance
+        :return:
+        """
+
+        # iterate over defined render layers and query the render settings for
+        # information about a potential render
+        for layer in cmds.ls(type="renderLayer"):
+
+            # use the render settings api to get a path where the frame number
+            # spec is replaced with a '*' which we can use to glob
+            (frame_glob,) = cmds.renderSettings(
+                genericFrameImageName="*",
+                fullPath=True,
+                layer=layer
+            )
+
+            # see if there are any files on disk that match this pattern
+            rendered_paths = glob.glob(frame_glob)
+
+            if rendered_paths:
+                # we only need one path to publish, so take the first one and
+                # let the base class collector handle it
+                item = super(MayaSessionCollector, self).process_file(
+                    parent_item,
+                    rendered_paths[0]
+                )
+
+                # the item has been created. update the display name to include
+                # the an indication of what it is and why it was collected
+                item.name = "%s (Render Layer: %s)" % (item.name, layer)

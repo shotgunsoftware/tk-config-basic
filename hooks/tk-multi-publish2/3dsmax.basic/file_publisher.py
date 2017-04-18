@@ -9,15 +9,15 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-import hou
+import MaxPlus
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class HoudiniSessionPublishPlugin(HookBaseClass):
+class MaxSessionPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open houdini session.
+    Plugin for publishing an open max session.
     """
 
     @property
@@ -39,7 +39,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Houdini Session Publisher"
+        return "Max Session Publisher"
 
     @property
     def description(self):
@@ -48,9 +48,9 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will publish the current Houdini session. The plugin
-        requires the session be saved to a file before validation will succeed.
-        The file will be published in place.
+        This plugin will publish the current 3dsMax session. The plugin requires
+        the session be saved to a file before validation will succeed. The file
+        will be published in place.
         """
 
     @property
@@ -75,7 +75,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         return {
             "Publish Type": {
                 "type": "shotgun_publish_type",
-                "default": "Houdini Scene",
+                "default": "3dsmax Scene",
                 "description": "SG publish type to associate publishes with."
             },
         }
@@ -89,7 +89,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["houdini.session"]
+        return ["3dsmax.session"]
 
     def accept(self, log, settings, item):
         """
@@ -132,14 +132,19 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        # make sure the session is completely saved
-        if hou.hipFile.hasUnsavedChanges():
-            log.error("The current session has unsaved changes.")
-            return False
-
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(hou.hipFile.path())
+        path = MaxPlus.FileManager.GetFileNameAndPath()
+
+        if not path:
+            log.error("Session is not saved.")
+            return False
+
+        if MaxPlus.FileManager.IsSaveRequired():
+            log.error("Unsaved changes in the current session.")
+            return False
+
+        sgtk.util.ShotgunPath.normalize(os.path.abspath(path))
 
         publisher = self.parent
 
@@ -184,7 +189,8 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(hou.hipFile.path())
+        path = sgtk.util.ShotgunPath.normalize(
+            os.path.abspath(MaxPlus.FileManager.GetFileNameAndPath()))
 
         publisher = self.parent
 
