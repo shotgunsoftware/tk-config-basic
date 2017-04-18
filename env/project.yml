@@ -20,7 +20,7 @@ includes:
 - includes/shell/all.yml
 - includes/photoshopcc/project.yml
 - includes/3dsmax/project.yml
-- includes/shotgun/project.yml
+- includes/shotgun/all.yml
 
 engines:
   tk-houdini: '@houdini.project'
@@ -30,4 +30,4 @@ engines:
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.project'
   tk-3dsmaxplus: '@3dsmax.project'
-  tk-shotgun: '@shotgun.project'
+  tk-shotgun: '@shotgun.all'

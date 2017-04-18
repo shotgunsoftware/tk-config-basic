@@ -16,7 +16,7 @@ includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
 
-shotgun.site:
+shotgun.all:
   apps:
     tk-multi-launchapp:
       scan_all_projects: true
