@@ -15,6 +15,7 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
 
 shotgun.project:
   apps:
