@@ -21,7 +21,7 @@ includes:
 - includes/shell/all.yml
 - includes/photoshopcc/site.yml
 - includes/3dsmax/site.yml
-- includes/shotgun/all.yml
+- includes/shotgun/site.yml
 
 engines:
   tk-houdini: '@houdini.site'
@@ -31,5 +31,5 @@ engines:
   tk-shell: '@shell.all'
   tk-photoshopcc: '@photoshopcc.site'
   tk-3dsmaxplus: '@3dsmax.site'
-  tk-shotgun: '@shotgun.all'
+  tk-shotgun: '@shotgun.site'
 

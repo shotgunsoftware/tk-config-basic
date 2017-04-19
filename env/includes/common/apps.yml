@@ -33,7 +33,16 @@ common.apps.tk-multi-launchapp:
   use_software_entity: true
   location:
     path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-    version: 8211a6306717c4e2494c7cd78f4927949299b31f
+    version: 7bc6ae606ae69764a19b58b14cf31a6f460d9168
+    type: git_branch
+    branch: develop/software_entity
+
+common.apps.desktop.tk-multi-launchapp:
+  use_software_entity: true
+  scan_all_projects: true
+  location:
+    path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
+    version: 7bc6ae606ae69764a19b58b14cf31a6f460d9168
     type: git_branch
     branch: develop/software_entity
 
@@ -56,3 +65,4 @@ common.apps.tk-multi-shotgunpanel.location:
   version: eeec3c6af701affb7c6d6f938b542c03060032ba
   type: git_branch
   branch: develop/zero_config
+
