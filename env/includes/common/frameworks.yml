@@ -42,6 +42,6 @@ frameworks:
   tk-framework-desktopserver_v1.x.x:
     location:
       path: https://github.com/shotgunsoftware/tk-framework-desktopserver.git
-      version: b2776efc737b66bfa63ffcd78ba483f075193194
+      version: 7aa0da57663633f17cb1f0600707969647321562
       type: git_branch
       branch: develop/zero_config
