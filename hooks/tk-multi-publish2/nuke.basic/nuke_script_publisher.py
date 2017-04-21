@@ -122,7 +122,7 @@ class NukeSessionPublishPlugin(HookBaseClass):
         path = nuke.root().name()
         checked = True
 
-        if nuke.root().modified() or not path:
+        if nuke.root().modified() or not path or path == "Root":
             # the session has unsaved changes. provide a save button and uncheck
             # the item. the session will need to be saved before validation will
             # succeed.
@@ -157,7 +157,7 @@ class NukeSessionPublishPlugin(HookBaseClass):
         path = nuke.root().name()
 
         # make sure the session is completely saved
-        if nuke.root().modified() or not path:
+        if nuke.root().modified() or not path or path == "Root":
             # the session still requires saving. provide a save button.
             # validation fails since we don't want to save as the next version
             # until the current changes have been saved.
