@@ -9,6 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
+import pprint
 import hou
 import sgtk
 
@@ -91,7 +92,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         """
         return ["houdini.session"]
 
-    def accept(self, log, settings, item):
+    def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
         interest to this plugin. Only items matching the filters defined via the
@@ -101,13 +102,14 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         dictionary with the following booleans:
 
             - accepted: Indicates if the plugin is interested in this value at
-                        all.
-            - required: If set to True, the publish task is required and cannot
-                        be disabled.
-            - enabled:  If True, the publish task will be enabled in the UI by
-                        default.
+                all. Required.
+            - enabled: If True, the plugin will be enabled in the UI, otherwise
+                it will be disabled. Optional, True by default.
+            - visible: If True, the plugin will be visible in the UI, otherwise
+                it will be hidden. Optional, True by default.
+            - checked: If True, the plugin will be checked in the UI, otherwise
+                it will be unchecked. Optional, True by default.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -116,15 +118,31 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        return {"accepted": True, "required": False, "enabled": True}
+        path = hou.hipFile.path()
+        checked = True
 
-    def validate(self, log, settings, item):
+        if hou.hipFile.hasUnsavedChanges() or not path:
+            # the session has unsaved changes. provide a save button and uncheck
+            # the item. the session will need to be saved before validation will
+            # succeed.
+            self.logger.warn(
+                "Unsaved changes in the session",
+                extra=self._get_save_as_action()
+            )
+            checked = False
+
+        self.logger.info(
+            "Houdini publish plugin accepted the current Houdini session.")
+        return {
+            "accepted": True,
+            "checked": checked
+        }
+
+    def validate(self, settings, item):
         """
         Validates the given item to check that it is ok to publish. Returns a
-        boolean to indicate validity. Use the logger to output further details
-        around why validation has failed.
+        boolean to indicate validity.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -132,22 +150,29 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
+        publisher = self.parent
+        path = hou.hipFile.path()
+
         # make sure the session is completely saved
-        if hou.hipFile.hasUnsavedChanges():
-            log.error("The current session has unsaved changes.")
+        if hou.hipFile.hasUnsavedChanges() or not path:
+            # the session still requires saving. provide a save button.
+            # validation fails since we don't want to save as the next version
+            # until the current changes have been saved.
+            self.logger.error(
+                "Unsaved changes in the session",
+                extra=self._get_save_as_action()
+            )
             return False
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(hou.hipFile.path())
-
-        publisher = self.parent
+        path = sgtk.util.ShotgunPath.normalize(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
         publish_name = publisher.util.get_publish_name(path)
 
-        log.info("Publish name will be: %s" % (publish_name,))
+        self.logger.info("Publish name will be: %s" % (publish_name,))
 
         # see if there are any other publishes of this path with a status.
         # Note the name, context, and path *must* match the values supplied to
@@ -161,21 +186,29 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         )
 
         if publishes:
-            log.warn(
-                "Found %s conflicting publishes in Shotgun with the path '%s'. "
+            conflict_info = (
                 "If you continue, these conflicting publishes will no longer "
-                "be available to other users via the loader." %
-                (len(publishes), path)
+                "be available to other users via the loader:<br>"
+                "<pre>%s</pre>" % (pprint.pformat(publishes),)
+            )
+            self.logger.warn(
+                "Found %s conflicting publishes in Shotgun" %
+                (len(publishes),),
+                extra={
+                    "action_show_more_info": {
+                        "label": "Show Conflicts",
+                        "tooltip": "Show the conflicting publishes in Shotgun",
+                        "text": conflict_info
+                    }
+                }
             )
 
         return True
 
-    def publish(self, log, settings, item):
+    def publish(self, settings, item):
         """
-        Executes the publish logic for the given item and settings. Use the
-        logger to give the user status updates.
+        Executes the publish logic for the given item and settings.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -196,7 +229,8 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         version_number = publisher.util.get_version_number(path) or 1
 
         # arguments for publish registration
-        args = {
+        self.logger.info("Registering publish...")
+        publish_data = {
             "tk": publisher.sgtk,
             "context": item.context,
             "comment": item.description,
@@ -206,21 +240,33 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
         }
-        log.debug("Publishing: %s" % (args,))
+
+        # log the publish data for debugging
+        self.logger.debug(
+            "Populated Publish data...",
+            extra={
+                "action_show_more_info": {
+                    "label": "Publish Data",
+                    "tooltip": "Show the complete Publish data dictionary",
+                    "text": "<pre>%s</pre>" % (pprint.pformat(publish_data),)
+                }
+            }
+        )
 
         # create the publish and stash it in the item properties for other
         # plugins to use.
-        item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
+        item.properties["sg_publish_data"] = sgtk.util.register_publish(
+            **publish_data)
+        self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published
         item.properties["path"] = path
 
-    def finalize(self, log, settings, item):
+    def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once all the publish
         tasks have completed, and can for example be used to version up files.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -233,6 +279,36 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         publish_data = item.properties["sg_publish_data"]
 
         # ensure conflicting publishes have their status cleared
-        log.info("Clearing status of conflicting publishes...")
         publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
+
+        self.logger.info(
+            "Cleared the status of all previous, conflicting publishes")
+
+        path = item.properties["path"]
+        self.logger.info(
+            "Publish created for file: %s" % (path,),
+            extra={
+                "action_show_in_shotgun": {
+                    "label": "Show Publish",
+                    "tooltip": "Open the Publish in Shotgun.",
+                    "entity": publish_data
+                }
+            }
+        )
+
+    def _get_save_as_action(self):
+        """
+        Simple helper for returning a log action dict for saving the session
+        """
+
+        houdini_engine = self.parent.engine
+
+        return {
+            "action_button": {
+                "label": "Save",
+                "tooltip": "Save the current session",
+                "callback": houdini_engine.save_as
+            }
+        }
+

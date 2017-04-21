@@ -14,8 +14,8 @@
 
 includes:
 - ../common/frameworks.yml
-- ../common/settings/tk-multi-publish2.yml
 - ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
 
 desktop.project:
   apps:
@@ -23,7 +23,7 @@ desktop.project:
     tk-multi-publish2:
       collector: "{config}/tk-multi-publish2/basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher_all'
+        - '@common.settings.tk-multi-publish2.file_publisher'
         - '@common.settings.tk-multi-publish2.version_creator'
       location: "@common.apps.tk-multi-publish2.location"
 
@@ -55,3 +55,4 @@ desktop.project:
     version: 1dc4856068212d12ecdeaf0d9e696ab8dd88fe29
     type: git_branch
     branch: develop/zero_config
+

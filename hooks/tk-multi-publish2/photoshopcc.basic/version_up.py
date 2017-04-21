@@ -86,7 +86,7 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
         """
         return {}
 
-    def accept(self, log, settings, item):
+    def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
         interest to this plugin. Only items matching the filters defined via the
@@ -96,13 +96,14 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
         dictionary with the following booleans:
 
             - accepted: Indicates if the plugin is interested in this value at
-                        all.
-            - required: If set to True, the publish task is required and cannot
-                        be disabled.
-            - enabled:  If True, the publish task will be enabled in the UI by
-                        default.
+                all. Required.
+            - enabled: If True, the plugin will be enabled in the UI, otherwise
+                it will be disabled. Optional, True by default.
+            - visible: If True, the plugin will be visible in the UI, otherwise
+                it will be hidden. Optional, True by default.
+            - checked: If True, the plugin will be checked in the UI, otherwise
+                it will be unchecked. Optional, True by default.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -111,37 +112,64 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        document = item.properties["document"]
-        if not document.saved:
-            log.error("Document '%s' has not been saved." % (document.name,))
+        document = item.properties.get("document")
+        if not document:
+            self.logger.warn("Could not determine the document for item")
             return {"accepted": False}
-
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(document.fullName.fsName))
 
         publisher = self.parent
 
-        # can't version up if we don't know the path
-        if not path:
-            return {"accepted": False}
+        try:
+            path = document.fullName.fsName
+        except RuntimeError:
+            path = None
 
-        version_number = publisher.util.get_version_number(path)
-        if version_number is None:
-            # no version number detected in the file name
-            return {"accepted": False}
+        checked = True
 
-        return {"accepted": True, "required": False, "enabled": True}
+        if not document.saved or not path:
+            # the document hasn't been saved. provide a save button and uncheck
+            # the item. the document will need to be saved before validation
+            # will succeed.
+            self.logger.warn(
+                "Unsaved changes in the session",
+                extra=_get_save_action(document)
+            )
+            checked = False
+        else:
+            # we have a path. make sure the path has a version number. we accept
+            # it regardless since it can be saved with a different file name
+            # while the publisher is open. but we will set it to be unchecked
+            # by default if there is no version
 
-    def validate(self, log, settings, item):
+            # get the path in a normalized state. no trailing separator,
+            # separators are appropriate for current os, no double separators,
+            # etc.
+            path = sgtk.util.ShotgunPath.normalize(path)
+            version_number = publisher.util.get_version_number(path)
+
+            if version_number is None:
+                self.logger.warn(
+                    "No version number detected in the file name",
+                    extra=_get_version_docs_action()
+                )
+                checked = False
+
+        self.logger.info(
+            "Photoshop version up plugin accepted document: %s." %
+            (document.name,)
+        )
+
+        return {
+            "accepted": True,
+            "checked": checked,
+        }
+
+    def validate(self, settings, item):
         """
         Validates the given item to check that it is ok to publish.
 
-        Returns a boolean to indicate validity. Use the logger to output further
-        details around why validation has failed.
+        Returns a boolean to indicate validity.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -150,82 +178,127 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        document = item.properties["document"]
-
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(document.fullName.fsName))
-
-        if not path:
-            log.error("Session is not saved.")
-            return False
-
         publisher = self.parent
+        document = item.properties["document"]
+        path = document.fullName.fsName
+
+        if not document.saved or not path:
+            # the document still hasn't been saved. provide a save button.
+            # validation fails since we don't want to save as the next version
+            # until the current changes have been saved.
+            self.logger.error(
+                "Unsaved changes in the session",
+                extra=_get_save_action(document)
+            )
+            return False
+        else:
+            # we have a path and there are no unsaved changes. make sure the
+            # path has a version number. if not, validation fails
+
+            # get the path in a normalized state. no trailing separator,
+            # separators are appropriate for current os, no double separators,
+            # etc.
+            path = sgtk.util.ShotgunPath.normalize(path)
+            version_number = publisher.util.get_version_number(path)
+
+            if version_number is None:
+                self.logger.error(
+                    "No version number detected in the file name",
+                    extra=_get_version_docs_action()
+                )
+                return False
+
         next_version_path = publisher.util.get_next_version_path(path)
 
         # nothing to do if the next version path can't be determined or if it
         # already exists.
         if not next_version_path:
-            log.warn("Could not determine the next version path.")
+            self.logger.error("Could not determine the next version path.")
+            return False
         elif os.path.exists(next_version_path):
-            log.warn("The next version of the path already exists")
+            self.logger.error(
+                "Next version already exists: %s" % (next_version_path,),
+                extra={
+                    "action_show_folder": {
+                        "path": next_version_path
+                    }
+                }
+            )
+            return False
 
         # insert the path into the properties for use during the publish phase
         item.properties["next_version_path"] = next_version_path
 
         return True
 
-    def publish(self, log, settings, item):
+    def publish(self, settings, item):
         """
         Executes the publish logic for the given item and settings.
 
-        Use the logger to give the user status updates.
-
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
         """
 
+        document = item.properties["document"]
+
         # get the next version path and save the document
         next_version_path = item.properties["next_version_path"]
 
-        if not next_version_path:
-            log.warn("Could not determine the next version.")
-            return
-
-        if os.path.exists(next_version_path):
-            log.warn("The next version path already exists.")
-            return
-
         engine = self.parent.engine
-        document = item.properties["document"]
 
-        # remember the active document so that we can restore it.
-        self._active_document = engine.adobe.app.activeDocument
+        with engine.context_changes_disabled():
 
-        # make the document being processed the active document
-        engine.adobe.app.activeDocument = document
+            # remember the active document so that we can restore it.
+            previous_active_document = engine.adobe.app.activeDocument
 
-        document.saveAs(engine.adobe.File(next_version_path))
-        log.info("Saved to: %s" % (next_version_path,))
+            # make the document being processed the active document
+            engine.adobe.app.activeDocument = document
 
-    def finalize(self, log, settings, item):
+            document.saveAs(engine.adobe.File(next_version_path))
+            self.logger.info(
+                "The Photoshop document is now at the next version!")
+
+            # restore the active document
+            engine.adobe.app.activeDocument = previous_active_document
+
+    def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once
         all the publish tasks have completed, and can for example
         be used to version up files.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
         """
+        pass
 
-        # restore the active document if need be
-        if hasattr(self, '_active_document'):
-            engine = self.parent.engine
-            engine.adobe.app.activeDocument = self._active_document
+
+def _get_save_action(document):
+    """
+    Simple helper for returning a log action dict for saving the session
+    """
+    return {
+        "action_button": {
+            "label": "Save",
+            "tooltip": "Save the current session",
+            "callback": lambda: document.save()
+        }
+    }
+
+
+def _get_version_docs_action():
+    """
+    Simple helper for returning a log action to show version docs
+    """
+    return {
+        "action_open_url": {
+            "label": "Version Docs",
+            "tooltip": "Show docs for version formats",
+            "url": "https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-User-Guide-WIP-#What%20happens%20when%20you%20publish"
+        }
+    }
+

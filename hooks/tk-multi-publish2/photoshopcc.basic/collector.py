@@ -20,7 +20,7 @@ class PhotoshopCCSceneCollector(HookBaseClass):
     from the basic collector.
     """
 
-    def process_current_scene(self, parent_item):
+    def process_current_session(self, parent_item):
         """
         Analyzes the open documents in Photoshop and creates publish items
         parented under the supplied item.
@@ -52,5 +52,8 @@ class PhotoshopCCSceneCollector(HookBaseClass):
             # add the document object to the properties so that the publish
             # plugins know which open document to associate with this item
             document_item.properties["document"] = document
+
+            self.logger.info(
+                "Collected Photoshop document: %s" % (document.name))
 
         # TODO: only the active document should be enabled

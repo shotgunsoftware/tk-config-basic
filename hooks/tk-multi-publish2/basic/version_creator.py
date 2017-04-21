@@ -7,8 +7,10 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-import sgtk
+
 import os
+import pprint
+import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -98,7 +100,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         # we use "video" since that's the mimetype category.
         return ["file.image", "file.video"]
 
-    def accept(self, log, settings, item):
+    def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
         interest to this plugin. Only items matching the filters defined via the
@@ -108,13 +110,14 @@ class ShotgunReviewPlugin(HookBaseClass):
         dictionary with the following booleans:
 
             - accepted: Indicates if the plugin is interested in this value at
-                        all.
-            - required: If set to True, the publish task is required and cannot
-                        be disabled.
-            - enabled:  If True, the publish task will be enabled in the UI by
-                        default.
+                all. Required.
+            - enabled: If True, the plugin will be enabled in the UI, otherwise
+                it will be disabled. Optional, True by default.
+            - visible: If True, the plugin will be visible in the UI, otherwise
+                it will be hidden. Optional, True by default.
+            - checked: If True, the plugin will be checked in the UI, otherwise
+                it will be unchecked. Optional, True by default.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -135,25 +138,34 @@ class ShotgunReviewPlugin(HookBaseClass):
             ext = ext.strip().lstrip(".")
             valid_extensions.append(ext)
 
-        log.debug("valid extensions: %s" % valid_extensions)
+        self.logger.debug("Valid extensions: %s" % valid_extensions)
 
         if extension in valid_extensions:
-            return {"accepted": True, "required": False, "enabled": True}
+            # log the accepted file and display a button to reveal it in the fs
+            self.logger.info(
+                "Version upload plugin accepted: %s" % (file_path,),
+                extra={
+                    "action_show_folder": {
+                        "path": file_path
+                    }
+                }
+            )
+
+            # return the accepted info
+            return {"accepted": True}
         else:
-            log.debug(
-                "%s not in valid extensions for version creation." %
+            self.logger.debug(
+                "%s is not in the valid extensions list for Version creation" %
                 (extension,)
             )
             return {"accepted": False}
 
-    def validate(self, log, settings, item):
+    def validate(self, settings, item):
         """
         Validates the given item to check that it is ok to publish.
 
-        Returns a boolean to indicate validity. Use the logger to output further
-        details around why validation has failed.
+        Returns a boolean to indicate validity.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -161,19 +173,12 @@ class ShotgunReviewPlugin(HookBaseClass):
 
         :returns: True if item is valid, False otherwise.
         """
-
-        if "path" not in item.properties:
-            log.error("Unknown file path for item.")
-            return False
-
         return True
 
-    def publish(self, log, settings, item):
+    def publish(self, settings, item):
         """
-        Executes the publish logic for the given item and settings. Use the
-        logger to give the user status updates.
+        Executes the publish logic for the given item and settings.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -186,6 +191,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         # get the publish name for this file path.
         publish_name = publisher.util.get_publish_name(path)
 
+        self.logger.info("Creating Version...")
         version_data = {
             "project": item.context.project,
             "code": publish_name,
@@ -200,11 +206,21 @@ class ShotgunReviewPlugin(HookBaseClass):
         if settings["Link Local File"].value:
             version_data["sg_path_to_movie"] = path
 
-        log.debug("Version data: %s" % (version_data,))
+        # log the version data for debugging
+        self.logger.debug(
+            "Populated Version data...",
+            extra={
+                "action_show_more_info": {
+                    "label": "Version Data",
+                    "tooltip": "Show the complete Version data dictionary",
+                    "text": "<pre>%s</pre>" % (pprint.pformat(version_data),)
+                }
+            }
+        )
 
         # Create the version
-        log.info("Creating version for review...")
-        version = self.parent.shotgun.create("Version", version_data)
+        version = publisher.shotgun.create("Version", version_data)
+        self.logger.info("Version created!")
 
         # stash the version info in the item just in case
         item.properties["sg_version_data"] = version
@@ -212,7 +228,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         thumb = item.get_thumbnail_as_path()
 
         if settings["Upload"].value:
-            log.info("Uploading content...")
+            self.logger.info("Uploading content...")
             self.parent.shotgun.upload(
                 "Version",
                 version["id"],
@@ -222,25 +238,39 @@ class ShotgunReviewPlugin(HookBaseClass):
         elif thumb:
             # only upload thumb if we are not uploading the content. with
             # uploaded content, the thumb is automatically extracted.
-            log.info("Uploading thumbnail...")
+            self.logger.info("Uploading thumbnail...")
             self.parent.shotgun.upload_thumbnail(
                 "Version",
                 version["id"],
                 thumb
             )
 
-    def finalize(self, log, settings, item):
+        self.logger.info("Upload complete!")
+
+    def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once all the publish
         tasks have completed, and can for example be used to version up files.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
         """
-        pass
+
+        path = item.properties["path"]
+        version = item.properties["sg_version_data"]
+
+        self.logger.info(
+            "Version uploaded for file: %s" % (path,),
+            extra={
+                "action_show_in_shotgun": {
+                    "label": "Show Version",
+                    "tooltip": "Reveal the version in Shotgun.",
+                    "entity": version
+                }
+            }
+        )
 
     def _get_version_entity(self, item):
         """

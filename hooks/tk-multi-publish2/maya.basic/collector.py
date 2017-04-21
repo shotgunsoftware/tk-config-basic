@@ -22,39 +22,7 @@ class MayaSessionCollector(HookBaseClass):
     collector hook.
     """
 
-    def process_file(self, parent_item, path):
-        """
-        Analyzes the given file and creates one or more items to represent it.
-
-        :param parent_item: Root item instance
-        :param path: Path to analyze
-        :returns: The main item that was created
-        """
-
-        # run base class logic to set basic properties for us
-        item = super(MayaSessionCollector, self).process_file(parent_item, path)
-
-        if item.type == "file.maya":
-
-            publisher = self.parent
-            file_info = publisher.util.get_file_path_components(path)
-
-            # this is a maya file. see if we can find associated files to
-            # publish from the project root
-            folder = file_info["folder"]
-            if os.path.basename(folder) == "scenes":
-
-                # assume parent level is workspace root. add it to properties
-                project_root = os.path.dirname(folder)
-                item.properties["project_root"] = project_root
-
-                # collect associated files
-                self.collect_alembic_caches(item, project_root)
-                self.collect_playblasts(item, project_root)
-
-        return item
-
-    def process_current_scene(self, parent_item):
+    def process_current_session(self, parent_item):
         """
         Analyzes the current session open in Maya and parents a subtree of
         items under the parent_item passed in.
@@ -115,6 +83,8 @@ class MayaSessionCollector(HookBaseClass):
         project_root = cmds.workspace(q=True, rootDirectory=True)
         session_item.properties["project_root"] = project_root
 
+        self.logger.info("Collected current Maya scene")
+
         return session_item
 
     def collect_alembic_caches(self, parent_item, project_root):
@@ -132,6 +102,15 @@ class MayaSessionCollector(HookBaseClass):
         cache_dir = os.path.join(project_root, "cache", "alembic")
         if not os.path.exists(cache_dir):
             return
+
+        self.logger.info(
+            "Processing alembic cache folder: %s" % (cache_dir,),
+            extra={
+                "action_show_folder": {
+                    "path": cache_dir
+                }
+            }
+        )
 
         # look for alembic files in the cache folder
         for filename in os.listdir(cache_dir):
@@ -166,6 +145,15 @@ class MayaSessionCollector(HookBaseClass):
         movies_dir = os.path.join(project_root, "movies")
         if not os.path.exists(movies_dir):
             return
+
+        self.logger.info(
+            "Processing movies folder: %s" % (movies_dir,),
+            extra={
+                "action_show_folder": {
+                    "path": movies_dir
+                }
+            }
+        )
 
         # look for movie files in the movies folder
         for filename in os.listdir(movies_dir):
@@ -202,6 +190,8 @@ class MayaSessionCollector(HookBaseClass):
         # iterate over defined render layers and query the render settings for
         # information about a potential render
         for layer in cmds.ls(type="renderLayer"):
+
+            self.logger.info("Processing render layer: %s" % (layer,))
 
             # use the render settings api to get a path where the frame number
             # spec is replaced with a '*' which we can use to glob

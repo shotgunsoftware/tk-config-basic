@@ -71,7 +71,7 @@ class BasicSceneCollector(HookBaseClass):
     A basic collector that handles files and general objects.
     """
 
-    def process_current_scene(self, parent_item):
+    def process_current_session(self, parent_item):
         """
         Analyzes the current scene open in a DCC and parents a subtree of items
         under the parent_item passed in.
@@ -113,9 +113,6 @@ class BasicSceneCollector(HookBaseClass):
         :returns: The item that was created
         """
 
-        publisher = self.parent
-        publisher.logger.debug("Collecting file: %s" % (path,))
-
         # get info for the extension
         item_info = self._get_item_info(path)
         item_type = item_info["item_type"]
@@ -140,6 +137,8 @@ class BasicSceneCollector(HookBaseClass):
         # evaluated path in case it was altered to account for frame sequence
         file_item.properties["path"] = item_info["path"]
 
+        self.logger.info("Collected file: %s" % (path,))
+
         return file_item
 
     def _collect_folder(self, parent_item, folder):
@@ -152,7 +151,6 @@ class BasicSceneCollector(HookBaseClass):
         """
 
         publisher = self.parent
-        publisher.logger.debug("Collecting folder: %s" % (folder,))
 
         folder_info = publisher.util.get_file_path_components(folder)
 
@@ -170,6 +168,8 @@ class BasicSceneCollector(HookBaseClass):
         # all we know about the file is its path. set the path in its
         # properties for the plugins to use for processing
         folder_item.properties["path"] = folder
+
+        self.logger.info("Collected folder: %s" % (folder,))
 
         return folder_item
 

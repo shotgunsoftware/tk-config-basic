@@ -87,7 +87,7 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         """
         return {}
 
-    def accept(self, log, settings, item):
+    def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
         interest to this plugin. Only items matching the filters defined via the
@@ -97,13 +97,14 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         dictionary with the following booleans:
 
             - accepted: Indicates if the plugin is interested in this value at
-                        all.
-            - required: If set to True, the publish task is required and cannot
-                        be disabled.
-            - enabled:  If True, the publish task will be enabled in the UI by
-                        default.
+                all. Required.
+            - enabled: If True, the plugin will be enabled in the UI, otherwise
+                it will be disabled. Optional, True by default.
+            - visible: If True, the plugin will be visible in the UI, otherwise
+                it will be hidden. Optional, True by default.
+            - checked: If True, the plugin will be checked in the UI, otherwise
+                it will be unchecked. Optional, True by default.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -112,31 +113,52 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(hou.hipFile.path())
-
-        # can't version up if we don't know the path
-        if not path:
-            return {"accepted": False}
-
         publisher = self.parent
+        path = hou.hipFile.path()
+        checked = True
 
-        version_number = publisher.util.get_version_number(path)
-        if version_number is None:
-            # no version number detected in the file name
-            return {"accepted": False}
+        if hou.hipFile.hasUnsavedChanges() or not path:
+            # the session has unsaved changes. provide a save button and uncheck
+            # the item. the session will need to be saved before validation will
+            # succeed.
+            self.logger.warn(
+                "Unsaved changes in the session",
+                extra=self._get_save_as_action()
+            )
+            checked = False
+        else:
+            # we have a path and there are no unsaved changes. make sure the
+            # path has a version number. we accept it regardless since it can be
+            # saved with a different file name while the publisher is open. but
+            # we will set it to be unchecked by default if there is no version
 
-        return {"accepted": True, "required": False, "enabled": True}
+            # get the path in a normalized state. no trailing separator,
+            # separators are appropriate for current os, no double separators,
+            # etc.
+            path = sgtk.util.ShotgunPath.normalize(path)
+            version_number = publisher.util.get_version_number(path)
 
-    def validate(self, log, settings, item):
+            if version_number is None:
+                self.logger.warn(
+                    "No version number detected in the file name",
+                    extra=_get_version_docs_action()
+                )
+                checked = False
+
+        self.logger.info(
+            "Houdini version up plugin accepted the current Houdini session.")
+
+        return {
+            "accepted": True,
+            "checked": checked,
+        }
+
+    def validate(self, settings, item):
         """
         Validates the given item to check that it is ok to publish.
 
-        Returns a boolean to indicate validity. Use the logger to output further
-        details around why validation has failed.
+        Returns a boolean to indicate validity.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -145,36 +167,65 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        if hou.hipFile.hasUnsavedChanges():
-            log.error("The current session has unsaved changes.")
-            return False
-
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(hou.hipFile.path())
-
         publisher = self.parent
+        path = hou.hipFile.path()
+
+        if hou.hipFile.hasUnsavedChanges() or not path:
+            # the session still requires saving. provide a save button.
+            # validation fails since we don't want to save as the next version
+            # until the current changes have been saved.
+            self.logger.error(
+                "Unsaved changes in the session",
+                extra=self._get_save_as_action()
+            )
+            return False
+        else:
+            # we have a path and there are no unsaved changes. make sure the
+            # path has a version number. if not, validation fails
+
+            # get the path in a normalized state. no trailing separator,
+            # separators are appropriate for current os, no double separators,
+            # etc.
+            path = sgtk.util.ShotgunPath.normalize(path)
+
+            version_number = publisher.util.get_version_number(path)
+
+            if version_number is None:
+                # still no version number in the file name. a warning was
+                # provided in accept(). validation fails
+                self.logger.error(
+                    "No version number detected in the file name",
+                    extra=_get_version_docs_action()
+                )
+                return False
+
         next_version_path = publisher.util.get_next_version_path(path)
 
         # nothing to do if the next version path can't be determined or if it
         # already exists.
         if not next_version_path:
-            log.warn("Could not determine the next version path.")
+            self.logger.error("Could not determine the next version path.")
+            return False
         elif os.path.exists(next_version_path):
-            log.warn("The next version of the path already exists")
+            self.logger.error(
+                "Next version already exists: %s" % (next_version_path,),
+                extra={
+                    "action_show_folder": {
+                        "path": next_version_path
+                    }
+                }
+            )
+            return False
 
         # insert the path into the properties for use during the publish phase
         item.properties["next_version_path"] = next_version_path
 
         return True
 
-    def publish(self, log, settings, item):
+    def publish(self, settings, item):
         """
         Executes the publish logic for the given item and settings.
 
-        Use the logger to give the user status updates.
-
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -183,28 +234,46 @@ class HoudiniVersionUpPlugin(HookBaseClass):
 
         # get the next version path and save the document
         next_version_path = item.properties["next_version_path"]
-
-        if not next_version_path:
-            log.warn("Could not determine the next version.")
-            return
-
-        if os.path.exists(next_version_path):
-            log.warn("The next version path already exists.")
-            return
-
-        # first rename the scene as file_path:
         hou.hipFile.save(file_name=next_version_path)
+        self.logger.info("The Houdini session is now at the next version!")
 
-    def finalize(self, log, settings, item):
+    def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once
         all the publish tasks have completed, and can for example
         be used to version up files.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
         """
         pass
+
+    def _get_save_as_action(self):
+        """
+        Simple helper for returning a log action dict for saving the session
+        """
+
+        houdini_engine = self.parent.engine
+
+        return {
+            "action_button": {
+                "label": "Save",
+                "tooltip": "Save the current session",
+                "callback": houdini_engine.save_as
+            }
+        }
+
+
+def _get_version_docs_action():
+    """
+    Simple helper for returning a log action to show version docs
+    """
+    return {
+        "action_open_url": {
+            "label": "Version Docs",
+            "tooltip": "Show docs for version formats",
+            "url": "https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-User-Guide-WIP-#What%20happens%20when%20you%20publish"
+        }
+    }

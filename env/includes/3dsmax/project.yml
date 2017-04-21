@@ -14,6 +14,7 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/engines.yml
 - ../common/apps.yml
 - ../common/settings/tk-multi-publish2.yml
 
@@ -77,11 +78,7 @@ includes:
       enable_context_switch: true
       location: "@common.apps.tk-multi-shotgunpanel.location"
 
-  location:
-    path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git
-    version: 52e7b1b57d987b7cdfc815c408d9ee3143d376c9
-    type: git_branch
-    branch: develop/zero_config
+  location: "@common.engines.tk-3dsmaxplus.location"
   menu_favourites: []
   launch_builtin_plugins: [basic]
 

@@ -14,6 +14,7 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/engines.yml
 - ../common/apps.yml
 - ../common/settings/tk-multi-publish2.yml
 
@@ -85,11 +86,7 @@ maya.project:
       location: "@common.apps.tk-multi-shotgunpanel.location"
 
 
-  location:
-    path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 9084f82533115e8c9656f2b5ad12b87b8d89df1e
-    type: git_branch
-    branch: develop/zero_config
+  location: "@common.engines.tk-maya.location"
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}

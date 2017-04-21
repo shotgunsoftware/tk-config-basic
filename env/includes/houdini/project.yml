@@ -14,6 +14,7 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/engines.yml
 - ../common/apps.yml
 - ../common/settings/tk-multi-publish2.yml
 
@@ -78,11 +79,7 @@ houdini.project:
         enable_context_switch: true
         location: "@common.apps.tk-multi-shotgunpanel.location"
 
-  location:
-    path: https://github.com/shotgunsoftware/tk-houdini.git
-    version: 1668744e9ee0d12bbdc0fba9b81fabed4edcbe64
-    type: git_branch
-    branch: develop/zero_config
+  location: "@common.engines.tk-houdini.location"
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}

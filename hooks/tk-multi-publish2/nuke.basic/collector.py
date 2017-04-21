@@ -26,7 +26,7 @@ class NukeSessionCollector(HookBaseClass):
     inherit from the basic collector hook.
     """
 
-    def process_current_scene(self, parent_item):
+    def process_current_session(self, parent_item):
         """
         Analyzes the current session open in Nuke/NukeStudio and parents a
         subtree of items under the parent_item passed in.
@@ -84,6 +84,8 @@ class NukeSessionCollector(HookBaseClass):
         )
         session_item.set_icon_from_path(icon_path)
 
+        self.logger.info("Collected current Nuke script")
+
     def collect_current_nukestudio_session(self, parent_item):
         """
         Analyzes the current session open in NukeStudio and parents a subtree of
@@ -115,6 +117,9 @@ class NukeSessionCollector(HookBaseClass):
             # add the project object to the properties so that the publish
             # plugins know which open project to associate with this item
             session_item.properties["project"] = project
+
+            self.logger.info(
+                "Collected Nuke Studio project: %s" % (project.name(),))
 
         # TODO: only the current project should be enabled
         # get the active project. if it can be determined and matches this
@@ -152,6 +157,9 @@ class NukeSessionCollector(HookBaseClass):
                 if not file_path or not os.path.exists(file_path):
                     # no file or file does not exist, nothing to do
                     continue
+
+                self.logger.info(
+                    "Processing %s node: %s" % (node_type, node.name()))
 
                 # file exists, let the basic collector handle it
                 item = super(NukeSessionCollector, self).process_file(

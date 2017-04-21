@@ -32,7 +32,7 @@ class HoudiniSessionCollector(HookBaseClass):
     Collector that operates on the houdini session
     """
 
-    def process_current_scene(self, parent_item):
+    def process_current_session(self, parent_item):
         """
         Analyzes the current Houdini session and parents a subtree of items
         under the parent_item passed in.
@@ -80,6 +80,8 @@ class HoudiniSessionCollector(HookBaseClass):
         )
         session_item.set_icon_from_path(icon_path)
 
+        self.logger.info("Collected current Houdini session")
+
         return session_item
 
     def collect_node_outputs(self, parent_item):
@@ -89,8 +91,6 @@ class HoudiniSessionCollector(HookBaseClass):
         :param parent_item: Parent Item instance
         """
 
-        publisher = self.parent
-
         for node_category in _HOUDINI_OUTPUTS:
             for node_type in _HOUDINI_OUTPUTS[node_category]:
 
@@ -99,15 +99,7 @@ class HoudiniSessionCollector(HookBaseClass):
                 # get all the nodes for the category and type
                 nodes = hou.nodeType(node_category, node_type).instances()
 
-                publisher.logger.debug(
-                    "Found %s nodes: %s" %
-                    (node_type, [n.path() for n in nodes])
-                )
-
                 for node in nodes:
-
-                    publisher.logger.debug(
-                        "Processing %s..." % (node.path(),))
 
                     # get the evaluated path parm value
                     path = node.parm(path_parm_name).eval()
@@ -115,6 +107,9 @@ class HoudiniSessionCollector(HookBaseClass):
                     # ensure the output path exists
                     if not os.path.exists(path):
                         continue
+
+                    self.logger.info(
+                        "Processing %s node: %s" % (node_type, node.path()))
 
                     # allow the base class to collect and create the item. it
                     # should know how to handle the output path

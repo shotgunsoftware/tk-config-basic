@@ -21,7 +21,7 @@ class MaxSessionCollector(HookBaseClass):
     collector hook.
     """
 
-    def process_current_scene(self, parent_item):
+    def process_current_session(self, parent_item):
         """
         Analyzes the current session open in Max and parents a subtree of
         items under the parent_item passed in.
@@ -55,5 +55,7 @@ class MaxSessionCollector(HookBaseClass):
             "3dsmax.png"
         )
         session_item.set_icon_from_path(icon_path)
+
+        self.logger.info("Collected current 3dsMax session")
 
         return session_item

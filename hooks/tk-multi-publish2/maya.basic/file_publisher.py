@@ -9,7 +9,9 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
+import pprint
 import maya.cmds as cmds
+import maya.mel as mel
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
@@ -91,7 +93,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         """
         return ["maya.session"]
 
-    def accept(self, log, settings, item):
+    def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
         interest to this plugin. Only items matching the filters defined via the
@@ -101,13 +103,14 @@ class MayaSessionPublishPlugin(HookBaseClass):
         dictionary with the following booleans:
 
             - accepted: Indicates if the plugin is interested in this value at
-                        all.
-            - required: If set to True, the publish task is required and cannot
-                        be disabled.
-            - enabled:  If True, the publish task will be enabled in the UI by
-                        default.
+                all. Required.
+            - enabled: If True, the plugin will be enabled in the UI, otherwise
+                it will be disabled. Optional, True by default.
+            - visible: If True, the plugin will be visible in the UI, otherwise
+                it will be hidden. Optional, True by default.
+            - checked: If True, the plugin will be checked in the UI, otherwise
+                it will be unchecked. Optional, True by default.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -116,15 +119,32 @@ class MayaSessionPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        return {"accepted": True, "required": False, "enabled": True}
+        path = cmds.file(query=True, sn=True)
+        modified = cmds.file(q=True, modified=True)
+        checked = True
 
-    def validate(self, log, settings, item):
+        if modified or not path:
+            # the session has unsaved changes. provide a save button and uncheck
+            # the item. the session will need to be saved before validation will
+            # succeed.
+            self.logger.warn(
+                "Unsaved changes in the session",
+                extra=_get_save_as_action()
+            )
+            checked = False
+
+        self.logger.info(
+            "Maya publish plugin accepted the current Maya session.")
+        return {
+            "accepted": True,
+            "checked": checked
+        }
+
+    def validate(self, settings, item):
         """
         Validates the given item to check that it is ok to publish. Returns a
-        boolean to indicate validity. Use the logger to output further details
-        around why validation has failed.
+        boolean to indicate validity.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -132,15 +152,20 @@ class MayaSessionPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
+        publisher = self.parent
         path = cmds.file(query=True, sn=True)
+        modified = cmds.file(q=True, modified=True)
 
-        if not path:
-            log.error("Session is not saved.")
+        if modified or not path:
+            # the session still requires saving. provide a save button.
+            # validation fails since we don't want to save as the next version
+            # until the current changes have been saved.
+            self.logger.error(
+                "Unsaved changes in the session",
+                extra=_get_save_as_action()
+            )
             return False
 
-        sgtk.util.ShotgunPath.normalize(os.path.abspath(path))
 
         # ensure we have an updated project root
         project_root = cmds.workspace(q=True, rootDirectory=True)
@@ -148,15 +173,27 @@ class MayaSessionPublishPlugin(HookBaseClass):
 
         # warn if no project root could be determined.
         if not project_root:
-            log.warning("Your session is not part of a maya project.")
+            self.logger.warning(
+                "Your session is not part of a maya project.",
+                extra={
+                    "action_button": {
+                        "label": "Set Project",
+                        "tooltip": "Set the maya project",
+                        "callback": lambda: mel.eval('setProject ""')
+                    }
+                }
+            )
 
-        publisher = self.parent
+        # get the path in a normalized state. no trailing separator,
+        # separators are appropriate for current os, no double separators,
+        # etc.
+        sgtk.util.ShotgunPath.normalize(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
         publish_name = publisher.util.get_publish_name(path)
 
-        log.info("Publish name will be: %s" % (publish_name,))
+        self.logger.info("Publish name will be: %s" % (publish_name,))
 
         # see if there are any other publishes of this path with a status.
         # Note the name, context, and path *must* match the values supplied to
@@ -170,33 +207,40 @@ class MayaSessionPublishPlugin(HookBaseClass):
         )
 
         if publishes:
-            log.warn(
-                "Found %s conflicting publishes in Shotgun with the path '%s'. "
+            conflict_info = (
                 "If you continue, these conflicting publishes will no longer "
-                "be available to other users via the loader." %
-                (len(publishes), path)
+                "be available to other users via the loader:<br>"
+                "<pre>%s</pre>" % (pprint.pformat(publishes),)
+            )
+            self.logger.warn(
+                "Found %s conflicting publishes in Shotgun" %
+                (len(publishes),),
+                extra={
+                    "action_show_more_info": {
+                        "label": "Show Conflicts",
+                        "tooltip": "Show the conflicting publishes in Shotgun",
+                        "text": conflict_info
+                    }
+                }
             )
 
         return True
 
-    def publish(self, log, settings, item):
+    def publish(self, settings, item):
         """
-        Executes the publish logic for the given item and settings. Use the
-        logger to give the user status updates.
+        Executes the publish logic for the given item and settings.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
         """
 
+        publisher = self.parent
+
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(cmds.file(query=True, sn=True)))
-
-        publisher = self.parent
+        path = sgtk.util.ShotgunPath.normalize(cmds.file(query=True, sn=True))
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -206,7 +250,8 @@ class MayaSessionPublishPlugin(HookBaseClass):
         version_number = publisher.util.get_version_number(path) or 1
 
         # arguments for publish registration
-        args = {
+        self.logger.info("Registering publish...")
+        publish_data = {
             "tk": publisher.sgtk,
             "context": item.context,
             "comment": item.description,
@@ -218,21 +263,33 @@ class MayaSessionPublishPlugin(HookBaseClass):
             "dependency_paths":
                 self._maya_find_additional_session_dependencies(),
         }
-        log.debug("Publishing: %s" % (args,))
+
+        # log the publish data for debugging
+        self.logger.debug(
+            "Populated Publish data...",
+            extra={
+                "action_show_more_info": {
+                    "label": "Publish Data",
+                    "tooltip": "Show the complete Publish data dictionary",
+                    "text": "<pre>%s</pre>" % (pprint.pformat(publish_data),)
+                }
+            }
+        )
 
         # create the publish and stash it in the item properties for other
         # plugins to use.
-        item.properties["sg_publish_data"] = sgtk.util.register_publish(**args)
+        item.properties["sg_publish_data"] = sgtk.util.register_publish(
+            **publish_data)
+        self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published
         item.properties["path"] = path
 
-    def finalize(self, log, settings, item):
+    def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once all the publish
         tasks have completed, and can for example be used to version up files.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -245,9 +302,23 @@ class MayaSessionPublishPlugin(HookBaseClass):
         publish_data = item.properties["sg_publish_data"]
 
         # ensure conflicting publishes have their status cleared
-        log.info("Clearing status of conflicting publishes...")
         publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
+
+        self.logger.info(
+            "Cleared the status of all previous, conflicting publishes")
+
+        path = item.properties["path"]
+        self.logger.info(
+            "Publish created for file: %s" % (path,),
+            extra={
+                "action_show_in_shotgun": {
+                    "label": "Show Publish",
+                    "tooltip": "Open the Publish in Shotgun.",
+                    "entity": publish_data
+                }
+            }
+        )
 
     def _maya_find_additional_session_dependencies(self):
         """
@@ -285,3 +356,49 @@ class MayaSessionPublishPlugin(HookBaseClass):
                 ref_paths.add(texture_path)
 
         return ref_paths
+
+
+def _session_save_as(path=None):
+    """
+    A save as wrapper for the current session.
+
+    :param path: Optional path to save the current session as.
+    """
+
+    if not path:
+        path = cmds.fileDialog(
+            mode=1, title="Save As", directoryMask='*.ma')
+
+    if not path:
+        # no path supplied and none returned via file dialog
+        return
+
+    # Maya can choose the wrong file type so we should set it here
+    # explicitly based on the extension
+    maya_file_type = None
+    if path.lower().endswith(".ma"):
+        maya_file_type = "mayaAscii"
+    elif path.lower().endswith(".mb"):
+        maya_file_type = "mayaBinary"
+
+    cmds.file(rename=path)
+
+    # save the scene:
+    if maya_file_type:
+        cmds.file(save=True, force=True, type=maya_file_type)
+    else:
+        cmds.file(save=True, force=True)
+
+
+def _get_save_as_action():
+    """
+
+    Simple helper for returning a log action dict for saving the session
+    """
+    return {
+        "action_button": {
+            "label": "Save",
+            "tooltip": "Save the current session",
+            "callback": _session_save_as
+        }
+    }

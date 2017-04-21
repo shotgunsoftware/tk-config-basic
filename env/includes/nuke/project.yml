@@ -14,6 +14,7 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/engines.yml
 - ../common/apps.yml
 - ../common/settings/tk-multi-publish2.yml
 
@@ -80,14 +81,9 @@ nuke.project:
       enable_context_switch: true
       location: "@common.apps.tk-multi-shotgunpanel.location"
 
+  location: "@common.engines.tk-nuke.location"
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
   automatic_context_switch: false
-
-  location:
-    path: https://github.com/shotgunsoftware/tk-nuke.git
-    version: b4b339878efde21edbf1b98f606ad6f18d0e5906
-    type: git_branch
-    branch: develop/zero_config

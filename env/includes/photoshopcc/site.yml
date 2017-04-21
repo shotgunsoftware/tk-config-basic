@@ -14,6 +14,7 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/engines.yml
 - ../common/apps.yml
 
 
@@ -65,8 +66,4 @@ photoshopcc.site:
 
   shelf_favorites: []
   debug_logging: true
-  location:
-    path: https://github.com/shotgunsoftware/tk-photoshopcc.git
-    version: ce1d2dc901586cd580440647b4fb94cf7f970aa1
-    type: git_branch
-    branch: develop/zero_config
+  location: "@common.engines.tk-photoshopcc.location"

@@ -1,0 +1,47 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# locations for common engines
+
+# 3dsMax
+common.engines.tk-3dsmaxplus.location:
+    path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git
+    version: 52e7b1b57d987b7cdfc815c408d9ee3143d376c9
+    type: git_branch
+    branch: develop/zero_config
+
+# Houdini
+common.engines.tk-houdini.location:
+    path: https://github.com/shotgunsoftware/tk-houdini.git
+    version: 9263d6a4a0fc49fdaec28ac51a3f2af2507d2dcf
+    type: git_branch
+    branch: develop/zero_config
+
+# Maya
+common.engines.tk-maya.location:
+    path: https://github.com/shotgunsoftware/tk-maya.git
+    version: 9084f82533115e8c9656f2b5ad12b87b8d89df1e
+    type: git_branch
+    branch: develop/zero_config
+
+# Nuke
+common.engines.tk-nuke.location:
+    path: https://github.com/shotgunsoftware/tk-nuke.git
+    version: b4b339878efde21edbf1b98f606ad6f18d0e5906
+    type: git_branch
+    branch: develop/zero_config
+
+# Photoshop
+common.engines.tk-photoshopcc.location:
+    path: https://github.com/shotgunsoftware/tk-photoshopcc.git
+    version: ce1d2dc901586cd580440647b4fb94cf7f970aa1
+    type: git_branch
+    branch: develop/zero_config

@@ -87,7 +87,7 @@ class MayaVersionUpPlugin(HookBaseClass):
         """
         return {}
 
-    def accept(self, log, settings, item):
+    def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
         interest to this plugin. Only items matching the filters defined via the
@@ -97,13 +97,14 @@ class MayaVersionUpPlugin(HookBaseClass):
         dictionary with the following booleans:
 
             - accepted: Indicates if the plugin is interested in this value at
-                        all.
-            - required: If set to True, the publish task is required and cannot
-                        be disabled.
-            - enabled:  If True, the publish task will be enabled in the UI by
-                        default.
+                all. Required.
+            - enabled: If True, the plugin will be enabled in the UI, otherwise
+                it will be disabled. Optional, True by default.
+            - visible: If True, the plugin will be visible in the UI, otherwise
+                it will be hidden. Optional, True by default.
+            - checked: If True, the plugin will be checked in the UI, otherwise
+                it will be unchecked. Optional, True by default.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -112,37 +113,53 @@ class MayaVersionUpPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        path = cmds.file(query=True, sn=True)
-
-        if not path:
-            log.error("The current session has not been saved.")
-            return {"accepted": False}
-
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(os.path.abspath(path))
-
         publisher = self.parent
+        path = cmds.file(query=True, sn=True)
+        modified = cmds.file(q=True, modified=True)
+        checked = True
 
-        # can't version up if we don't know the path
-        if not path:
-            return {"accepted": False}
+        if modified or not path:
+            # the session has unsaved changes. provide a save button and uncheck
+            # the item. the session will need to be saved before validation will
+            # succeed.
+            self.logger.warn(
+                "Unsaved changes in the session",
+                extra=_get_save_as_action()
+            )
+            checked = False
+        else:
+            # we have a path and there are no unsaved changes. make sure the
+            # path has a version number. we accept it regardless since it can be
+            # saved with a different file name while the publisher is open. but
+            # we will set it to be unchecked by default if there is no version
 
-        version_number = publisher.util.get_version_number(path)
-        if version_number is None:
-            # no version number detected in the file name
-            return {"accepted": False}
+            # get the path in a normalized state. no trailing separator,
+            # separators are appropriate for current os, no double separators,
+            # etc.
+            path = sgtk.util.ShotgunPath.normalize(path)
+            version_number = publisher.util.get_version_number(path)
 
-        return {"accepted": True, "required": False, "enabled": True}
+            if version_number is None:
+                self.logger.warn(
+                    "No version number detected in the file name",
+                    extra=_get_version_docs_action()
+                )
+                checked = False
 
-    def validate(self, log, settings, item):
+        self.logger.info(
+            "Maya version up plugin accepted the current Maya session.")
+
+        return {
+            "accepted": True,
+            "checked": checked,
+        }
+
+    def validate(self, settings, item):
         """
         Validates the given item to check that it is ok to publish.
 
-        Returns a boolean to indicate validity. Use the logger to output further
-        details around why validation has failed.
+        Returns a boolean to indicate validity.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -151,37 +168,66 @@ class MayaVersionUpPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(
-            os.path.abspath(cmds.file(query=True, sn=True)))
-
-        if not path:
-            log.error("The current session has not been saved.")
-            return False
-
         publisher = self.parent
+        path = cmds.file(query=True, sn=True)
+        modified = cmds.file(q=True, modified=True)
+
+        if modified or not path:
+            # the session still requires saving. provide a save button.
+            # validation fails since we don't want to save as the next version
+            # until the current changes have been saved.
+            self.logger.error(
+                "Unsaved changes in the session",
+                extra=_get_save_as_action()
+            )
+            return False
+        else:
+            # we have a path and there are no unsaved changes. make sure the
+            # path has a version number. if not, validation fails
+
+            # get the path in a normalized state. no trailing separator,
+            # separators are appropriate for current os, no double separators,
+            # etc.
+            path = sgtk.util.ShotgunPath.normalize(path)
+
+            version_number = publisher.util.get_version_number(path)
+
+            if version_number is None:
+                # still no version number in the file name. a warning was
+                # provided in accept(). validation fails
+                self.logger.error(
+                    "No version number detected in the file name",
+                    extra=_get_version_docs_action()
+                )
+                return False
+
         next_version_path = publisher.util.get_next_version_path(path)
 
         # nothing to do if the next version path can't be determined or if it
         # already exists.
         if not next_version_path:
-            log.warn("Could not determine the next version path.")
+            self.logger.error("Could not determine the next version path.")
+            return False
         elif os.path.exists(next_version_path):
-            log.warn("The next version of the path already exists")
+            self.logger.error(
+                "The next version of the path already exists",
+                extra={
+                    "action_show_folder": {
+                        "path": next_version_path
+                    }
+                }
+            )
+            return False
 
         # insert the path into the properties for use during the publish phase
         item.properties["next_version_path"] = next_version_path
 
         return True
 
-    def publish(self, log, settings, item):
+    def publish(self, settings, item):
         """
         Executes the publish logic for the given item and settings.
 
-        Use the logger to give the user status updates.
-
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
@@ -190,42 +236,76 @@ class MayaVersionUpPlugin(HookBaseClass):
 
         # get the next version path and save the document
         next_version_path = item.properties["next_version_path"]
+        _session_save_as(path=next_version_path)
+        self.logger.info("The Maya session is now at the next version!")
 
-        if not next_version_path:
-            log.warn("Could not determine the next version.")
-            return
-
-        if os.path.exists(next_version_path):
-            log.warn("The next version path already exists.")
-            return
-
-        # first rename the scene as file_path:
-        cmds.file(rename=next_version_path)
-
-        # Maya can choose the wrong file type so we should set it here
-        # explicitely based on the extension
-        maya_file_type = None
-        if next_version_path.lower().endswith(".ma"):
-            maya_file_type = "mayaAscii"
-        elif next_version_path.lower().endswith(".mb"):
-            maya_file_type = "mayaBinary"
-
-        # save the scene:
-        if maya_file_type:
-            cmds.file(save=True, force=True, type=maya_file_type)
-        else:
-            cmds.file(save=True, force=True)
-
-    def finalize(self, log, settings, item):
+    def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once
         all the publish tasks have completed, and can for example
         be used to version up files.
 
-        :param log: Logger to output feedback to.
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
         """
         pass
+
+
+def _session_save_as(path=None):
+    """
+    A save as wrapper for the current session.
+
+    :param path: Optional path to save the current session as.
+    """
+
+    if not path:
+        path = cmds.fileDialog(
+            mode=1, title="Save As", directoryMask='*.ma')
+
+    if not path:
+        # no path supplied and none returned via file dialog
+        return
+
+    # Maya can choose the wrong file type so we should set it here
+    # explicitly based on the extension
+    maya_file_type = None
+    if path.lower().endswith(".ma"):
+        maya_file_type = "mayaAscii"
+    elif path.lower().endswith(".mb"):
+        maya_file_type = "mayaBinary"
+
+    cmds.file(rename=path)
+
+    # save the scene:
+    if maya_file_type:
+        cmds.file(save=True, force=True, type=maya_file_type)
+    else:
+        cmds.file(save=True, force=True)
+
+
+def _get_save_as_action():
+    """
+    Simple helper for returning a log action dict for saving the session
+    """
+    return {
+        "action_button": {
+            "label": "Save",
+            "tooltip": "Save the current session",
+            "callback": _session_save_as
+        }
+    }
+
+
+def _get_version_docs_action():
+    """
+    Simple helper for returning a log action to show version docs
+    """
+    return {
+        "action_open_url": {
+            "label": "Version Docs",
+            "tooltip": "Show docs for version formats",
+            "url": "https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-User-Guide-WIP-#What%20happens%20when%20you%20publish"
+        }
+    }
