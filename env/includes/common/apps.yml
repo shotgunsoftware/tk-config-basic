@@ -52,6 +52,6 @@ common.apps.tk-multi-loader2.location:
 
 common.apps.tk-multi-shotgunpanel.location:
   path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-  version: eeec3c6af701affb7c6d6f938b542c03060032ba
+  version: 24a5905bf450b99b12e570bf531648f826cc330a
   type: git_branch
   branch: develop/zero_config
