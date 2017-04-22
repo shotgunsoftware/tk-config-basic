@@ -15,17 +15,19 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
 
-shotgun.all:
+shotgun.project:
   apps:
-    tk-multi-launchapp:
-      scan_all_projects: true
-      use_software_entity: true
-      location:
-        path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-        version: 7bc6ae606ae69764a19b58b14cf31a6f460d9168
-        type: git_branch
-        branch: develop/software_entity
+
+    tk-multi-publish2:
+      collector: "{config}/tk-multi-publish2/basic/collector.py"
+      publish_plugins:
+        - '@common.settings.tk-multi-publish2.file_publisher_all'
+        - '@common.settings.tk-multi-publish2.version_creator'
+      location: "@common.apps.tk-multi-publish2.location"
+
+    tk-multi-launchapp: '@common.apps.desktop.tk-multi-launchapp'
 
   location:
     type: app_store
