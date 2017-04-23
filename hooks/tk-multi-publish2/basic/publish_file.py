@@ -10,16 +10,15 @@
 
 import os
 import pprint
-import maya.cmds as cmds
-import maya.mel as mel
 import sgtk
+
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaSessionPublishPlugin(HookBaseClass):
+class PublishFilePlugin(HookBaseClass):
     """
-    Plugin for publishing an open maya session.
+    Plugin for creating generic publishes in Shotgun
     """
 
     @property
@@ -41,7 +40,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Maya Session Publisher"
+        return "Publish files/folders to Shotgun"
 
     @property
     def description(self):
@@ -49,16 +48,12 @@ class MayaSessionPublishPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return """
-        This plugin will publish the current Maya session. The plugin requires
-        the session be saved to a file before validation will succeed. The file
-        will be published in place.
-        """
+        return "Publishes files and folders to Shotgun."
 
     @property
     def settings(self):
         """
-        Dictionary defining the settings that this plugin expects to receive
+        Dictionary defining the settings that this plugin expects to recieve
         through the settings parameter in the accept, validate, publish and
         finalize methods.
 
@@ -71,14 +66,18 @@ class MayaSessionPublishPlugin(HookBaseClass):
                     "description": "One line description of the setting"
             }
 
-        The type string should be one of the data types that toolkit accepts as
-        part of its environment configuration.
+        The type string should be one of the data types that toolkit accepts
+        as part of its environment configuration.
         """
         return {
-            "Publish Type": {
-                "type": "shotgun_publish_type",
-                "default": "Maya Scene",
-                "description": "SG publish type to associate publishes with."
+            "File Types": {
+                "type": "list",
+                "default": "[]",
+                "description": (
+                    "List of file types to include. Each entry in the list "
+                    "is a list in which the first entry is the Shotgun "
+                    "published file type and subsequent entries are file "
+                    "extensions that should be associated.")
             },
         }
 
@@ -91,7 +90,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["maya.session"]
+        return ["file.*"]
 
     def accept(self, settings, item):
         """
@@ -119,75 +118,37 @@ class MayaSessionPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        path = cmds.file(query=True, sn=True)
-        modified = cmds.file(q=True, modified=True)
-        checked = True
+        path = item.properties["path"]
 
-        if modified or not path:
-            # the session has unsaved changes. provide a save button and uncheck
-            # the item. the session will need to be saved before validation will
-            # succeed.
-            self.logger.warn(
-                "Unsaved changes in the session",
-                extra=_get_save_as_action()
-            )
-            checked = False
-
+        # log the accepted file and display a button to reveal it in the fs
         self.logger.info(
-            "Maya publish plugin accepted the current Maya session.")
-        return {
-            "accepted": True,
-            "checked": checked
-        }
+            "File publisher plugin accepted: %s" % (path,),
+            extra={
+                "action_show_folder": {
+                    "path": path
+                }
+            }
+        )
+
+        # return the accepted info
+        return {"accepted": True}
 
     def validate(self, settings, item):
         """
-        Validates the given item to check that it is ok to publish. Returns a
-        boolean to indicate validity.
+        Validates the given item to check that it is ok to publish.
+
+        Returns a boolean to indicate validity.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
+
         :returns: True if item is valid, False otherwise.
         """
 
         publisher = self.parent
-        path = cmds.file(query=True, sn=True)
-        modified = cmds.file(q=True, modified=True)
-
-        if modified or not path:
-            # the session still requires saving. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
-            self.logger.error(
-                "Unsaved changes in the session",
-                extra=_get_save_as_action()
-            )
-            return False
-
-
-        # ensure we have an updated project root
-        project_root = cmds.workspace(q=True, rootDirectory=True)
-        item.properties["project_root"] = project_root
-
-        # warn if no project root could be determined.
-        if not project_root:
-            self.logger.warning(
-                "Your session is not part of a maya project.",
-                extra={
-                    "action_button": {
-                        "label": "Set Project",
-                        "tooltip": "Set the maya project",
-                        "callback": lambda: mel.eval('setProject ""')
-                    }
-                }
-            )
-
-        # get the path in a normalized state. no trailing separator,
-        # separators are appropriate for current os, no double separators,
-        # etc.
-        sgtk.util.ShotgunPath.normalize(path)
+        path = item.properties.get("path")
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
@@ -214,7 +175,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
             )
             self.logger.warn(
                 "Found %s conflicting publishes in Shotgun" %
-                (len(publishes),),
+                    (len(publishes),),
                 extra={
                     "action_show_more_info": {
                         "label": "Show Conflicts",
@@ -237,10 +198,16 @@ class MayaSessionPublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
+        path = item.properties["path"]
 
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(cmds.file(query=True, sn=True))
+        # get the publish path components
+        path_info = publisher.util.get_file_path_components(path)
+
+        # determine the publish type
+        extension = path_info["extension"]
+
+        # get the publish type
+        publish_type = self._get_publish_type(extension, settings)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -251,7 +218,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
 
         # arguments for publish registration
         self.logger.info("Registering publish...")
-        publish_data = {
+        publish_data= {
             "tk": publisher.sgtk,
             "context": item.context,
             "comment": item.description,
@@ -259,9 +226,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
             "name": publish_name,
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": settings["Publish Type"].value,
-            "dependency_paths":
-                self._maya_find_additional_session_dependencies(),
+            "published_file_type": publish_type,
         }
 
         # log the publish data for debugging
@@ -282,13 +247,11 @@ class MayaSessionPublishPlugin(HookBaseClass):
             **publish_data)
         self.logger.info("Publish registered!")
 
-        # now that we've published. keep a handle on the path that was published
-        item.properties["path"] = path
-
     def finalize(self, settings, item):
         """
-        Execute the finalization pass. This pass executes once all the publish
-        tasks have completed, and can for example be used to version up files.
+        Execute the finalization pass. This pass executes once
+        all the publish tasks have completed, and can for example
+        be used to version up files.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
@@ -320,85 +283,37 @@ class MayaSessionPublishPlugin(HookBaseClass):
             }
         )
 
-    def _maya_find_additional_session_dependencies(self):
+    def _get_publish_type(self, extension, settings):
         """
-        Find additional dependencies from the session
+        Get a publish type for the supplied extension and publish settings.
+
+        :param extension: The file extension to find a publish type for
+        :param settings: The publish settings defining the publish types
+
+        :return: A publish type or None if one could not be found.
         """
-        # default implementation looks for references and
-        # textures (file nodes) and returns any paths that
-        # match a template defined in the configuration
-        ref_paths = set()
 
-        # first let's look at maya references
-        ref_nodes = cmds.ls(references=True)
-        for ref_node in ref_nodes:
-            # get the path:
-            ref_path = cmds.referenceQuery(ref_node, filename=True)
-            # make it platform dependent
-            # (maya uses C:/style/paths)
-            ref_path = ref_path.replace("/", os.path.sep)
-            if ref_path:
-                ref_paths.add(ref_path)
+        # ensure lowercase and no dot
+        if extension:
+            extension = extension.lstrip(".").lower()
 
-        # now look at file texture nodes
-        for file_node in cmds.ls(l=True, type="file"):
-            # ensure this is actually part of this session and not referenced
-            if cmds.referenceQuery(file_node, isNodeReferenced=True):
-                # this is embedded in another reference, so don't include it in
-                # the breakdown
-                continue
+            for type_def in settings["File Types"].value:
 
-            # get path and make it platform dependent
-            # (maya uses C:/style/paths)
-            texture_path = cmds.getAttr(
-                "%s.fileTextureName" % file_node).replace("/", os.path.sep)
-            if texture_path:
-                ref_paths.add(texture_path)
+                publish_type = type_def[0]
+                file_extensions = type_def[1:]
 
-        return ref_paths
+                if extension in file_extensions:
+                    # found a matching type in settings. use it!
+                    return publish_type
 
+        # --- no pre-defined publish type found...
 
-def _session_save_as(path=None):
-    """
-    A save as wrapper for the current session.
+        if extension:
+            # publish type is based on extension
+            publish_type = "%s File" % extension.capitalize()
+        else:
+            # no extension, assume it is a folder
+            publish_type = "Folder"
 
-    :param path: Optional path to save the current session as.
-    """
-
-    if not path:
-        path = cmds.fileDialog(
-            mode=1, title="Save As", directoryMask='*.ma')
-
-    if not path:
-        # no path supplied and none returned via file dialog
-        return
-
-    # Maya can choose the wrong file type so we should set it here
-    # explicitly based on the extension
-    maya_file_type = None
-    if path.lower().endswith(".ma"):
-        maya_file_type = "mayaAscii"
-    elif path.lower().endswith(".mb"):
-        maya_file_type = "mayaBinary"
-
-    cmds.file(rename=path)
-
-    # save the scene:
-    if maya_file_type:
-        cmds.file(save=True, force=True, type=maya_file_type)
-    else:
-        cmds.file(save=True, force=True)
-
-
-def _get_save_as_action():
-    """
-
-    Simple helper for returning a log action dict for saving the session
-    """
-    return {
-        "action_button": {
-            "label": "Save",
-            "tooltip": "Save the current session",
-            "callback": _session_save_as
-        }
-    }
+        # no publish type identified!
+        return publish_type

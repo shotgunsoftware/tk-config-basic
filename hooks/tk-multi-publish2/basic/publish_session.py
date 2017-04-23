@@ -1,25 +1,56 @@
 # Copyright (c) 2017 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
 import pprint
 import sgtk
 
-
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class BasicFilePublishPlugin(HookBaseClass):
+class PublishSessionPlugin(HookBaseClass):
     """
-    Plugin for creating generic publishes in Shotgun
+    Abstract plugin hook for publishing an open session within a DCC. Subclasses
+    must implement the DCC-specific properties in order for publish phase
+    methods to function properly.
     """
+
+    @property
+    def publish_type(self):
+        """
+        The publish type to use for this publisher.
+        :return:
+        """
+        raise NotImplementedError(
+            "Subclass plugin hook has not defined the 'publish_type' property.")
+
+    @property
+    def session_path(self):
+        """
+        The path to the current session on disk. Can be ``None`` if the session
+        has not been saved.
+        """
+        raise NotImplementedError(
+            "Subclass plugin hook has not defined the 'session_path' property.")
+
+    @property
+    def session_dependency_paths(self):
+        """
+        The list of file paths for other files that this file depends on.
+
+        Subclasses that support references should implement the DCC-specific
+        discovery of upstream dependency paths. The default implementation will
+        return an empty list to simplify implementation for DCCs that do not
+        support dependencies.
+        """
+        return []
 
     @property
     def icon(self):
@@ -40,7 +71,7 @@ class BasicFilePublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish files/folders to Shotgun"
+        return "Session Publisher"
 
     @property
     def description(self):
@@ -48,12 +79,16 @@ class BasicFilePublishPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return "Publishes files and folders to Shotgun."
+        return """
+            This plugin will publish the current session. The plugin requires
+            the session be saved to a file before validation will succeed. The
+            file will be published in place.
+            """
 
     @property
     def settings(self):
         """
-        Dictionary defining the settings that this plugin expects to recieve
+        Dictionary defining the settings that this plugin expects to receive
         through the settings parameter in the accept, validate, publish and
         finalize methods.
 
@@ -66,18 +101,14 @@ class BasicFilePublishPlugin(HookBaseClass):
                     "description": "One line description of the setting"
             }
 
-        The type string should be one of the data types that toolkit accepts
-        as part of its environment configuration.
+        The type string should be one of the data types that toolkit accepts as
+        part of its environment configuration.
         """
         return {
-            "File Types": {
-                "type": "list",
-                "default": "[]",
-                "description": (
-                    "List of file types to include. Each entry in the list "
-                    "is a list in which the first entry is the Shotgun "
-                    "published file type and subsequent entries are file "
-                    "extensions that should be associated.")
+            "Publish Type": {
+                "type": "shotgun_publish_type",
+                "default": self.publish_type,
+                "description": "SG publish type to associate publishes with."
             },
         }
 
@@ -90,7 +121,8 @@ class BasicFilePublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["file.*"]
+        raise NotImplementedError(
+            "Subclass plugin hook has not defined the 'item_filters' property.")
 
     def accept(self, settings, item):
         """
@@ -118,37 +150,33 @@ class BasicFilePublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        path = item.properties["path"]
-
-        # log the accepted file and display a button to reveal it in the fs
-        self.logger.info(
-            "File publisher plugin accepted: %s" % (path,),
-            extra={
-                "action_show_folder": {
-                    "path": path
-                }
-            }
-        )
-
-        # return the accepted info
-        return {"accepted": True}
+        self.logger.info("Publish plugin accepted the current session.")
+        return {"accepted": True, "checked": True}
 
     def validate(self, settings, item):
         """
-        Validates the given item to check that it is ok to publish.
-
-        Returns a boolean to indicate validity.
+        Validates the given item to check that it is ok to publish. Returns a
+        boolean to indicate validity.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
-
         :returns: True if item is valid, False otherwise.
         """
 
         publisher = self.parent
-        path = item.properties.get("path")
+        path = self.session_path
+
+        if not path:
+            # no path defined
+            self.logger.error("Session has not been saved.")
+            return False
+
+        # get the path in a normalized state. no trailing separator,
+        # separators are appropriate for current os, no double separators,
+        # etc.
+        sgtk.util.ShotgunPath.normalize(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
@@ -175,7 +203,7 @@ class BasicFilePublishPlugin(HookBaseClass):
             )
             self.logger.warn(
                 "Found %s conflicting publishes in Shotgun" %
-                    (len(publishes),),
+                (len(publishes),),
                 extra={
                     "action_show_more_info": {
                         "label": "Show Conflicts",
@@ -198,16 +226,10 @@ class BasicFilePublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = item.properties["path"]
 
-        # get the publish path components
-        path_info = publisher.util.get_file_path_components(path)
-
-        # determine the publish type
-        extension = path_info["extension"]
-
-        # get the publish type
-        publish_type = self._get_publish_type(extension, settings)
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(self.session_path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -218,7 +240,7 @@ class BasicFilePublishPlugin(HookBaseClass):
 
         # arguments for publish registration
         self.logger.info("Registering publish...")
-        publish_data= {
+        publish_data = {
             "tk": publisher.sgtk,
             "context": item.context,
             "comment": item.description,
@@ -226,7 +248,8 @@ class BasicFilePublishPlugin(HookBaseClass):
             "name": publish_name,
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": publish_type,
+            "published_file_type": settings["Publish Type"].value,
+            "dependency_paths": self.session_dependency_paths,
         }
 
         # log the publish data for debugging
@@ -247,11 +270,13 @@ class BasicFilePublishPlugin(HookBaseClass):
             **publish_data)
         self.logger.info("Publish registered!")
 
+        # now that we've published. keep a handle on the path that was published
+        item.properties["path"] = path
+
     def finalize(self, settings, item):
         """
-        Execute the finalization pass. This pass executes once
-        all the publish tasks have completed, and can for example
-        be used to version up files.
+        Execute the finalization pass. This pass executes once all the publish
+        tasks have completed, and can for example be used to version up files.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
@@ -283,37 +308,4 @@ class BasicFilePublishPlugin(HookBaseClass):
             }
         )
 
-    def _get_publish_type(self, extension, settings):
-        """
-        Get a publish type for the supplied extension and publish settings.
 
-        :param extension: The file extension to find a publish type for
-        :param settings: The publish settings defining the publish types
-
-        :return: A publish type or None if one could not be found.
-        """
-
-        # ensure lowercase and no dot
-        if extension:
-            extension = extension.lstrip(".").lower()
-
-            for type_def in settings["File Types"].value:
-
-                publish_type = type_def[0]
-                file_extensions = type_def[1:]
-
-                if extension in file_extensions:
-                    # found a matching type in settings. use it!
-                    return publish_type
-
-        # --- no pre-defined publish type found...
-
-        if extension:
-            # publish type is based on extension
-            publish_type = "%s File" % extension.capitalize()
-        else:
-            # no extension, assume it is a folder
-            publish_type = "Folder"
-
-        # no publish type identified!
-        return publish_type

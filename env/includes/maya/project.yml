@@ -26,13 +26,18 @@ maya.project:
     tk-multi-publish2:
       collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
+        # standard, drag/drop file plugins
+        - '@common.settings.tk-multi-publish2.publish_file'
+        - '@common.settings.tk-multi-publish2.create_version'
+        # plugins for the current maya session
+        - name: Ensure Session Saved
+          hook: "{config}/tk-multi-publish2/basic/ensure_saved.py:{config}/tk-multi-publish2/maya.basic/ensure_saved.py"
+          settings: {}
         - name: Maya Scene Publisher
-          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py"
+          hook: "{config}/tk-multi-publish2/basic/publish_session.py:{config}/tk-multi-publish2/maya.basic/publish_session.py"
           settings: {}
         - name: Save the file to the next version
-          hook: "{config}/tk-multi-publish2/maya.basic/version_up.py"
+          hook: "{config}/tk-multi-publish2/basic/bump_file_version.py:{config}/tk-multi-publish2/maya.basic/bump_file_version.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 

@@ -27,8 +27,8 @@ includes:
     tk-multi-publish2:
       collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/3dsmax.basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
+        - '@common.settings.tk-multi-publish2.publish_file'
+        - '@common.settings.tk-multi-publish2.create_version'
         - name: 3ds Max Scene Publisher
           hook: "{config}/tk-multi-publish2/3dsmax.basic/file_publisher.py"
           settings: {}
