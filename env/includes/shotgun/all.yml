@@ -15,9 +15,16 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
 
 shotgun.all:
   apps:
+    tk-multi-publish2:
+      collector: "{config}/tk-multi-publish2/basic/collector.py"
+      publish_plugins:
+        - '@common.settings.tk-multi-publish2.file_publisher'
+        - '@common.settings.tk-multi-publish2.version_creator'
+      location: "@common.apps.tk-multi-publish2.location"
     tk-multi-launchapp:
       scan_all_projects: true
       use_software_entity: true
