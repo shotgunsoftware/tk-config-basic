@@ -66,7 +66,7 @@ COMMON_FILE_INFO = {
 }
 
 
-class BasicSceneCollector(HookBaseClass):
+class FileCollectorPlugin(HookBaseClass):
     """
     A basic collector that handles files and general objects.
     """

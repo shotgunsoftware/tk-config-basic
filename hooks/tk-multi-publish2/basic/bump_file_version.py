@@ -9,16 +9,24 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-import maya.cmds as cmds
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaVersionUpPlugin(HookBaseClass):
+class BumpFileVersionPlugin(HookBaseClass):
     """
     Plugin for creating the next version of a file.
     """
+
+    @property
+    def session_path(self):
+        """
+        The path to the current session on disk. Can be ``None`` if the session
+        has not been saved.
+        """
+        raise NotImplementedError(
+            "Subclass plugin hook has not defined the 'session_path' property.")
 
     @property
     def icon(self):
@@ -48,11 +56,11 @@ class MayaVersionUpPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Detect the version number in the maya file path and save it to the next
-        available version number. The plugin will only be available to maya
-        files where a version number can be detected in the path. The plugin
-        will only create the next available version if the new path does not
-        already exist.
+        Detect the version number in the file path and save it to the next
+        available version number. The plugin will only be available to files
+        where a version number can be detected in the path. The plugin will only
+        create the next available version if the new path does not already
+        exist.
         """
 
     @property
@@ -64,7 +72,8 @@ class MayaVersionUpPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["maya.session"]
+        raise NotImplementedError(
+            "Subclass plugin hook has not defined the 'item_filters' property.")
 
     @property
     def settings(self):
@@ -114,18 +123,11 @@ class MayaVersionUpPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = cmds.file(query=True, sn=True)
-        modified = cmds.file(q=True, modified=True)
+        path = self.session_path
         checked = True
 
-        if modified or not path:
-            # the session has unsaved changes. provide a save button and uncheck
-            # the item. the session will need to be saved before validation will
-            # succeed.
-            self.logger.warn(
-                "Unsaved changes in the session",
-                extra=_get_save_as_action()
-            )
+        if not path:
+            self.logger.warning("Session has not been saved")
             checked = False
         else:
             # we have a path and there are no unsaved changes. make sure the
@@ -147,7 +149,7 @@ class MayaVersionUpPlugin(HookBaseClass):
                 checked = False
 
         self.logger.info(
-            "Maya version up plugin accepted the current Maya session.")
+            "Version up plugin accepted the current session")
 
         return {
             "accepted": True,
@@ -169,44 +171,38 @@ class MayaVersionUpPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = cmds.file(query=True, sn=True)
-        modified = cmds.file(q=True, modified=True)
+        path = self.session_path
 
-        if modified or not path:
-            # the session still requires saving. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
+        if not path:
+            # no path defined
+            self.logger.error("Session has not been saved")
+            return False
+
+        # we have a path and there are no unsaved changes. make sure the
+        # path has a version number. if not, validation fails
+
+        # get the path in a normalized state. no trailing separator,
+        # separators are appropriate for current os, no double separators,
+        # etc.
+        path = sgtk.util.ShotgunPath.normalize(path)
+
+        version_number = publisher.util.get_version_number(path)
+
+        if version_number is None:
+            # still no version number in the file name. a warning was
+            # provided in accept(). validation fails
             self.logger.error(
-                "Unsaved changes in the session",
-                extra=_get_save_as_action()
+                "No version number detected in the file name",
+                extra=_get_version_docs_action()
             )
             return False
-        else:
-            # we have a path and there are no unsaved changes. make sure the
-            # path has a version number. if not, validation fails
-
-            # get the path in a normalized state. no trailing separator,
-            # separators are appropriate for current os, no double separators,
-            # etc.
-            path = sgtk.util.ShotgunPath.normalize(path)
-
-            version_number = publisher.util.get_version_number(path)
-
-            if version_number is None:
-                # still no version number in the file name. a warning was
-                # provided in accept(). validation fails
-                self.logger.error(
-                    "No version number detected in the file name",
-                    extra=_get_version_docs_action()
-                )
-                return False
 
         next_version_path = publisher.util.get_next_version_path(path)
 
         # nothing to do if the next version path can't be determined or if it
         # already exists.
         if not next_version_path:
-            self.logger.error("Could not determine the next version path.")
+            self.logger.error("Could not determine the next version path")
             return False
         elif os.path.exists(next_version_path):
             self.logger.error(
@@ -236,8 +232,8 @@ class MayaVersionUpPlugin(HookBaseClass):
 
         # get the next version path and save the document
         next_version_path = item.properties["next_version_path"]
-        _session_save_as(path=next_version_path)
-        self.logger.info("The Maya session is now at the next version!")
+        self.session_save_as(next_version_path)
+        self.logger.info("The session is now at the next version!")
 
     def finalize(self, settings, item):
         """
@@ -252,50 +248,17 @@ class MayaVersionUpPlugin(HookBaseClass):
         """
         pass
 
+    def session_save_as(self, path):
+        """
+        Abstract method that must be implemented by the subclass. This method
+        should save the current session to the supplied path.
 
-def _session_save_as(path=None):
-    """
-    A save as wrapper for the current session.
-
-    :param path: Optional path to save the current session as.
-    """
-
-    if not path:
-        path = cmds.fileDialog(
-            mode=1, title="Save As", directoryMask='*.ma')
-
-    if not path:
-        # no path supplied and none returned via file dialog
-        return
-
-    # Maya can choose the wrong file type so we should set it here
-    # explicitly based on the extension
-    maya_file_type = None
-    if path.lower().endswith(".ma"):
-        maya_file_type = "mayaAscii"
-    elif path.lower().endswith(".mb"):
-        maya_file_type = "mayaBinary"
-
-    cmds.file(rename=path)
-
-    # save the scene:
-    if maya_file_type:
-        cmds.file(save=True, force=True, type=maya_file_type)
-    else:
-        cmds.file(save=True, force=True)
-
-
-def _get_save_as_action():
-    """
-    Simple helper for returning a log action dict for saving the session
-    """
-    return {
-        "action_button": {
-            "label": "Save",
-            "tooltip": "Save the current session",
-            "callback": _session_save_as
-        }
-    }
+        :param path: The path to save the session to
+        """
+        raise NotImplementedError(
+            "Subclass plugin hook has not defined the 'session_save_as' "
+            "method."
+        )
 
 
 def _get_version_docs_action():

@@ -15,7 +15,7 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class ShotgunReviewPlugin(HookBaseClass):
+class CreateVersionPlugin(HookBaseClass):
     """
     Plugin for sending quicktimes and images to shotgun for review.
     """
