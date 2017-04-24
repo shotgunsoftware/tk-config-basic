@@ -46,6 +46,7 @@ photoshopcc.project:
         Photoshop Image: [add_as_a_layer, open_file]
         Rendered Image: [add_as_a_layer, open_file]
         Image: [add_as_a_layer, open_file]
+        Texture: [add_as_a_layer, open_file]
       actions_hook: '{self}/tk-photoshopcc_actions.py'
       entities:
       - caption: Current Project
@@ -66,18 +67,21 @@ photoshopcc.project:
       actions_hook: '{self}/general_actions.py'
       action_mappings:
         PublishedFile:
-        - actions:
-          - publish_clipboard
+        - actions: [publish_clipboard]
           filters: {}
+        - actions: [add_as_a_layer, open_file]
+          filters: {published_file_type: Photoshop Image}
+        - actions: [add_as_a_layer, open_file]
+          filters: {published_file_type: Rendered Image}
+        - actions: [add_as_a_layer, open_file]
+          filters: {published_file_type: Image}
+        - actions: [add_as_a_layer, open_file]
+          filters: {published_file_type: Texture}
         Task:
-        - actions:
-          - assign_task
-          - task_to_ip
+        - actions: [assign_task, task_to_ip]
           filters: {}
         Version:
-        - actions:
-          - quicktime_clipboard
-          - sequence_clipboard
+        - actions: [quicktime_clipboard, sequence_clipboard]
           filters: {}
       enable_context_switch: true
       location: "@common.apps.tk-multi-shotgunpanel.location"

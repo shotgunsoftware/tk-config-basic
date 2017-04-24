@@ -24,10 +24,12 @@ maya.site:
 
     tk-multi-loader2:
       action_mappings:
-        Maya Scene: [reference, import]
-        Photoshop Image: [udim_texture_node]
-        Rendered Image: [texture_node, image_plane]
+        Alembic Cache: [reference, import]
         Image: [texture_node, image_plane]
+        Maya Scene: [reference, import]
+        Photoshop Image: [texture_node, image_plane]
+        Rendered Image: [texture_node, image_plane]
+        Texture: [texture_node, image_plane]
       actions_hook: '{self}/tk-maya_actions.py'
       entities:
       - caption: Project
@@ -47,15 +49,17 @@ maya.site:
       action_mappings:
         PublishedFile:
         - actions: [reference, import]
-          filters: {published_file_type: Maya Scene}
+          filters: {published_file_type: Alembic Cache}
         - actions: [texture_node, image_plane]
           filters: {published_file_type: Image}
+        - actions: [reference, import]
+          filters: {published_file_type: Maya Scene}
+        - actions: [texture_node, image_plane]
+          filters: {published_file_type: Photoshop Image}
         - actions: [texture_node, image_plane]
           filters: {published_file_type: Rendered Image}
         - actions: [texture_node, image_plane]
-          filters: {published_file_type: Photoshop Image}
-        - actions: [udim_texture_node]
-          filters: {published_file_type: UDIM Image}
+          filters: {published_file_type: Texture}
         - actions: [publish_clipboard]
           filters: {}
         Task:
