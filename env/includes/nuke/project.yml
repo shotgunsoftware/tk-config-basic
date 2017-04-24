@@ -48,6 +48,7 @@ nuke.project:
         Rendered Image: [read_node]
         Alembic Cache: [read_node]
         Movie: [read_node]
+        NukeStudio Project: [open_project]
       actions_hook: '{self}/tk-nuke_actions.py'
       entities:
       - caption: Current Project
@@ -74,6 +75,8 @@ nuke.project:
           filters: {published_file_type: Movie}
         - actions: [script_import]
           filters: {published_file_type: Nuke Script}
+        - actions: [open_project]
+          filters: {published_file_type: NukeStudio Project}
         Task:
         - actions: [assign_task, task_to_ip]
           filters: {}

@@ -109,7 +109,7 @@ class NukeSessionCollector(HookBaseClass):
             # create the session item for the publish hierarchy
             session_item = parent_item.create_item(
                 "nukestudio.project",
-                "Nuke Studio Project",
+                "NukeStudio Project",
                 project.name()
             )
             session_item.set_icon_from_path(icon_path)
