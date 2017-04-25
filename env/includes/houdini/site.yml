@@ -42,6 +42,11 @@ houdini.site:
           filters:
           - [task_assignees, is, '{context.user}']
           hierarchy: [project, entity, content]
+        # ignore publishes without a status. with zero config, it is very easy
+        # to publish the same path multiple times. the default zero config publish
+        # plugins will clear the status of previous publishes of the same path.
+        # this filter means only the latest publish will be displayed.
+        publish_filters: [["sg_status_list", "is_not", null]]
         location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
