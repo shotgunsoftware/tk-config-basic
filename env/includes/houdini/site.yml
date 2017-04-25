@@ -25,8 +25,11 @@ houdini.site:
     tk-multi-loader2:
         action_mappings:
           Alembic Cache: [import]
-          Rendered Image: [file_cop]
+          Houdini Scene: [merge]
           Image: [file_cop]
+          Photoshop Image: [file_cop]
+          Rendered Image: [file_cop]
+          Texture: [file_cop]
         actions_hook: '{self}/tk-houdini_actions.py'
         entities:
         - caption: Project
@@ -44,12 +47,20 @@ houdini.site:
     tk-multi-shotgunpanel:
         action_mappings:
           PublishedFile:
-          - actions: [publish_clipboard]
-            filters: {}
+          - actions: [import]
+            filters: {published_file_type: Alembic Cache}
+          - actions: [merge]
+            filters: {published_file_type: Houdini Scene}
+          - actions: [file_cop]
+            filters: {published_file_type: Image}
+          - actions: [file_cop]
+            filters: {published_file_type: Photoshop Image}
           - actions: [file_cop]
             filters: {published_file_type: Rendered Image}
           - actions: [file_cop]
-            filters: {published_file_type: Image}
+            filters: {published_file_type: Texture}
+          - actions: [publish_clipboard]
+            filters: {}
           Task:
           - actions:
             - assign_task

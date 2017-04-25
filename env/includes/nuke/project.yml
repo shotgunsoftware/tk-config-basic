@@ -44,11 +44,14 @@ nuke.project:
 
     tk-multi-loader2:
       action_mappings:
-        Nuke Script: [script_import]
-        Rendered Image: [read_node]
         Alembic Cache: [read_node]
+        Image: [read_node]
         Movie: [read_node]
+        Nuke Script: [script_import]
         NukeStudio Project: [open_project]
+        Photoshop Image: [read_node]
+        Rendered Image: [read_node]
+        Texture: [read_node]
       actions_hook: '{self}/tk-nuke_actions.py'
       entities:
       - caption: Current Project
@@ -68,15 +71,21 @@ nuke.project:
       action_mappings:
         PublishedFile:
         - actions: [read_node]
-          filters: {published_file_type: Rendered Image}
-        - actions: [read_node]
           filters: {published_file_type: Alembic Cache}
+        - actions: [read_node]
+          filters: {published_file_type: Image}
         - actions: [read_node]
           filters: {published_file_type: Movie}
         - actions: [script_import]
           filters: {published_file_type: Nuke Script}
         - actions: [open_project]
           filters: {published_file_type: NukeStudio Project}
+        - actions: [read_node]
+          filters: {published_file_type: Photoshop Image}
+        - actions: [read_node]
+          filters: {published_file_type: Rendered Image}
+        - actions: [read_node]
+          filters: {published_file_type: Texture}
         Task:
         - actions: [assign_task, task_to_ip]
           filters: {}
