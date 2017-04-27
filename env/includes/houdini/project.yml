@@ -48,7 +48,7 @@ houdini.project:
         entities:
         - caption: Project
           type: Hierarchy
-          root: /
+          root: "{context.project}"
           publish_filters: []
         - caption: My Tasks
           type: Query
