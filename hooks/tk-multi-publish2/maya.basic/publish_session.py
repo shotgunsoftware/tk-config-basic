@@ -41,7 +41,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Maya Session Publisher"
+        return "Publish Maya work file"
 
     @property
     def description(self):
@@ -50,9 +50,11 @@ class MayaSessionPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will publish the current Maya session. The plugin requires
-        the session be saved to a file before validation will succeed. The file
-        will be published in place.
+        This plugin will save and publish the current Maya session. If the
+        session has not been saved before or the path can not be determined,
+        validation will fail. If a version number is detected in the file name,
+        the session will be saved to the next version once publishing is
+        complete.
         """
 
     @property
@@ -119,25 +121,24 @@ class MayaSessionPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        path = cmds.file(query=True, sn=True)
-        modified = cmds.file(q=True, modified=True)
-        checked = True
+        path = _session_path()
 
-        if modified or not path:
-            # the session has unsaved changes. provide a save button and uncheck
-            # the item. the session will need to be saved before validation will
-            # succeed.
+        if not path:
+            # the session has not been saved before (no path determined).
+            # provide a save button. the session will need to be saved before
+            # validation will succeed.
             self.logger.warn(
-                "Unsaved changes in the session",
+                "The Maya session has not been saved.",
                 extra=_get_save_as_action()
             )
-            checked = False
 
         self.logger.info(
-            "Maya publish plugin accepted the current Maya session.")
+            "Maya '%s' plugin accepted the current Maya session." %
+            (self.name,)
+        )
         return {
             "accepted": True,
-            "checked": checked
+            "checked": True
         }
 
     def validate(self, settings, item):
@@ -153,19 +154,16 @@ class MayaSessionPublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = cmds.file(query=True, sn=True)
-        modified = cmds.file(q=True, modified=True)
+        path = _session_path()
 
-        if modified or not path:
+        if not path:
             # the session still requires saving. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
+            # validation fails.
             self.logger.error(
                 "Unsaved changes in the session",
                 extra=_get_save_as_action()
             )
             return False
-
 
         # ensure we have an updated project root
         project_root = cmds.workspace(q=True, rootDirectory=True)
@@ -240,7 +238,10 @@ class MayaSessionPublishPlugin(HookBaseClass):
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(cmds.file(query=True, sn=True))
+        path = sgtk.util.ShotgunPath.normalize(_session_path())
+
+        # ensure the session is saved
+        _save_session(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -320,6 +321,47 @@ class MayaSessionPublishPlugin(HookBaseClass):
             }
         )
 
+        # insert the path into the properties
+        item.properties["next_version_path"] = self._bump_file_version(path)
+
+    def _bump_file_version(self, path):
+
+        publisher = self.parent
+        version_number = publisher.util.get_version_number(path)
+
+        if version_number is None:
+            self.logger.debug(
+                "No version number detected in the publish path. "
+                "Skipping the bump file version step."
+            )
+            return None
+
+        self.logger.info("Incrementing session file version number...")
+
+        next_version_path = publisher.util.get_next_version_path(path)
+
+        # nothing to do if the next version path can't be determined or if it
+        # already exists.
+        if not next_version_path:
+            self.logger.warning("Could not determine the next version path.")
+            return None
+        elif os.path.exists(next_version_path):
+            self.logger.warning(
+                "The next version of the path already exists",
+                extra={
+                    "action_show_folder": {
+                        "path": next_version_path
+                    }
+                }
+            )
+            return None
+
+        # save the session to the new path
+        _save_session(next_version_path)
+        self.logger.info("Session saved as: %s" % (next_version_path,))
+
+        return next_version_path
+
     def _maya_find_additional_session_dependencies(self):
         """
         Find additional dependencies from the session
@@ -358,6 +400,36 @@ class MayaSessionPublishPlugin(HookBaseClass):
         return ref_paths
 
 
+def _session_path():
+    """
+    Return the path to the current session
+    :return:
+    """
+    return cmds.file(query=True, sn=True)
+
+
+def _save_session(path):
+    """
+    Save the current session to the supplied path.
+    """
+
+    # Maya can choose the wrong file type so we should set it here
+    # explicitly based on the extension
+    maya_file_type = None
+    if path.lower().endswith(".ma"):
+        maya_file_type = "mayaAscii"
+    elif path.lower().endswith(".mb"):
+        maya_file_type = "mayaBinary"
+
+    cmds.file(rename=path)
+
+    # save the scene:
+    if maya_file_type:
+        cmds.file(save=True, force=True, type=maya_file_type)
+    else:
+        cmds.file(save=True, force=True)
+
+
 def _get_save_as_action():
     """
 
@@ -365,7 +437,7 @@ def _get_save_as_action():
     """
     return {
         "action_button": {
-            "label": "Save",
+            "label": "Save As...",
             "tooltip": "Save the current session",
             "callback": cmds.SaveScene
         }

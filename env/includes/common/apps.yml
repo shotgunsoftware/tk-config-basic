@@ -40,9 +40,10 @@ common.apps.tk-multi-launchapp:
 # locations for common apps
 
 common.apps.tk-multi-publish2.location:
-  type: app_store
-  name: tk-multi-publish2
-  version: v0.2.4
+  path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+  version: a07b6f8bd466f18cd436cabf6a8d061742aafa43
+  type: git_branch
+  branch: master
 
 common.apps.tk-multi-loader2.location:
   path: https://github.com/shotgunsoftware/tk-multi-loader2.git

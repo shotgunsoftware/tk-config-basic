@@ -28,11 +28,11 @@ maya.project:
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher'
         - '@common.settings.tk-multi-publish2.version_creator'
-        - name: Maya Scene Publisher
-          hook: "{config}/tk-multi-publish2/maya.basic/file_publisher.py"
+        - name: Add version number to Maya file name
+          hook: "{config}/tk-multi-publish2/maya.basic/start_version_control.py"
           settings: {}
-        - name: Save the file to the next version
-          hook: "{config}/tk-multi-publish2/maya.basic/version_up.py"
+        - name: Publish Maya file
+          hook: "{config}/tk-multi-publish2/maya.basic/publish_session.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 
