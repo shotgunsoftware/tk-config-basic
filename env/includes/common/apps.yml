@@ -41,7 +41,7 @@ common.apps.tk-multi-launchapp:
 
 common.apps.tk-multi-publish2.location:
   path: https://github.com/shotgunsoftware/tk-multi-publish2.git
-  version: 2324ac1ebe6fcbc692ebcc3491d2ce32d055956b
+  version: 25d0d93f83539d7ead8b5e7cacdc7b1ee4059064
   type: git_branch
   branch: master
 
