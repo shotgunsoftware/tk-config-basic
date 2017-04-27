@@ -32,7 +32,7 @@ includes:
       entities:
       - caption: Project
         type: Hierarchy
-        root: /
+        root:
         publish_filters: []
       - caption: My Tasks
         type: Query

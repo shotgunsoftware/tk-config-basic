@@ -48,7 +48,7 @@ maya.project:
       entities:
       - caption: Current Project
         type: Hierarchy
-        root: "/Project/{context.project.id}"
+        root: "{context.project}"
         publish_filters: []
       - caption: My Tasks
         type: Query

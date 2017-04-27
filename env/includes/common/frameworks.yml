@@ -26,7 +26,7 @@ frameworks:
   tk-framework-shotgunutils_v5.x.x:
     location:
       path: https://github.com/shotgunsoftware/tk-framework-shotgunutils.git
-      version: e42ac6492cf872707a06f1e3aa7064db6b826aef
+      version: c575026f8dc17cd0a5f653e0b641b4db01364221
       type: git_branch
       branch: develop/zero_config
   tk-framework-adminui_v0.x.x:
