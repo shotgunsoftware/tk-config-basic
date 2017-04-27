@@ -24,6 +24,7 @@ maya.project:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-publish2:
+      help_url: "@common.apps.tk-multi-publish2.help_url"
       collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher'

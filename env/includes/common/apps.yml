@@ -41,7 +41,7 @@ common.apps.tk-multi-launchapp:
 
 common.apps.tk-multi-publish2.location:
   path: https://github.com/shotgunsoftware/tk-multi-publish2.git
-  version: 25d0d93f83539d7ead8b5e7cacdc7b1ee4059064
+  version: efcb84da7fb09ebcfc67cee130cf812f9e87789a
   type: git_branch
   branch: master
 
@@ -56,3 +56,7 @@ common.apps.tk-multi-shotgunpanel.location:
   version: c953fe2a510388843853c1ddebfe967ec5ea4126
   type: git_branch
   branch: develop/zero_config
+
+# help urls
+
+common.apps.tk-multi-publish2.help_url: https://support.shotgunsoftware.com/hc/en-us/articles/115000067473-Getting-started-with-the-beta#Publisher
