@@ -358,38 +358,6 @@ class MayaSessionPublishPlugin(HookBaseClass):
         return ref_paths
 
 
-def _session_save_as(path=None):
-    """
-    A save as wrapper for the current session.
-
-    :param path: Optional path to save the current session as.
-    """
-
-    if not path:
-        path = cmds.fileDialog(
-            mode=1, title="Save As", directoryMask='*.ma')
-
-    if not path:
-        # no path supplied and none returned via file dialog
-        return
-
-    # Maya can choose the wrong file type so we should set it here
-    # explicitly based on the extension
-    maya_file_type = None
-    if path.lower().endswith(".ma"):
-        maya_file_type = "mayaAscii"
-    elif path.lower().endswith(".mb"):
-        maya_file_type = "mayaBinary"
-
-    cmds.file(rename=path)
-
-    # save the scene:
-    if maya_file_type:
-        cmds.file(save=True, force=True, type=maya_file_type)
-    else:
-        cmds.file(save=True, force=True)
-
-
 def _get_save_as_action():
     """
 
@@ -399,6 +367,6 @@ def _get_save_as_action():
         "action_button": {
             "label": "Save",
             "tooltip": "Save the current session",
-            "callback": _session_save_as
+            "callback": cmds.SaveScene
         }
     }
