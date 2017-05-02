@@ -10,16 +10,15 @@
 
 import os
 import pprint
-import maya.cmds as cmds
-import maya.mel as mel
+import MaxPlus
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaSessionPublishPlugin(HookBaseClass):
+class MaxSessionPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open maya session.
+    Plugin for publishing an open max session.
     """
 
     @property
@@ -41,7 +40,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish Maya work file"
+        return "Publish Max work file"
 
     @property
     def description(self):
@@ -50,7 +49,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will save and publish the current Maya session. If the
+        This plugin will save and publish the current Max session. If the
         session has not been saved before or the path can not be determined,
         validation will fail. If a version number is detected in the file name,
         the session will be saved to the next version once publishing is
@@ -79,7 +78,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         return {
             "Publish Type": {
                 "type": "shotgun_publish_type",
-                "default": "Maya Scene",
+                "default": "3dsmax Scene",
                 "description": "SG publish type to associate publishes with."
             },
         }
@@ -93,7 +92,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["maya.session"]
+        return ["3dsmax.session"]
 
     def accept(self, settings, item):
         """
@@ -128,12 +127,12 @@ class MayaSessionPublishPlugin(HookBaseClass):
             # provide a save button. the session will need to be saved before
             # validation will succeed.
             self.logger.warn(
-                "The Maya session has not been saved.",
+                "The Max session has not been saved.",
                 extra=_get_save_as_action()
             )
 
         self.logger.info(
-            "Maya '%s' plugin accepted the current Maya session." %
+            "Max '%s' plugin accepted the current Max session." %
             (self.name,)
         )
         return {
@@ -164,23 +163,6 @@ class MayaSessionPublishPlugin(HookBaseClass):
                 extra=_get_save_as_action()
             )
             return False
-
-        # ensure we have an updated project root
-        project_root = cmds.workspace(q=True, rootDirectory=True)
-        item.properties["project_root"] = project_root
-
-        # warn if no project root could be determined.
-        if not project_root:
-            self.logger.warning(
-                "Your session is not part of a maya project.",
-                extra={
-                    "action_button": {
-                        "label": "Set Project",
-                        "tooltip": "Set the maya project",
-                        "callback": lambda: mel.eval('setProject ""')
-                    }
-                }
-            )
 
         # get the path in a normalized state. no trailing separator,
         # separators are appropriate for current os, no double separators,
@@ -261,8 +243,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
-            "dependency_paths":
-                self._maya_find_additional_session_dependencies(),
+            "dependency_paths": []  # TODO
         }
 
         # log the publish data for debugging
@@ -325,6 +306,9 @@ class MayaSessionPublishPlugin(HookBaseClass):
         item.properties["next_version_path"] = self._bump_file_version(path)
 
     def _bump_file_version(self, path):
+        """
+        Save the supplied path to the next version on disk.
+        """
 
         publisher = self.parent
         version_number = publisher.util.get_version_number(path)
@@ -362,83 +346,35 @@ class MayaSessionPublishPlugin(HookBaseClass):
 
         return next_version_path
 
-    def _maya_find_additional_session_dependencies(self):
-        """
-        Find additional dependencies from the session
-        """
-        # default implementation looks for references and
-        # textures (file nodes) and returns any paths that
-        # match a template defined in the configuration
-        ref_paths = set()
-
-        # first let's look at maya references
-        ref_nodes = cmds.ls(references=True)
-        for ref_node in ref_nodes:
-            # get the path:
-            ref_path = cmds.referenceQuery(ref_node, filename=True)
-            # make it platform dependent
-            # (maya uses C:/style/paths)
-            ref_path = ref_path.replace("/", os.path.sep)
-            if ref_path:
-                ref_paths.add(ref_path)
-
-        # now look at file texture nodes
-        for file_node in cmds.ls(l=True, type="file"):
-            # ensure this is actually part of this session and not referenced
-            if cmds.referenceQuery(file_node, isNodeReferenced=True):
-                # this is embedded in another reference, so don't include it in
-                # the breakdown
-                continue
-
-            # get path and make it platform dependent
-            # (maya uses C:/style/paths)
-            texture_path = cmds.getAttr(
-                "%s.fileTextureName" % file_node).replace("/", os.path.sep)
-            if texture_path:
-                ref_paths.add(texture_path)
-
-        return ref_paths
-
 
 def _session_path():
     """
     Return the path to the current session
     :return:
     """
-    return cmds.file(query=True, sn=True)
+
+    return MaxPlus.FileManager.GetFileNameAndPath()
 
 
 def _save_session(path):
     """
     Save the current session to the supplied path.
     """
-
-    # Maya can choose the wrong file type so we should set it here
-    # explicitly based on the extension
-    maya_file_type = None
-    if path.lower().endswith(".ma"):
-        maya_file_type = "mayaAscii"
-    elif path.lower().endswith(".mb"):
-        maya_file_type = "mayaBinary"
-
-    cmds.file(rename=path)
-
-    # save the scene:
-    if maya_file_type:
-        cmds.file(save=True, force=True, type=maya_file_type)
-    else:
-        cmds.file(save=True, force=True)
+    MaxPlus.FileManager.Save(path)
 
 
 def _get_save_as_action():
     """
-
     Simple helper for returning a log action dict for saving the session
     """
     return {
         "action_button": {
             "label": "Save As...",
             "tooltip": "Save the current session",
-            "callback": cmds.SaveScene
+            "callback": MaxPlus.FileManager.SaveAs
         }
     }
+
+
+
+

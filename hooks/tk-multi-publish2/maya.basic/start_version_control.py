@@ -15,7 +15,7 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class StartVersionControlPlugin(HookBaseClass):
+class MaxStartVersionControlPlugin(HookBaseClass):
     """
     Simple plugin to insert a version number into the maya file path if one
     does not exist.

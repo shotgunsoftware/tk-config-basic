@@ -33,7 +33,7 @@ maya.project:
           hook: "{config}/tk-multi-publish2/maya.basic/start_version_control.py"
           settings: {}
         - name: Publish Maya file
-          hook: "{config}/tk-multi-publish2/maya.basic/publish_session.py"
+          hook: "{config}/tk-multi-publish2/maya.basic/publish_maya_session.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 
