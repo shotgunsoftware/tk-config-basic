@@ -41,7 +41,9 @@ common.engines.tk-nuke.location:
 
 # Photoshop
 common.engines.tk-photoshopcc.location:
-    path: https://github.com/shotgunsoftware/tk-photoshopcc.git
-    version: ce1d2dc901586cd580440647b4fb94cf7f970aa1
-    type: git_branch
-    branch: develop/zero_config
+    #path: https://github.com/shotgunsoftware/tk-photoshopcc.git
+    #version: ce1d2dc901586cd580440647b4fb94cf7f970aa1
+    #type: git_branch
+    #branch: develop/zero_config
+    type: dev
+    path: /Users/josh/dev/sg/zero_config/tk-photoshopcc

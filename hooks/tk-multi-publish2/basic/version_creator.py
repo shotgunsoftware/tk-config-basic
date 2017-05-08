@@ -196,7 +196,8 @@ class ShotgunReviewPlugin(HookBaseClass):
             "project": item.context.project,
             "code": publish_name,
             "description": item.description,
-            "entity": self._get_version_entity(item)
+            "entity": self._get_version_entity(item),
+            "sg_task": item.context.task
         }
 
         if "sg_publish_data" in item.properties:

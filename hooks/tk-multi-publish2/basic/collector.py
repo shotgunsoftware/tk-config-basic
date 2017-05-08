@@ -132,6 +132,9 @@ class BasicSceneCollector(HookBaseClass):
             item_type.startswith("file.texture")):
             file_item.set_thumbnail_from_path(path)
 
+            # disable thumbnail creation since we get it for free
+            file_item.thumbnail_enabled = False
+
         # all we know about the file is its path. set the path in its
         # properties for the plugins to use for processing. we'll use the
         # evaluated path in case it was altered to account for frame sequence

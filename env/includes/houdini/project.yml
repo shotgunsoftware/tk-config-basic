@@ -29,11 +29,11 @@ houdini.project:
       publish_plugins:
         - '@common.settings.tk-multi-publish2.file_publisher'
         - '@common.settings.tk-multi-publish2.version_creator'
-        - name: Houdini Scene Publisher
-          hook: "{config}/tk-multi-publish2/houdini.basic/file_publisher.py"
+        - name: Add version number to Houdini file name
+          hook: "{config}/tk-multi-publish2/houdini.basic/start_version_control.py"
           settings: {}
-        - name: Save the file to the next version
-          hook: "{config}/tk-multi-publish2/houdini.basic/version_up.py"
+        - name: Publish Houdini work file
+          hook: "{config}/tk-multi-publish2/houdini.basic/publish_houdini_session.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 

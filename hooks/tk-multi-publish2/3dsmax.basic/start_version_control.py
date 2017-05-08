@@ -49,9 +49,9 @@ class MaxStartVersionControlPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will acts on Maya session files where a version number
-        can not be detected in the file name. If checked, this plugin will
-        insert a version number into the file name and save the session.
+        This plugin acts on Max session files where a version number can not be
+        detected in the file name. If checked, this plugin will insert a version
+        number into the file name and save the session.
         """
 
     @property
@@ -119,22 +119,24 @@ class MaxStartVersionControlPlugin(HookBaseClass):
             version_number = publisher.util.get_version_number(path)
             if version_number is not None:
                 self.logger.info(
-                    "Maya '%s' plugin rejected the current Maya session...")
+                    "Max '%s' plugin rejected the current Max session..." %
+                    (self.name,)
+                )
                 self.logger.info(
                     "  There is already a version number in the file...")
-                self.logger.info("  Maya file path: %s" % (self.name,))
+                self.logger.info("  Max file path: %s" % (path,))
                 return {"accepted": False}
         else:
             # the session has not been saved before (no path determined).
             # provide a save button. the session will need to be saved before
             # validation will succeed.
             self.logger.warn(
-                "The Maya session has not been saved.",
+                "The Max session has not been saved.",
                 extra=_get_save_as_action()
             )
 
         self.logger.info(
-            "Maya '%s' plugin accepted the current Maya session." %
+            "Max '%s' plugin accepted the current Max session." %
             (self.name,),
             extra=_get_version_docs_action()
         )
@@ -160,6 +162,7 @@ class MaxStartVersionControlPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
+        publisher = self.parent
         path = _session_path()
 
         if not path:
@@ -167,6 +170,16 @@ class MaxStartVersionControlPlugin(HookBaseClass):
             # validation fails
             self.logger.error(
                 "The Max session has not been saved.",
+                extra=_get_save_as_action()
+            )
+            return False
+
+        # get the path to a versioned copy of the file.
+        version_path = publisher.util.get_version_path(path, "v001")
+        if os.path.exists(version_path):
+            self.logger.error(
+                "A file already exists with a version number. Please choose "
+                "another name.",
                 extra=_get_save_as_action()
             )
             return False

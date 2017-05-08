@@ -33,7 +33,7 @@ includes:
         - name: Add version number to Max file name
           hook: "{config}/tk-multi-publish2/3dsmax.basic/start_version_control.py"
           settings: {}
-        - name: Publish Max file
+        - name: Publish Max work file
           hook: "{config}/tk-multi-publish2/3dsmax.basic/publish_max_session.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"

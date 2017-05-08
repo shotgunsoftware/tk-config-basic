@@ -21,24 +21,22 @@ includes:
 
 photoshopcc.project:
   apps:
-    tk-multi-about: '@common.apps.tk-multi-about'
+    tk-multi-about: "@common.apps.tk-multi-about"
 
-    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+    tk-multi-pythonconsole: "@common.apps.tk-multi-pythonconsole"
 
     tk-multi-publish2:
       help_url: "@common.apps.tk-multi-publish2.help_url"
       collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/photoshopcc.basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
-        - name: Photoshop Document Publisher
-          hook: "{config}/tk-multi-publish2/photoshopcc.basic/document_publisher.py"
+        - "@common.settings.tk-multi-publish2.file_publisher"
+        - "@common.settings.tk-multi-publish2.version_creator"
+        - name: Add version number to Maya file name
+          hook: "{config}/tk-multi-publish2/photoshopcc.basic/start_version_control.py"
           settings: {}
+        - "@common.settings.tk-multi-publish2.publish_photoshop_document"
         - name: Send document to Shotgun review
-          hook: "{config}/tk-multi-publish2/photoshopcc.basic/version_creator.py"
-          settings: {}
-        - name: Save the file to the next version
-          hook: "{config}/tk-multi-publish2/photoshopcc.basic/version_up.py"
+          hook: "{config}/tk-multi-publish2/photoshopcc.basic/create_version.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 
@@ -48,7 +46,7 @@ photoshopcc.project:
         Rendered Image: [add_as_a_layer, open_file]
         Image: [add_as_a_layer, open_file]
         Texture: [add_as_a_layer, open_file]
-      actions_hook: '{self}/tk-photoshopcc_actions.py'
+      actions_hook: "{self}/tk-photoshopcc_actions.py"
       entities:
       - caption: Current Project
         type: Hierarchy
@@ -58,8 +56,8 @@ photoshopcc.project:
         type: Query
         entity_type: Task
         filters:
-        - [project, is, '{context.project}']
-        - [task_assignees, is, '{context.user}']
+        - [project, is, "{context.project}"]
+        - [task_assignees, is, "{context.user}"]
         hierarchy: [entity, content]
       # ignore publishes without a status. with zero config, it is very easy
       # to publish the same path multiple times. the default zero config publish
@@ -69,8 +67,8 @@ photoshopcc.project:
       location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
-      shotgun_fields_hook: '{self}/shotgun_fields.py'
-      actions_hook: '{self}/general_actions.py'
+      shotgun_fields_hook: "{self}/shotgun_fields.py"
+      actions_hook: "{self}/general_actions.py"
       action_mappings:
         PublishedFile:
         - actions: [publish_clipboard]

@@ -1,24 +1,24 @@
 # Copyright (c) 2017 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
 import pprint
-import traceback
+import nuke
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
+class NukeSessionPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing Photoshop documents in Shotgun.
+    Plugin for publishing an open nuke session.
     """
 
     @property
@@ -40,7 +40,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Photoshop Document Publisher"
+        return "Publish Nuke script"
 
     @property
     def description(self):
@@ -49,9 +49,11 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will publish an open Photoshop document. The plugin requires
-        the document be saved to a file before validation will succeed. The file
-        will be published in place.
+        This plugin will save and publish the current Nuke script. If the
+        session has not been saved before or the path can not be determined,
+        validation will fail. If a version number is detected in the file name,
+        the session will be saved to the next version once publishing is
+        complete.
         """
 
     @property
@@ -75,12 +77,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
         return {
             "Publish Type": {
-                "type": "str",
-                "default": "Photoshop Image",
-                "description": (
-                    "The shotgun publish file type to use when publishing "
-                    "items with this plugin."
-                )
+                "type": "shotgun_publish_type",
+                "default": "Nuke Script",
+                "description": "SG publish type to associate publishes with."
             },
         }
 
@@ -93,7 +92,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["photoshop.document"]
+        return ["nuke.session"]
 
     def accept(self, settings, item):
         """
@@ -105,7 +104,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         dictionary with the following booleans:
 
             - accepted: Indicates if the plugin is interested in this value at
-               all. Required.
+                all. Required.
             - enabled: If True, the plugin will be enabled in the UI, otherwise
                 it will be disabled. Optional, True by default.
             - visible: If True, the plugin will be visible in the UI, otherwise
@@ -121,68 +120,54 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        document = item.properties.get("document")
-        if not document:
-            self.logger.warn("Could not determine the document for item")
-            return {"accepted": False}
+        path = _session_path()
 
-        try:
-            path = document.fullName.fsName
-        except RuntimeError:
-            path = None
-
-        checked = True
-
-        if not document.saved or not path:
-            # the document hasn't been saved. provide a save button and uncheck
-            # the item. the document will need to be saved before validation
-            # will succeed.
+        if not path:
+            # the session has not been saved before (no path determined).
+            # provide a save button. the session will need to be saved before
+            # validation will succeed.
             self.logger.warn(
-                "Unsaved changes for document: %s" % (document.name,),
-                extra=_get_save_action(document)
+                "The Nuke script has not been saved.",
+                extra=self._get_save_as_action()
             )
-            checked = False
 
         self.logger.info(
-            "Photoshop publish plugin accepted document: %s" %
-            (document.name,)
+            "Nuke '%s' plugin accepted the current Nuke script." %
+            (self.name,)
         )
         return {
             "accepted": True,
-            "checked": checked
+            "checked": True
         }
 
     def validate(self, settings, item):
         """
-        Validates the given item to check that it is ok to publish.
-
-        Returns a boolean to indicate validity.
+        Validates the given item to check that it is ok to publish. Returns a
+        boolean to indicate validity.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
-
         :returns: True if item is valid, False otherwise.
         """
 
         publisher = self.parent
-        document = item.properties["document"]
-        path = document.fullName.fsName
+        path = _session_path()
 
-        if not document.saved or not path:
-            # the document still hasn't been saved. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
+        if not path:
+            # the session still requires saving. provide a save button.
+            # validation fails.
             self.logger.error(
-                "Unsaved changes in the session",
-                extra=_get_save_action(document)
+                "The Nuke script has not been saved.",
+                extra=self._get_save_as_action()
             )
             return False
 
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(path)
+        # get the path in a normalized state. no trailing separator,
+        # separators are appropriate for current os, no double separators,
+        # etc.
+        sgtk.util.ShotgunPath.normalize(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
@@ -219,6 +204,33 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
                 }
             )
 
+        # if the file has a version number in it, see if the next version exists
+        next_version_path = publisher.util.get_next_version_path(path)
+        if next_version_path and os.path.exists(next_version_path):
+
+            # determine the next available version_number. just keep asking for
+            # the next one until we get one that doesn't exist.
+            while os.path.exists(next_version_path):
+                next_version_path = publisher.util.get_next_version_path(
+                    next_version_path)
+
+            # now extract the version number of the next available to display
+            # to the user
+            version = publisher.util.get_version_number(next_version_path)
+
+            self.logger.error(
+                "The next version of this file already exists on disk.",
+                extra={
+                    "action_button": {
+                        "label": "Save to v%s" % (version,),
+                        "tooltip": "Save to the next available version number, "
+                                   "v%s" % (version,),
+                        "callback": lambda: _save_session(next_version_path)
+                    }
+                }
+            )
+            return False
+
         return True
 
     def publish(self, settings, item):
@@ -233,12 +245,12 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
 
         publisher = self.parent
 
-        # should be saved if we're here
-        document = item.properties["document"]
-
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(document.fullName.fsName)
+        path = sgtk.util.ShotgunPath.normalize(_session_path())
+
+        # ensure the session is saved
+        _save_session(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -258,6 +270,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
+            "dependency_paths": []  # TODO: dependencies
         }
 
         # log the publish data for debugging
@@ -276,6 +289,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(
             **publish_data)
+        self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published
         item.properties["path"] = path
@@ -297,9 +311,11 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         publish_data = item.properties["sg_publish_data"]
 
         # ensure conflicting publishes have their status cleared
-        self.logger.info("Clearing status of conflicting publishes...")
         publisher.util.clear_status_for_conflicting_publishes(
             item.context, publish_data)
+
+        self.logger.info(
+            "Cleared the status of all previous, conflicting publishes")
 
         path = item.properties["path"]
         self.logger.info(
@@ -313,15 +329,74 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             }
         )
 
+        # insert the path into the properties
+        item.properties["next_version_path"] = self._bump_file_version(path)
 
-def _get_save_action(document):
+    def _bump_file_version(self, path):
+        """
+        Save the supplied path to the next version on disk.
+        """
+
+        publisher = self.parent
+        version_number = publisher.util.get_version_number(path)
+
+        if version_number is None:
+            self.logger.debug(
+                "No version number detected in the publish path. "
+                "Skipping the bump file version step."
+            )
+            return None
+
+        self.logger.info("Incrementing session file version number...")
+
+        next_version_path = publisher.util.get_next_version_path(path)
+
+        # nothing to do if the next version path can't be determined or if it
+        # already exists.
+        if not next_version_path:
+            self.logger.warning("Could not determine the next version path.")
+            return None
+        elif os.path.exists(next_version_path):
+            self.logger.warning(
+                "The next version of the path already exists",
+                extra={
+                    "action_show_folder": {
+                        "path": next_version_path
+                    }
+                }
+            )
+            return None
+
+        # save the session to the new path
+        _save_session(next_version_path)
+        self.logger.info("Session saved as: %s" % (next_version_path,))
+
+        return next_version_path
+
+
+def _save_session(path):
+    """
+    Save the current session to the supplied path.
+    """
+    nuke.scriptSave(filename=path)
+
+
+def _session_path():
+    """
+    Return the path to the current session
+    :return:
+    """
+    return nuke.root().name()
+
+
+def _get_save_as_action():
     """
     Simple helper for returning a log action dict for saving the session
     """
     return {
         "action_button": {
-            "label": "Save",
+            "label": "Save As...",
             "tooltip": "Save the current session",
-            "callback": lambda: document.save()
+            "callback": nuke.scriptSaveAs
         }
     }

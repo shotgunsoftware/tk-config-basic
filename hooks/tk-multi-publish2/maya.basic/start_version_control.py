@@ -15,7 +15,7 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MaxStartVersionControlPlugin(HookBaseClass):
+class MayaStartVersionControlPlugin(HookBaseClass):
     """
     Simple plugin to insert a version number into the maya file path if one
     does not exist.
@@ -49,9 +49,9 @@ class MaxStartVersionControlPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will acts on Maya session files where a version number
-        can not be detected in the file name. If checked, this plugin will
-        insert a version number into the file name and save the session.
+        This plugin acts on Maya session files where a version number can not be
+        detected in the file name. If checked, this plugin will insert a version
+        number into the file name and save the session.
         """
 
     @property
@@ -119,10 +119,12 @@ class MaxStartVersionControlPlugin(HookBaseClass):
             version_number = publisher.util.get_version_number(path)
             if version_number is not None:
                 self.logger.info(
-                    "Maya '%s' plugin rejected the current Maya session...")
+                    "Maya '%s' plugin rejected the current Maya session..." %
+                    (self.name,)
+                )
                 self.logger.info(
                     "  There is already a version number in the file...")
-                self.logger.info("  Maya file path: %s" % (self.name,))
+                self.logger.info("  Maya file path: %s" % (path,))
                 return {"accepted": False}
         else:
             # the session has not been saved before (no path determined).
@@ -160,6 +162,7 @@ class MaxStartVersionControlPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
+        publisher = self.parent
         path = _session_path()
 
         if not path:
@@ -167,6 +170,16 @@ class MaxStartVersionControlPlugin(HookBaseClass):
             # validation fails
             self.logger.error(
                 "The Maya session has not been saved.",
+                extra=_get_save_as_action()
+            )
+            return False
+
+        # get the path to a versioned copy of the file.
+        version_path = publisher.util.get_version_path(path, "v001")
+        if os.path.exists(version_path):
+            self.logger.error(
+                "A file already exists with a version number. Please choose "
+                "another name.",
                 extra=_get_save_as_action()
             )
             return False
@@ -253,7 +266,7 @@ def _get_save_as_action():
         "action_button": {
             "label": "Save As...",
             "tooltip": "Save the current session",
-            "callback": cmds.SaveScene
+            "callback": cmds.SaveSceneAs
         }
     }
 

@@ -159,7 +159,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
             # the session still requires saving. provide a save button.
             # validation fails.
             self.logger.error(
-                "Unsaved changes in the session",
+                "The Maya session has not been saved.",
                 extra=_get_save_as_action()
             )
             return False
@@ -203,6 +203,33 @@ class MaxSessionPublishPlugin(HookBaseClass):
                     }
                 }
             )
+
+        # if the file has a version number in it, see if the next version exists
+        next_version_path = publisher.util.get_next_version_path(path)
+        if next_version_path and os.path.exists(next_version_path):
+
+            # determine the next available version_number. just keep asking for
+            # the next one until we get one that doesn't exist.
+            while os.path.exists(next_version_path):
+                next_version_path = publisher.util.get_next_version_path(
+                    next_version_path)
+
+            # now extract the version number of the next available to display
+            # to the user
+            version = publisher.util.get_version_number(next_version_path)
+
+            self.logger.error(
+                "The next version of this file already exists on disk.",
+                extra={
+                    "action_button": {
+                        "label": "Save to v%s" % (version,),
+                        "tooltip": "Save to the next available version number, "
+                                   "v%s" % (version,),
+                        "callback": lambda: _save_session(next_version_path)
+                    }
+                }
+            )
+            return False
 
         return True
 
