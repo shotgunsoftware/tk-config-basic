@@ -51,8 +51,6 @@ desktop.project:
     - '*Fla*'
     name: Finishing Tools
   location:
-    path: https://github.com/shotgunsoftware/tk-desktop.git
-    version: 1dc4856068212d12ecdeaf0d9e696ab8dd88fe29
-    type: git_branch
-    branch: develop/zero_config
-
+    type: app_store
+    name: tk-desktop
+    version: v2.1.0
