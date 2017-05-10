@@ -29,8 +29,6 @@ frameworks:
       version: 1b4d3cc820c60d146d5eccac7303a7df53e7de44
       type: git_branch
       branch: develop/zero_config
-      #type: dev
-      #path: /Users/josh/dev/sg/zero_config/tk-framework-shotgunutils
   tk-framework-adminui_v0.x.x:
     location:
       version: v0.1.6
