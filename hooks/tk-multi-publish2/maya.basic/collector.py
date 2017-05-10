@@ -125,7 +125,7 @@ class MayaSessionCollector(HookBaseClass):
 
             # allow the base class to collect and create the item. it knows how
             # to handle alembic files
-            super(MayaSessionCollector, self).process_file(
+            super(MayaSessionCollector, self)._collect_file(
                 parent_item,
                 cache_path
             )
@@ -169,7 +169,7 @@ class MayaSessionCollector(HookBaseClass):
 
             # allow the base class to collect and create the item. it knows how
             # to handle movie files
-            item = super(MayaSessionCollector, self).process_file(
+            item = super(MayaSessionCollector, self)._collect_file(
                 parent_item,
                 movie_path
             )
@@ -207,9 +207,10 @@ class MayaSessionCollector(HookBaseClass):
             if rendered_paths:
                 # we only need one path to publish, so take the first one and
                 # let the base class collector handle it
-                item = super(MayaSessionCollector, self).process_file(
+                item = super(MayaSessionCollector, self)._collect_file(
                     parent_item,
-                    rendered_paths[0]
+                    rendered_paths[0],
+                    frame_sequence=True
                 )
 
                 # the item has been created. update the display name to include

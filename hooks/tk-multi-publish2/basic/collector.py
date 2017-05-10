@@ -66,6 +66,7 @@ COMMON_FILE_INFO = {
 }
 
 
+
 class BasicSceneCollector(HookBaseClass):
     """
     A basic collector that handles files and general objects.
@@ -89,45 +90,58 @@ class BasicSceneCollector(HookBaseClass):
 
         :param parent_item: Root item instance
         :param path: Path to analyze
-        :returns: The main item that was created
+        :returns: The main item that was created, or None if no item was created
+            for the supplied path
+        """
+
+        # handle files and folders differently
+        if os.path.isdir(path):
+            self._collect_folder(parent_item, path)
+            return None
+        else:
+            return self._collect_file(parent_item, path)
+
+    def _collect_file(self, parent_item, path, frame_sequence=False):
+        """
+        Process the supplied file path.
+
+        :param parent_item: parent item instance
+        :param path: Path to analyze
+        :param frame_sequence: Treat the path as a part of a sequence
+        :returns: The item that was created
         """
 
         # make sure the path is normalized. no trailing separator, separators
         # are appropriate for the current os, no double separators, etc.
         path = sgtk.util.ShotgunPath.normalize(path)
 
-        # handle files and folders differently
-        if os.path.isdir(path):
-            item = self._collect_folder(parent_item, path)
-        else:
-            item = self._collect_file(parent_item, path)
-
-        return item
-
-    def _collect_file(self, parent_item, path):
-        """
-        Process the supplied file path.
-
-        :param parent_item: parent item instance
-        :param path: Path to analyze
-        :returns: The item that was created
-        """
+        publisher = self.parent
 
         # get info for the extension
         item_info = self._get_item_info(path)
         item_type = item_info["item_type"]
+        type_display = item_info["type_display"]
+        evaluated_path = path
+        is_sequence = False
+
+        if frame_sequence:
+            # replace the frame number with frame spec
+            seq_path = publisher.util.get_frame_sequence_path(path)
+            if seq_path:
+                evaluated_path = seq_path
+                type_display = "%s Sequence" % (type_display,)
+                item_type = "%s.%s" % (item_type, "sequence")
+                is_sequence = True
+
+        display_name = publisher.util.get_publish_name(
+            path, sequence=is_sequence)
 
         # create and populate the item
         file_item = parent_item.create_item(
-            item_type,
-            item_info["type_display"],
-            item_info["display_name"]
-        )
+            item_type, type_display, display_name)
         file_item.set_icon_from_path(item_info["icon_path"])
 
-        # if the supplied path is an image, use the original path to generate
-        # the thumbnail. type could also be "file.image.sequence" so we won't
-        # use the evaluated path which could include a frame format spec
+        # if the supplied path is an image, use the path as # the thumbnail.
         if (item_type.startswith("file.image") or
             item_type.startswith("file.texture")):
             file_item.set_thumbnail_from_path(path)
@@ -136,11 +150,16 @@ class BasicSceneCollector(HookBaseClass):
             file_item.thumbnail_enabled = False
 
         # all we know about the file is its path. set the path in its
-        # properties for the plugins to use for processing. we'll use the
-        # evaluated path in case it was altered to account for frame sequence
-        file_item.properties["path"] = item_info["path"]
+        # properties for the plugins to use for processing.
+        file_item.properties["path"] = evaluated_path
 
-        self.logger.info("Collected file: %s" % (path,))
+        if is_sequence:
+            # include an indicator that this is an image sequence and the known
+            # file that belongs to this sequence
+            file_item.properties["is_sequence"] = True
+            file_item.properties["sequence_files"] = [path]
+
+        self.logger.info("Collected file: %s" % (evaluated_path,))
 
         return file_item
 
@@ -153,28 +172,65 @@ class BasicSceneCollector(HookBaseClass):
         :returns: The item that was created
         """
 
+        # make sure the path is normalized. no trailing separator, separators
+        # are appropriate for the current os, no double separators, etc.
+        folder = sgtk.util.ShotgunPath.normalize(folder)
+
         publisher = self.parent
+        img_sequences = publisher.util.get_frame_sequences(
+            folder, IMAGE_EXTENSIONS_LIST)
 
-        folder_info = publisher.util.get_file_path_components(folder)
+        file_items = []
 
-        # create and populate an item for the folder
-        folder_item = parent_item.create_item(
-            "file.folder",
-            "Folder",
-            folder_info["filename"]
-        )
+        for (image_seq_path, img_seq_files) in img_sequences:
 
-        # look for icon one level up from this hook's folder
-        folder_item.set_icon_from_path(
-            self._get_icon_path("folder.png"))
+            # get info for the extension
+            item_info = self._get_item_info(image_seq_path)
+            item_type = item_info["item_type"]
+            type_display = item_info["type_display"]
 
-        # all we know about the file is its path. set the path in its
-        # properties for the plugins to use for processing
-        folder_item.properties["path"] = folder
+            # the supplied image path is part of a sequence. alter the
+            # type info to account for this.
+            type_display = "%s Sequence" % (type_display,)
+            item_type = "%s.%s" % (item_type, "sequence")
+            icon_name = "image_sequence.png"
 
-        self.logger.info("Collected folder: %s" % (folder,))
+            # get the first frame of the sequence. we'll use this for the
+            # thumbnail and to generate the display name
+            img_seq_files.sort()
+            first_frame_file = img_seq_files[0]
+            display_name = publisher.util.get_publish_name(
+                first_frame_file, sequence=True)
 
-        return folder_item
+            # create and populate the item
+            file_item = parent_item.create_item(
+                item_type,
+                type_display,
+                display_name
+            )
+            icon_path = self._get_icon_path(icon_name)
+            file_item.set_icon_from_path(icon_path)
+
+            # use the first frame of the seq as the thumbnail
+            file_item.set_thumbnail_from_path(first_frame_file)
+
+            # disable thumbnail creation since we get it for free
+            file_item.thumbnail_enabled = False
+
+            # all we know about the file is its path. set the path in its
+            # properties for the plugins to use for processing.
+            file_item.properties["path"] = image_seq_path
+            file_item.properties["is_sequence"] = True
+            file_item.properties["sequence_files"] = img_seq_files
+
+            self.logger.info("Collected file: %s" % (image_seq_path,))
+
+            file_items.append(file_item)
+
+        if not file_items:
+            self.logger.warn("No image sequences found in: %s" % (folder,))
+
+        return file_items
 
     def _get_item_info(self, path):
         """
@@ -194,7 +250,6 @@ class BasicSceneCollector(HookBaseClass):
             {
                 "item_type": "file.image.sequence",
                 "type_display": "Rendered Image Sequence",
-                "display_name": "file.%04d.exr",
                 "icon_path": "/path/to/some/icons/folder/image_sequence.png",
                 "path": "/path/to/some/file.%04d.exr"
             }
@@ -205,10 +260,6 @@ class BasicSceneCollector(HookBaseClass):
 
         publisher = self.parent
 
-        # we may modify the path during this process. use the supplied path as
-        # the default value though.
-        evaluated_path = path
-
         # extract the components of the supplied path
         file_info = publisher.util.get_file_path_components(path)
         extension = file_info["extension"]
@@ -218,7 +269,6 @@ class BasicSceneCollector(HookBaseClass):
         type_display = "File"
         item_type = "file.unknown"
         icon_name = "file.png"
-        display_name = filename
 
         # keep track if a common type was identified for the extension
         common_type_found = False
@@ -250,21 +300,6 @@ class BasicSceneCollector(HookBaseClass):
                 item_type = "file.%s" % (category,)
                 icon_name = "%s.png" % (category,)
 
-        # at this point, we should have what we need. do one more check on image
-        # file types to see if the path looks like an image sequence.
-        if "Image" in type_display:
-            # not an ideal way to identify image types, but should work for now.
-            # see if this looks like an image sequence.
-            img_seq_path = publisher.util.get_image_sequence_path(path)
-            if img_seq_path:
-                # the supplied image path is part of a sequence. alter the
-                # type info to account for this.
-                evaluated_path = img_seq_path
-                type_display = "%s Sequence" % (type_display,)
-                item_type = "%s.%s" % (item_type, "sequence")
-                icon_name = "image_sequence.png"
-                display_name = publisher.util.get_publish_name(path)
-
         # construct a full path to the icon given the name defined above
         icon_path = self._get_icon_path(icon_name)
 
@@ -272,9 +307,7 @@ class BasicSceneCollector(HookBaseClass):
         return dict(
             item_type=item_type,
             type_display=type_display,
-            display_name=display_name,
             icon_path=icon_path,
-            path=evaluated_path
         )
 
     def _get_icon_path(self, icon_name):
@@ -300,3 +333,23 @@ class BasicSceneCollector(HookBaseClass):
             )
 
         return icon_path
+
+
+def _build_image_extensions_list():
+
+    image_file_types = ["Photoshop Image", "Rendered Image", "Texture Image"]
+    image_extensions = set()
+
+    for image_file_type in image_file_types:
+        image_extensions.update(COMMON_FILE_INFO[image_file_type]["extensions"])
+
+    # get all the image mime type image extensions as well
+    mimetypes.init()
+    types_map = mimetypes.types_map
+    for (ext, mimetype) in types_map.iteritems():
+        if mimetype.startswith("image/"):
+            image_extensions.add(ext.lstrip("."))
+
+    return list(image_extensions)
+
+IMAGE_EXTENSIONS_LIST = _build_image_extensions_list()

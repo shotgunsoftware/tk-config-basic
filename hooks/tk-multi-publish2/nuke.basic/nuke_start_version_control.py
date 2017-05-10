@@ -15,7 +15,7 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class NukeVersionUpPlugin(HookBaseClass):
+class NukeStartVersionControlPlugin(HookBaseClass):
     """
     Plugin for creating the next version of a file.
     """
@@ -131,7 +131,7 @@ class NukeVersionUpPlugin(HookBaseClass):
             # validation will succeed.
             self.logger.warn(
                 "The Nuke script has not been saved.",
-                extra=self._get_save_as_action()
+                extra=_get_save_as_action()
             )
 
         self.logger.info(
@@ -168,8 +168,8 @@ class NukeVersionUpPlugin(HookBaseClass):
             # the session still requires saving. provide a save button.
             # validation fails
             self.logger.error(
-                "The Houdini session has not been saved.",
-                extra=self._get_save_as_action()
+                "The Nuke script has not been saved.",
+                extra=_get_save_as_action()
             )
             return False
 
@@ -179,7 +179,7 @@ class NukeVersionUpPlugin(HookBaseClass):
             self.logger.error(
                 "A file already exists with a version number. Please choose "
                 "another name.",
-                extra=self._get_save_as_action()
+                extra=_get_save_as_action()
             )
             return False
 
@@ -210,8 +210,8 @@ class NukeVersionUpPlugin(HookBaseClass):
         # save to the new version path
         _save_session(version_path)
         self.logger.info(
-            "A version number has been added to the Houdini file...")
-        self.logger.info("  Houdini file path: %s" % (version_path,))
+            "A version number has been added to the Nuke script...")
+        self.logger.info("  Nuke script path: %s" % (version_path,))
 
     def finalize(self, settings, item):
         """
@@ -231,7 +231,7 @@ def _save_session(path):
     """
     Save the current session to the supplied path.
     """
-    nuke.scriptSave(filename=path)
+    nuke.scriptSaveAs(path, True)
 
 
 def _session_path():

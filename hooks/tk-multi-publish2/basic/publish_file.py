@@ -149,10 +149,18 @@ class BasicFilePublishPlugin(HookBaseClass):
 
         publisher = self.parent
         path = item.properties.get("path")
+        is_sequence = item.properties.get("is_sequence", False)
+
+        if is_sequence:
+            # generate the name from one of the actual files in the sequence
+            name_path = item.properties["sequence_files"][0]
+        else:
+            name_path = path
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
-        publish_name = publisher.util.get_publish_name(path)
+        publish_name = publisher.util.get_publish_name(
+            name_path, sequence=is_sequence)
 
         self.logger.info("Publish name will be: %s" % (publish_name,))
 
@@ -205,16 +213,29 @@ class BasicFilePublishPlugin(HookBaseClass):
 
         # determine the publish type
         extension = path_info["extension"]
-
-        # get the publish type
         publish_type = self._get_publish_type(extension, settings)
+
+        is_sequence = item.properties.get("is_sequence", False)
+
+        if is_sequence:
+            # generate the name from one of the actual files in the sequence
+            name_path = item.properties["sequence_files"][0]
+        else:
+            name_path = path
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
-        publish_name = publisher.util.get_publish_name(path)
+        publish_name = publisher.util.get_publish_name(
+            name_path, sequence=is_sequence)
 
         # extract the version number for publishing. use 1 if no version in path
         version_number = publisher.util.get_version_number(path) or 1
+
+        # if the parent item has a publish path, include it in the list of
+        # dependencies
+        dependency_paths = []
+        if "sg_publish_path" in item.parent.properties:
+            dependency_paths.append(item.parent.properties["sg_publish_path"])
 
         # arguments for publish registration
         self.logger.info("Registering publish...")
@@ -227,6 +248,7 @@ class BasicFilePublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": publish_type,
+            "dependency_paths": dependency_paths
         }
 
         # log the publish data for debugging

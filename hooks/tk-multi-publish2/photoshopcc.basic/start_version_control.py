@@ -137,7 +137,7 @@ class PhotoshopStartVersionControlPlugin(HookBaseClass):
             self.logger.warn(
                 "Photoshop document '%s' has not been saved." %
                 (document.name),
-                extra=_get_save_as_action(document)
+                extra=self._get_save_as_action(document)
             )
 
         self.logger.info(
@@ -177,7 +177,7 @@ class PhotoshopStartVersionControlPlugin(HookBaseClass):
             self.logger.error(
                 "The Photoshop document '%s' has not been saved." %
                 (document.name,),
-                extra=self._get_save_as_action()
+                extra=self._get_save_as_action(document)
             )
             return False
 
@@ -187,7 +187,7 @@ class PhotoshopStartVersionControlPlugin(HookBaseClass):
             self.logger.error(
                 "A file already exists with a version number. Please choose "
                 "another name.",
-                extra=self._get_save_as_action()
+                extra=self._get_save_as_action(document)
             )
             return False
 
@@ -248,18 +248,20 @@ class PhotoshopStartVersionControlPlugin(HookBaseClass):
         """
         pass
 
+    def _get_save_as_action(self, document):
+        """
+        Simple helper for returning a log action dict for saving the session
+        """
 
-def _get_save_as_action(document):
-    """
-    Simple helper for returning a log action dict for saving the session
-    """
-    return {
-        "action_button": {
-            "label": "Save As...",
-            "tooltip": "Save the current session",
-            "callback": lambda: document.save()
+        ps_engine = self.parent.engine
+
+        return {
+            "action_button": {
+                "label": "Save As...",
+                "tooltip": "Save the current session",
+                "callback": lambda: ps_engine.save_as(document)
+            }
         }
-    }
 
 
 def _get_version_docs_action():

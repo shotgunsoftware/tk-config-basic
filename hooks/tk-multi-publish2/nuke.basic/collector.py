@@ -174,8 +174,11 @@ class NukeSessionCollector(HookBaseClass):
                     "Processing %s node: %s" % (node_type, node.name()))
 
                 # file exists, let the basic collector handle it
-                item = super(NukeSessionCollector, self).process_file(
-                    parent_item, file_path)
+                item = super(NukeSessionCollector, self)._collect_file(
+                    parent_item,
+                    file_path,
+                    frame_sequence=True
+                )
 
                 # the item has been created. update the display name to include
                 # the nuke node to make it clear to the user how it was

@@ -289,6 +289,11 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(
             **publish_data)
+
+        # inject the publish path such that children can refer to it when
+        # updating dependency information
+        item.properties["sg_publish_path"] = path
+
         self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published

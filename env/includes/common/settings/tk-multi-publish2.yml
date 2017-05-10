@@ -34,15 +34,15 @@ image_publish_type_to_extensions: &image_file_types
   - [Image, jpeg, jpg, png]
   - [Movie, mov, mp4]
 
-common.settings.tk-multi-publish2.file_publisher:
+common.settings.tk-multi-publish2.publish_file:
   name: Publish to Shotgun
-  hook: "{config}/tk-multi-publish2/basic/file_publisher.py"
+  hook: "{config}/tk-multi-publish2/basic/publish_file.py"
   settings:
     File Types: *file_types
 
-common.settings.tk-multi-publish2.version_creator:
+common.settings.tk-multi-publish2.upload_version:
   name: Send to Shotgun review
-  hook: "{config}/tk-multi-publish2/basic/version_creator.py"
+  hook: "{config}/tk-multi-publish2/basic/upload_version.py"
   settings: {}
 
 common.settings.tk-multi-publish2.publish_photoshop_document:

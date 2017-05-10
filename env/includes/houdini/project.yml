@@ -27,8 +27,8 @@ houdini.project:
       help_url: "@common.apps.tk-multi-publish2.help_url"
       collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/houdini.basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
+        - '@common.settings.tk-multi-publish2.publish_file'
+        - '@common.settings.tk-multi-publish2.upload_version'
         - name: Add version number to Houdini file name
           hook: "{config}/tk-multi-publish2/houdini.basic/start_version_control.py"
           settings: {}

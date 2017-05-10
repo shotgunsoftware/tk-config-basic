@@ -10,14 +10,16 @@
 
 import os
 import pprint
+import tempfile
+import uuid
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class ShotgunReviewPlugin(HookBaseClass):
+class PhotoshopUploadVersionPlugin(HookBaseClass):
     """
-    Plugin for sending quicktimes and images to shotgun for review.
+    Plugin for sending photoshop documents to shotgun for review.
     """
 
     @property
@@ -39,7 +41,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Send files to Shotgun review"
+        return "Send document to Shotgun review"
 
     @property
     def description(self):
@@ -47,7 +49,10 @@ class ShotgunReviewPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return """Uploads files to Shotgun for Review."""
+        return """
+        This plugin exports and uploads a copy of the Photoshop document to
+        Shotgun for review.
+        """
 
     @property
     def settings(self):
@@ -68,24 +73,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         The type string should be one of the data types that toolkit accepts as
         part of its environment configuration.
         """
-        return {
-            "File Extensions": {
-                "type": "str",
-                "default": "jpeg, jpg, png, mov, mp4",
-                "description": "File Extensions of files to include"
-            },
-            "Upload": {
-                "type": "bool",
-                "default": True,
-                "description": "Upload content to Shotgun?"
-            },
-            "Link Local File": {
-                "type": "bool",
-                "default": True,
-                "description": "Should the local file be referenced by Shotgun"
-            },
-
-        }
+        return {}
 
     @property
     def item_filters(self):
@@ -98,7 +86,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         """
 
         # we use "video" since that's the mimetype category.
-        return ["file.image", "file.video"]
+        return ["photoshop.document"]
 
     def accept(self, settings, item):
         """
@@ -126,39 +114,33 @@ class ShotgunReviewPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        publisher = self.parent
-        file_path = item.properties["path"]
-
-        file_info = publisher.util.get_file_path_components(file_path)
-        extension = file_info["extension"].lower()
-
-        valid_extensions = []
-
-        for ext in settings["File Extensions"].value.split(","):
-            ext = ext.strip().lstrip(".")
-            valid_extensions.append(ext)
-
-        self.logger.debug("Valid extensions: %s" % valid_extensions)
-
-        if extension in valid_extensions:
-            # log the accepted file and display a button to reveal it in the fs
-            self.logger.info(
-                "Version upload plugin accepted: %s" % (file_path,),
-                extra={
-                    "action_show_folder": {
-                        "path": file_path
-                    }
-                }
-            )
-
-            # return the accepted info
-            return {"accepted": True}
-        else:
-            self.logger.debug(
-                "%s is not in the valid extensions list for Version creation" %
-                (extension,)
-            )
+        document = item.properties.get("document")
+        if not document:
+            self.logger.warn("Could not determine the document for item")
             return {"accepted": False}
+
+        path = _document_path(document)
+
+        checked = True
+
+        if not document.saved or not path:
+            # the document hasn't been saved. provide a save button and uncheck
+            # the item. the document will need to be saved before validation
+            # will succeed.
+            self.logger.warn(
+                "Unsaved changes for document: %s" % (document.name,),
+                extra=_get_save_action(document)
+            )
+            checked = False
+
+        self.logger.info(
+            "Photoshop Version upload plugin accepted document: %s" %
+            (document.name,)
+        )
+        return {
+            "accepted": True,
+            "checked": checked
+        }
 
     def validate(self, settings, item):
         """
@@ -173,6 +155,20 @@ class ShotgunReviewPlugin(HookBaseClass):
 
         :returns: True if item is valid, False otherwise.
         """
+
+        document = item.properties["document"]
+        path = _document_path(document)
+
+        if not document.saved or not path:
+            # the document still hasn't been saved. provide a save button.
+            # validation fails since we don't want to save as the next version
+            # until the current changes have been saved.
+            self.logger.error(
+                "Unsaved changes in the session",
+                extra=_get_save_action(document)
+            )
+            return False
+
         return True
 
     def publish(self, settings, item):
@@ -186,11 +182,44 @@ class ShotgunReviewPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = item.properties["path"]
+        engine = publisher.engine
+        document = item.properties["document"]
 
-        # get the publish name for this file path.
+        path = _document_path(document)
+        upload_path = path
+
+        file_info = publisher.util.get_file_path_components(path)
+        if file_info["extension"] in ["psd", "psb"]:
+
+            with engine.context_changes_disabled():
+
+                # remember the active document so that we can restore it.
+                previous_active_document = engine.adobe.app.activeDocument
+
+                # make the document being processed the active document
+                engine.adobe.app.activeDocument = document
+
+                # path to a temp jpg file
+                upload_path = os.path.join(
+                    tempfile.gettempdir(),
+                    "%s_sgtk.jpg" % uuid.uuid4().hex
+                )
+
+                # jpg file/options
+                jpg_file = engine.adobe.File(upload_path)
+                jpg_options = engine.adobe.JPEGSaveOptions
+                jpg_options.quality = 12
+
+                # save a jpg copy of the document
+                document.saveAs(jpg_file, jpg_options, True)
+
+                # restore the active document
+                engine.adobe.app.activeDocument = previous_active_document
+
+        # use the original path for the version display name
         publish_name = publisher.util.get_publish_name(path)
 
+        # populate the version data to send to SG
         self.logger.info("Creating Version...")
         version_data = {
             "project": item.context.project,
@@ -200,12 +229,11 @@ class ShotgunReviewPlugin(HookBaseClass):
             "sg_task": item.context.task
         }
 
-        if "sg_publish_data" in item.properties:
-            publish_data = item.properties["sg_publish_data"]
-            version_data["published_files"] = [publish_data]
+        publish_data = item.properties.get("sg_publish_data")
 
-        if settings["Link Local File"].value:
-            version_data["sg_path_to_movie"] = path
+        # if the file was published, add the publish data to the version
+        if publish_data:
+            version_data["published_files"] = [publish_data]
 
         # log the version data for debugging
         self.logger.debug(
@@ -214,39 +242,40 @@ class ShotgunReviewPlugin(HookBaseClass):
                 "action_show_more_info": {
                     "label": "Version Data",
                     "tooltip": "Show the complete Version data dictionary",
-                    "text": "<pre>%s</pre>" % (pprint.pformat(version_data),)
+                    "text": "<pre>%s</pre>" % (
+                    pprint.pformat(version_data),)
                 }
             }
         )
 
-        # Create the version
-        version = publisher.shotgun.create("Version", version_data)
-        self.logger.info("Version created!")
+        # create the version
+        self.logger.info("Creating version for review...")
+        version = self.parent.shotgun.create("Version", version_data)
 
         # stash the version info in the item just in case
         item.properties["sg_version_data"] = version
 
-        thumb = item.get_thumbnail_as_path()
-
-        if settings["Upload"].value:
-            self.logger.info("Uploading content...")
-            self.parent.shotgun.upload(
-                "Version",
-                version["id"],
-                path,
-                "sg_uploaded_movie"
-            )
-        elif thumb:
-            # only upload thumb if we are not uploading the content. with
-            # uploaded content, the thumb is automatically extracted.
-            self.logger.info("Uploading thumbnail...")
-            self.parent.shotgun.upload_thumbnail(
-                "Version",
-                version["id"],
-                thumb
-            )
-
+        # upload the file to SG
+        self.logger.info("Uploading content...")
+        self.parent.shotgun.upload(
+            "Version",
+            version["id"],
+            upload_path,
+            "sg_uploaded_movie"
+        )
         self.logger.info("Upload complete!")
+
+        # go ahead and update the publish thumbnail (if there was one)
+        if publish_data:
+            self.logger.info("Updating publish thumbnail...")
+            self.parent.shotgun.upload_thumbnail(
+                publish_data["type"],
+                publish_data["id"],
+                upload_path
+            )
+            self.logger.info("Publish thumbnail updated!")
+
+        item.properties["upload_path"] = upload_path
 
     def finalize(self, settings, item):
         """
@@ -259,11 +288,10 @@ class ShotgunReviewPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        path = item.properties["path"]
         version = item.properties["sg_version_data"]
 
         self.logger.info(
-            "Version uploaded for file: %s" % (path,),
+            "Verison uploaded for photoshop document",
             extra={
                 "action_show_in_shotgun": {
                     "label": "Show Version",
@@ -273,16 +301,50 @@ class ShotgunReviewPlugin(HookBaseClass):
             }
         )
 
+        upload_path = item.properties["upload_path"]
+
+        # remove the tmp file
+        try:
+            os.remove(upload_path)
+        except Exception:
+            self.logger.warn("Unable to remove temp file: %s" % (upload_path,))
+            pass
+
     def _get_version_entity(self, item):
         """
         Returns the best entity to link the version to.
         """
 
-        if item.context.task:
-            return item.context.task
-        elif item.context.entity:
+        if item.context.entity:
             return item.context.entity
         elif item.context.project:
             return item.context.project
         else:
             return None
+
+
+def _get_save_action(document):
+    """
+    Simple helper for returning a log action dict for saving the session
+    """
+    return {
+        "action_button": {
+            "label": "Save",
+            "tooltip": "Save the current session",
+            "callback": lambda: document.save()
+        }
+    }
+
+
+def _document_path(document):
+    """
+    Returns the path on disk to the supplied document. May be ``None`` if the
+    document has not been saved.
+    """
+
+    try:
+        path = document.fullName.fsName
+    except RuntimeError:
+        path = None
+
+    return path

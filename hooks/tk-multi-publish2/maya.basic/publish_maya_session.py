@@ -288,8 +288,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
-            "dependency_paths":
-                self._maya_find_additional_session_dependencies(),
+            "dependency_paths": _maya_find_additional_session_dependencies(),
         }
 
         # log the publish data for debugging
@@ -308,6 +307,11 @@ class MayaSessionPublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(
             **publish_data)
+
+        # inject the publish path such that children can refer to it when
+        # updating dependency information
+        item.properties["sg_publish_path"] = path
+
         self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published
@@ -392,42 +396,42 @@ class MayaSessionPublishPlugin(HookBaseClass):
 
         return next_version_path
 
-    def _maya_find_additional_session_dependencies(self):
-        """
-        Find additional dependencies from the session
-        """
-        # default implementation looks for references and
-        # textures (file nodes) and returns any paths that
-        # match a template defined in the configuration
-        ref_paths = set()
 
-        # first let's look at maya references
-        ref_nodes = cmds.ls(references=True)
-        for ref_node in ref_nodes:
-            # get the path:
-            ref_path = cmds.referenceQuery(ref_node, filename=True)
-            # make it platform dependent
-            # (maya uses C:/style/paths)
-            ref_path = ref_path.replace("/", os.path.sep)
-            if ref_path:
-                ref_paths.add(ref_path)
+def _maya_find_additional_session_dependencies():
+    """
+    Find additional dependencies from the session
+    """
+    # default implementation looks for references and
+    # textures (file nodes)
+    ref_paths = set()
 
-        # now look at file texture nodes
-        for file_node in cmds.ls(l=True, type="file"):
-            # ensure this is actually part of this session and not referenced
-            if cmds.referenceQuery(file_node, isNodeReferenced=True):
-                # this is embedded in another reference, so don't include it in
-                # the breakdown
-                continue
+    # first let's look at maya references
+    ref_nodes = cmds.ls(references=True)
+    for ref_node in ref_nodes:
+        # get the path:
+        ref_path = cmds.referenceQuery(ref_node, filename=True)
+        # make it platform dependent
+        # (maya uses C:/style/paths)
+        ref_path = ref_path.replace("/", os.path.sep)
+        if ref_path:
+            ref_paths.add(ref_path)
 
-            # get path and make it platform dependent
-            # (maya uses C:/style/paths)
-            texture_path = cmds.getAttr(
-                "%s.fileTextureName" % file_node).replace("/", os.path.sep)
-            if texture_path:
-                ref_paths.add(texture_path)
+    # now look at file texture nodes
+    for file_node in cmds.ls(l=True, type="file"):
+        # ensure this is actually part of this session and not referenced
+        if cmds.referenceQuery(file_node, isNodeReferenced=True):
+            # this is embedded in another reference, so don't include it in
+            # the breakdown
+            continue
 
-        return ref_paths
+        # get path and make it platform dependent
+        # (maya uses C:/style/paths)
+        texture_path = cmds.getAttr(
+            "%s.fileTextureName" % file_node).replace("/", os.path.sep)
+        if texture_path:
+            ref_paths.add(texture_path)
+
+    return list(ref_paths)
 
 
 def _session_path():

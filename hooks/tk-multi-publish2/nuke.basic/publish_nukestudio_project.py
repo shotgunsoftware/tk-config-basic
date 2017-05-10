@@ -166,7 +166,8 @@ class NukeStudioProjectPublishPlugin(HookBaseClass):
             # the session still requires saving. provide a save button.
             # validation fails.
             self.logger.error(
-                "The Houdini session has not been saved.",
+                "The Nuke Studio project '%s' has not been saved." %
+                (project.name(),),
                 extra=_get_save_as_action(project)
             )
             return False
@@ -298,6 +299,11 @@ class NukeStudioProjectPublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(
             **publish_data)
+
+        # inject the publish path such that children can refer to it when
+        # updating dependency information
+        item.properties["sg_publish_path"] = path
+
         self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published

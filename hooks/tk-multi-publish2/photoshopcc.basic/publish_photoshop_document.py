@@ -10,8 +10,8 @@
 
 import os
 import pprint
-import traceback
 import sgtk
+from sgtk.platform.qt import QtGui
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -137,7 +137,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             self.logger.warn(
                 "The Photoshop document '%s' has not been saved." %
                 (document.name,),
-                extra=_get_save_as_action(document)
+                extra=self._get_save_as_action(document)
             )
 
         self.logger.info(
@@ -171,8 +171,9 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             # the session still requires saving. provide a save button.
             # validation fails.
             self.logger.error(
-                "The Houdini session has not been saved.",
-                extra=_get_save_as_action(document)
+                "The Photoshop document '%s' has not been saved." %
+                (document.name,),
+                extra=self._get_save_as_action(document)
             )
             return False
 
@@ -237,7 +238,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
                         "label": "Save to v%s" % (version,),
                         "tooltip": "Save to the next available version number, "
                                    "v%s" % (version,),
-                        "callback": lambda: document.saveAs(next_version_path)
+                        "callback": lambda: document.saveAs(
+                            publisher.engine.adobe.File(next_version_path))
                     }
                 }
             )
@@ -273,6 +275,10 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         # extract the version number for publishing. use 1 if no version in path
         version_number = publisher.util.get_version_number(path) or 1
 
+        path_info = publisher.util.get_file_path_components(path)
+        extension = path_info["extension"]
+        publish_type = self._get_publish_type(extension, settings)
+
         # arguments for publish registration
         self.logger.info("Registering publish...")
         publish_data = {
@@ -283,7 +289,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             "name": publish_name,
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": settings["Publish Type"].value,
+            "published_file_type": publish_type,
             "dependency_paths": []  # TODO: dependencies
         }
 
@@ -303,6 +309,11 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(
             **publish_data)
+
+        # inject the publish path such that children can refer to it when
+        # updating dependency information
+        item.properties["sg_publish_path"] = path
+
         self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published
@@ -384,7 +395,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             return None
 
         # save the session to the new path
-        document.saveAs(next_version_path)
+        document.saveAs(publisher.engine.adobe.File(next_version_path))
         self.logger.info("Session saved as: %s" % (next_version_path,))
 
         return next_version_path
@@ -414,18 +425,20 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         # no publish type identified. fall back to regular image type
         return "Image"
 
+    def _get_save_as_action(self, document):
+        """
+        Simple helper for returning a log action dict for saving the session
+        """
 
-def _get_save_as_action(document):
-    """
-    Simple helper for returning a log action dict for saving the session
-    """
-    return {
-        "action_button": {
-            "label": "Save As...",
-            "tooltip": "Save the current session",
-            "callback": lambda: document.save()
+        ps_engine = self.parent.engine
+
+        return {
+            "action_button": {
+                "label": "Save As...",
+                "tooltip": "Save the current session",
+                "callback": lambda: ps_engine.save_as(document)
+            }
         }
-    }
 
 
 def _document_path(document):

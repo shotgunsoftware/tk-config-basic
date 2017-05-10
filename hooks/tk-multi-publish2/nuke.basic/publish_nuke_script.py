@@ -128,7 +128,7 @@ class NukeSessionPublishPlugin(HookBaseClass):
             # validation will succeed.
             self.logger.warn(
                 "The Nuke script has not been saved.",
-                extra=self._get_save_as_action()
+                extra=_get_save_as_action()
             )
 
         self.logger.info(
@@ -160,7 +160,7 @@ class NukeSessionPublishPlugin(HookBaseClass):
             # validation fails.
             self.logger.error(
                 "The Nuke script has not been saved.",
-                extra=self._get_save_as_action()
+                extra=_get_save_as_action()
             )
             return False
 
@@ -270,7 +270,7 @@ class NukeSessionPublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
-            "dependency_paths": []  # TODO: dependencies
+            "dependency_paths": _nuke_find_additional_script_dependencies(),
         }
 
         # log the publish data for debugging
@@ -289,6 +289,11 @@ class NukeSessionPublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(
             **publish_data)
+
+        # inject the publish path such that children can refer to it when
+        # updating dependency information
+        item.properties["sg_publish_path"] = path
+
         self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published
@@ -374,11 +379,33 @@ class NukeSessionPublishPlugin(HookBaseClass):
         return next_version_path
 
 
+def _nuke_find_additional_script_dependencies():
+    """
+    Find all dependencies for the current nuke script
+    """
+
+    # figure out all the inputs to the scene and pass them as dependency
+    # candidates
+    dependency_paths = []
+    for read_node in nuke.allNodes("Read"):
+        # make sure we have a file path and normalize it
+        # file knobs set to "" in Python will evaluate to None. This is
+        # different than if you set file to an empty string in the UI, which
+        # will evaluate to ""!
+        file_path = read_node.knob("file").evaluate()
+        if not file_path:
+            continue
+        file_path = sgtk.util.ShotgunPath.normalize(file_path)
+        dependency_paths.append(file_path)
+
+    return dependency_paths
+
+
 def _save_session(path):
     """
     Save the current session to the supplied path.
     """
-    nuke.scriptSave(filename=path)
+    nuke.scriptSaveAs(path, True)
 
 
 def _session_path():

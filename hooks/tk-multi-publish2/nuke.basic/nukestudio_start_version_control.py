@@ -179,7 +179,7 @@ class NukeStudioStartVersionControlPlugin(HookBaseClass):
             self.logger.error(
                 "The Nuke Studio project '%s' has not been saved." %
                 (project.name(),),
-                extra=self._get_save_as_action()
+                extra=_get_save_as_action(project)
             )
             return False
 
@@ -189,7 +189,7 @@ class NukeStudioStartVersionControlPlugin(HookBaseClass):
             self.logger.error(
                 "A file already exists with a version number. Please choose "
                 "another name.",
-                extra=self._get_save_as_action()
+                extra=_get_save_as_action(project)
             )
             return False
 

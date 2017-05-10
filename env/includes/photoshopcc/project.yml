@@ -29,14 +29,14 @@ photoshopcc.project:
       help_url: "@common.apps.tk-multi-publish2.help_url"
       collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/photoshopcc.basic/collector.py"
       publish_plugins:
-        - "@common.settings.tk-multi-publish2.file_publisher"
-        - "@common.settings.tk-multi-publish2.version_creator"
+        - "@common.settings.tk-multi-publish2.publish_file"
+        - "@common.settings.tk-multi-publish2.upload_version"
         - name: Add version number to Maya file name
           hook: "{config}/tk-multi-publish2/photoshopcc.basic/start_version_control.py"
           settings: {}
         - "@common.settings.tk-multi-publish2.publish_photoshop_document"
         - name: Send document to Shotgun review
-          hook: "{config}/tk-multi-publish2/photoshopcc.basic/create_version.py"
+          hook: "{config}/tk-multi-publish2/photoshopcc.basic/upload_version.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 
