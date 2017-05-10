@@ -28,7 +28,7 @@ common.engines.tk-houdini.location:
 # Maya
 common.engines.tk-maya.location:
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 9084f82533115e8c9656f2b5ad12b87b8d89df1e
+    version: 247c301c9f4ef57eece1dd623fda60e590a35073
     type: git_branch
     branch: develop/zero_config
 
