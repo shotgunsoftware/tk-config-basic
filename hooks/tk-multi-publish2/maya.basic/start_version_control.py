@@ -232,7 +232,12 @@ def _session_path():
     Return the path to the current session
     :return:
     """
-    return cmds.file(query=True, sn=True)
+    path = cmds.file(query=True, sn=True)
+
+    if isinstance(path, unicode):
+        path = path.encode("utf-8")
+
+    return path
 
 
 def _save_session(path):

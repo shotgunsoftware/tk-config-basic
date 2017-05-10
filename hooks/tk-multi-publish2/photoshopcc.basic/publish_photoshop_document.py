@@ -131,8 +131,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         path = _document_path(document)
 
         if not path:
-            # the session has not been saved before (no path determined).
-            # provide a save button. the session will need to be saved before
+            # the document has not been saved before (no path determined).
+            # provide a save button. the document will need to be saved before
             # validation will succeed.
             self.logger.warn(
                 "The Photoshop document '%s' has not been saved." %
@@ -168,7 +168,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         path = _document_path(document)
 
         if not path:
-            # the session still requires saving. provide a save button.
+            # the document still requires saving. provide a save button.
             # validation fails.
             self.logger.error(
                 "The Photoshop document '%s' has not been saved." %

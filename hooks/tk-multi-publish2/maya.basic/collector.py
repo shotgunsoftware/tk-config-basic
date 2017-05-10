@@ -11,6 +11,7 @@
 import glob
 import os
 import maya.cmds as cmds
+import maya.mel as mel
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
@@ -39,8 +40,33 @@ class MayaSessionCollector(HookBaseClass):
 
         # if we can determine a project root, collect other files to publish
         if project_root:
+
+            self.logger.info(
+                "Current Maya project is: %s." % (project_root,),
+                extra={
+                    "action_button": {
+                        "label": "Change Project",
+                        "tooltip": "Change to a different Maya project",
+                        "callback": lambda: mel.eval('setProject ""')
+                    }
+                }
+            )
+
             self.collect_playblasts(item, project_root)
             self.collect_alembic_caches(item, project_root)
+
+        else:
+
+            self.logger.warning(
+                "Could not determine the current Maya project.",
+                extra={
+                    "action_button": {
+                        "label": "Set Project",
+                        "tooltip": "Set the Maya project",
+                        "callback": lambda: mel.eval('setProject ""')
+                    }
+                }
+            )
 
     def collect_current_maya_session(self, parent_item):
         """

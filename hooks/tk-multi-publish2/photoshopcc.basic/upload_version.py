@@ -121,25 +121,23 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
 
         path = _document_path(document)
 
-        checked = True
-
-        if not document.saved or not path:
-            # the document hasn't been saved. provide a save button and uncheck
-            # the item. the document will need to be saved before validation
-            # will succeed.
+        if not path:
+            # the document has not been saved before (no path determined).
+            # provide a save button. the document will need to be saved before
+            # validation will succeed.
             self.logger.warn(
-                "Unsaved changes for document: %s" % (document.name,),
+                "The Photoshop document '%s' has not been saved." %
+                (document.name,),
                 extra=_get_save_action(document)
             )
-            checked = False
 
         self.logger.info(
-            "Photoshop Version upload plugin accepted document: %s" %
-            (document.name,)
+            "Photoshop '%s' plugin accepted document: %s" %
+            (self.name, document.name)
         )
         return {
             "accepted": True,
-            "checked": checked
+            "checked": True
         }
 
     def validate(self, settings, item):
@@ -159,13 +157,13 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
         document = item.properties["document"]
         path = _document_path(document)
 
-        if not document.saved or not path:
-            # the document still hasn't been saved. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
+        if not path:
+            # the document still requires saving. provide a save button.
+            # validation fails.
             self.logger.error(
-                "Unsaved changes in the session",
-                extra=_get_save_action(document)
+                "The Photoshop document '%s' has not been saved." %
+                (document.name,),
+                extra=self._get_save_as_action(document)
             )
             return False
 
@@ -291,7 +289,7 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
         version = item.properties["sg_version_data"]
 
         self.logger.info(
-            "Verison uploaded for photoshop document",
+            "Version uploaded for Photoshop document",
             extra={
                 "action_show_in_shotgun": {
                     "label": "Show Version",

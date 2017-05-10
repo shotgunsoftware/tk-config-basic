@@ -47,7 +47,7 @@ class UploadVersionPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return """Uploads files to Shotgun for Review."""
+        return """Uploads a file Shotgun for Review."""
 
     @property
     def settings(self):
