@@ -19,7 +19,7 @@ includes:
 
 common.apps.tk-multi-about:
   location:
-    version: v0.2.2
+    version: v0.2.5
     type: app_store
     name: tk-multi-about
 
@@ -28,14 +28,6 @@ common.apps.tk-multi-pythonconsole:
     version: v1.1.0
     type: app_store
     name: tk-multi-pythonconsole
-
-common.apps.tk-multi-launchapp:
-  use_software_entity: true
-  location:
-    path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-    version: 8211a6306717c4e2494c7cd78f4927949299b31f
-    type: git_branch
-    branch: develop/software_entity
 
 # locations for common apps
 
@@ -46,15 +38,19 @@ common.apps.tk-multi-publish2.location:
 
 common.apps.tk-multi-loader2.location:
   type: app_store
-  version: v1.16.2
   name: tk-multi-loader2
+  version: v1.16.2
 
 common.apps.tk-multi-shotgunpanel.location:
-  path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-  version: c953fe2a510388843853c1ddebfe967ec5ea4126
-  type: git_branch
-  branch: develop/zero_config
+  type: app_store
+  name: tk-multi-shotgunpanel
+  version: v1.4.0
+
+common.apps.tk-multi-launchapp.location:
+  type: app_store
+  name: tk-multi-launchapp
+  version: v0.9.2
 
 # help urls
 
-common.apps.tk-multi-publish2.help_url: https://support.shotgunsoftware.com/hc/en-us/articles/115000067473-Getting-started-with-the-beta#Publisher
+common.apps.tk-multi-publish2.help_url: https://support.shotgunsoftware.com/hc/en-us/articles/115000067473#Publisher

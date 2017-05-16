@@ -14,10 +14,9 @@
 frameworks:
   tk-framework-qtwidgets_v2.x.x:
     location:
-      path: https://github.com/shotgunsoftware/tk-framework-qtwidgets.git
-      version: 384ce1a4622e59deb2c200bf7f855b87785c06fe
-      type: git_branch
-      branch: develop/zero_config
+      version: v2.6.2
+      type: app_store
+      name: tk-framework-qtwidgets
   tk-framework-shotgunutils_v4.x.x:
     location:
       version: v4.4.15
@@ -25,10 +24,9 @@ frameworks:
       name: tk-framework-shotgunutils
   tk-framework-shotgunutils_v5.x.x:
     location:
-      path: https://github.com/shotgunsoftware/tk-framework-shotgunutils.git
-      version: 1b4d3cc820c60d146d5eccac7303a7df53e7de44
-      type: git_branch
-      branch: develop/zero_config
+      version: v5.2.0
+      type: app_store
+      name: tk-framework-shotgunutils
   tk-framework-adminui_v0.x.x:
     location:
       version: v0.1.6
