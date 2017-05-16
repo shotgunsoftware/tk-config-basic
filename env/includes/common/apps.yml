@@ -25,7 +25,7 @@ common.apps.tk-multi-about:
 
 common.apps.tk-multi-pythonconsole:
   location:
-    version: v1.0.7
+    version: v1.1.0
     type: app_store
     name: tk-multi-pythonconsole
 
@@ -40,10 +40,9 @@ common.apps.tk-multi-launchapp:
 # locations for common apps
 
 common.apps.tk-multi-publish2.location:
-  path: https://github.com/shotgunsoftware/tk-multi-publish2.git
-  version: 7c0d35c4b4e71bf8e18732edd1fa5729757a4c2b
-  type: git_branch
-  branch: master
+  type: app_store
+  version: v0.2.5
+  name: tk-multi-publish2
 
 common.apps.tk-multi-loader2.location:
   path: https://github.com/shotgunsoftware/tk-multi-loader2.git
