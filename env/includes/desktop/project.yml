@@ -14,6 +14,7 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/engines.yml
 - ../common/apps.yml
 - ../common/settings/tk-multi-publish2.yml
 
@@ -52,7 +53,4 @@ desktop.project:
   - matches:
     - '*Fla*'
     name: Finishing Tools
-  location:
-    type: app_store
-    name: tk-desktop
-    version: v2.1.0
+  location: "@common.engines.tk-desktop.location"

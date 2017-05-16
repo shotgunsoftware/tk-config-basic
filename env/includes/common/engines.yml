@@ -40,3 +40,9 @@ common.engines.tk-photoshopcc.location:
     type: app_store
     name: tk-photoshopcc
     version: v1.1.2
+
+# Desktop
+common.engines.tk-desktop.location:
+    type: app_store
+    name: tk-desktop
+    version: v2.1.0

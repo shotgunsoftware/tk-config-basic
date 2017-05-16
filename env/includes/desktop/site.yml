@@ -14,10 +14,8 @@
 
 includes:
 - ../common/frameworks.yml
+- ../common/engines.yml
 
 desktop.site:
   apps:
-  location:
-    type: app_store
-    name: tk-desktop
-    version: v2.1.1
+  location: "@common.engines.tk-desktop.location"
