@@ -19,23 +19,22 @@ includes:
 
 common.apps.tk-multi-about:
   location:
-    version: v0.2.2
+    version: v0.2.5
     type: app_store
     name: tk-multi-about
 
 common.apps.tk-multi-pythonconsole:
   location:
-    version: v1.0.7
+    version: v1.1.0
     type: app_store
     name: tk-multi-pythonconsole
 
 common.apps.tk-multi-launchapp:
   use_software_entity: true
   location:
-    path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
-    version: 8211a6306717c4e2494c7cd78f4927949299b31f
-    type: git_branch
-    branch: develop/software_entity
+    type: app_store
+    name: tk-multi-launchapp
+    version: v0.9.1
 
 # locations for common apps
 
@@ -45,13 +44,11 @@ common.apps.tk-multi-publish2.location:
   version: v0.2.4
 
 common.apps.tk-multi-loader2.location:
-  path: https://github.com/shotgunsoftware/tk-multi-loader2.git
-  version: 055a49c8455d9a99bcbb79732b1e22093f0d5375
-  type: git_branch
-  branch: develop/zero_config
+  type: app_store
+  name: tk-multi-loader2
+  version: v1.16.2
 
 common.apps.tk-multi-shotgunpanel.location:
-  path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-  version: c953fe2a510388843853c1ddebfe967ec5ea4126
-  type: git_branch
-  branch: develop/zero_config
+  type: app_store
+  name: tk-multi-shotgunpanel
+  version: v1.4.0
