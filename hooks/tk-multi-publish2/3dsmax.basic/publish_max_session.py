@@ -1,23 +1,24 @@
 # Copyright (c) 2017 Shotgun Software Inc.
-#
+# 
 # CONFIDENTIAL AND PROPRIETARY
-#
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# 
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# By accessing, using, copying or modifying this work you indicate your 
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
 import pprint
+import MaxPlus
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class NukeSessionPublishPlugin(HookBaseClass):
+class MaxSessionPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open nuke session.
+    Plugin for publishing an open max session.
     """
 
     @property
@@ -39,7 +40,7 @@ class NukeSessionPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Nuke Session Publisher"
+        return "Publish Max work file"
 
     @property
     def description(self):
@@ -48,9 +49,11 @@ class NukeSessionPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will publish the current Nuke script. The plugin requires
-        the session be saved to a file before validation will succeed. The file
-        will be published in place.
+        This plugin will save and publish the current Max session. If the
+        session has not been saved before or the path can not be determined,
+        validation will fail. If a version number is detected in the file name,
+        the session will be saved to the next version once publishing is
+        complete.
         """
 
     @property
@@ -75,7 +78,7 @@ class NukeSessionPublishPlugin(HookBaseClass):
         return {
             "Publish Type": {
                 "type": "shotgun_publish_type",
-                "default": "Nuke Script",
+                "default": "3dsmax Scene",
                 "description": "SG publish type to associate publishes with."
             },
         }
@@ -89,7 +92,7 @@ class NukeSessionPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["nuke.session"]
+        return ["3dsmax.session"]
 
     def accept(self, settings, item):
         """
@@ -117,26 +120,24 @@ class NukeSessionPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        import nuke
+        path = _session_path()
 
-        path = nuke.root().name()
-        checked = True
-
-        if nuke.root().modified() or not path or path == "Root":
-            # the session has unsaved changes. provide a save button and uncheck
-            # the item. the session will need to be saved before validation will
-            # succeed.
+        if not path:
+            # the session has not been saved before (no path determined).
+            # provide a save button. the session will need to be saved before
+            # validation will succeed.
             self.logger.warn(
-                "Unsaved changes in the session",
+                "The Max session has not been saved.",
                 extra=_get_save_as_action()
             )
-            checked = False
 
         self.logger.info(
-            "Nuke publish plugin accepted the current Nuke script.")
+            "Max '%s' plugin accepted the current Max session." %
+            (self.name,)
+        )
         return {
             "accepted": True,
-            "checked": checked
+            "checked": True
         }
 
     def validate(self, settings, item):
@@ -151,25 +152,22 @@ class NukeSessionPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        import nuke
-
         publisher = self.parent
-        path = nuke.root().name()
+        path = _session_path()
 
-        # make sure the session is completely saved
-        if nuke.root().modified() or not path or path == "Root":
+        if not path:
             # the session still requires saving. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
+            # validation fails.
             self.logger.error(
-                "Unsaved changes in the session",
+                "The Maya session has not been saved.",
                 extra=_get_save_as_action()
             )
             return False
 
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(path)
+        # get the path in a normalized state. no trailing separator,
+        # separators are appropriate for current os, no double separators,
+        # etc.
+        sgtk.util.ShotgunPath.normalize(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
@@ -206,6 +204,33 @@ class NukeSessionPublishPlugin(HookBaseClass):
                 }
             )
 
+        # if the file has a version number in it, see if the next version exists
+        next_version_path = publisher.util.get_next_version_path(path)
+        if next_version_path and os.path.exists(next_version_path):
+
+            # determine the next available version_number. just keep asking for
+            # the next one until we get one that doesn't exist.
+            while os.path.exists(next_version_path):
+                next_version_path = publisher.util.get_next_version_path(
+                    next_version_path)
+
+            # now extract the version number of the next available to display
+            # to the user
+            version = publisher.util.get_version_number(next_version_path)
+
+            self.logger.error(
+                "The next version of this file already exists on disk.",
+                extra={
+                    "action_button": {
+                        "label": "Save to v%s" % (version,),
+                        "tooltip": "Save to the next available version number, "
+                                   "v%s" % (version,),
+                        "callback": lambda: _save_session(next_version_path)
+                    }
+                }
+            )
+            return False
+
         return True
 
     def publish(self, settings, item):
@@ -218,13 +243,14 @@ class NukeSessionPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        import nuke
+        publisher = self.parent
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(nuke.root().name())
+        path = sgtk.util.ShotgunPath.normalize(_session_path())
 
-        publisher = self.parent
+        # ensure the session is saved
+        _save_session(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -244,6 +270,7 @@ class NukeSessionPublishPlugin(HookBaseClass):
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
             "published_file_type": settings["Publish Type"].value,
+            "dependency_paths": []  # TODO
         }
 
         # log the publish data for debugging
@@ -262,6 +289,11 @@ class NukeSessionPublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(
             **publish_data)
+
+        # inject the publish path such that children can refer to it when
+        # updating dependency information
+        item.properties["sg_publish_path"] = path
+
         self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published
@@ -302,17 +334,79 @@ class NukeSessionPublishPlugin(HookBaseClass):
             }
         )
 
+        # insert the path into the properties
+        item.properties["next_version_path"] = self._bump_file_version(path)
+
+    def _bump_file_version(self, path):
+        """
+        Save the supplied path to the next version on disk.
+        """
+
+        publisher = self.parent
+        version_number = publisher.util.get_version_number(path)
+
+        if version_number is None:
+            self.logger.debug(
+                "No version number detected in the publish path. "
+                "Skipping the bump file version step."
+            )
+            return None
+
+        self.logger.info("Incrementing session file version number...")
+
+        next_version_path = publisher.util.get_next_version_path(path)
+
+        # nothing to do if the next version path can't be determined or if it
+        # already exists.
+        if not next_version_path:
+            self.logger.warning("Could not determine the next version path.")
+            return None
+        elif os.path.exists(next_version_path):
+            self.logger.warning(
+                "The next version of the path already exists",
+                extra={
+                    "action_show_folder": {
+                        "path": next_version_path
+                    }
+                }
+            )
+            return None
+
+        # save the session to the new path
+        _save_session(next_version_path)
+        self.logger.info("Session saved as: %s" % (next_version_path,))
+
+        return next_version_path
+
+
+def _session_path():
+    """
+    Return the path to the current session
+    :return:
+    """
+
+    return MaxPlus.FileManager.GetFileNameAndPath()
+
+
+def _save_session(path):
+    """
+    Save the current session to the supplied path.
+    """
+    MaxPlus.FileManager.Save(path)
+
 
 def _get_save_as_action():
     """
     Simple helper for returning a log action dict for saving the session
     """
-    import nuke
-
     return {
         "action_button": {
-            "label": "Save",
+            "label": "Save As...",
             "tooltip": "Save the current session",
-            "callback": nuke.scriptSaveAs
+            "callback": MaxPlus.FileManager.SaveAs
         }
     }
+
+
+
+

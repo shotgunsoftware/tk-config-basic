@@ -20,11 +20,14 @@ includes:
 desktop.project:
   apps:
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-publish2:
+      help_url: "@common.apps.tk-multi-publish2.help_url"
       collector: "{config}/tk-multi-publish2/basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
+        - '@common.settings.tk-multi-publish2.publish_file'
+        - '@common.settings.tk-multi-publish2.upload_version'
       location: "@common.apps.tk-multi-publish2.location"
 
     tk-multi-launchapp: '@common.apps.tk-multi-launchapp'

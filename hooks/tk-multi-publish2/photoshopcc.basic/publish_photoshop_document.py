@@ -10,16 +10,15 @@
 
 import os
 import pprint
-import maya.cmds as cmds
-import maya.mel as mel
 import sgtk
+from sgtk.platform.qt import QtGui
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class MayaSessionPublishPlugin(HookBaseClass):
+class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open maya session.
+    Plugin for publishing Photoshop documents in Shotgun.
     """
 
     @property
@@ -41,7 +40,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Maya Session Publisher"
+        return "Publish Photoshop document"
 
     @property
     def description(self):
@@ -50,9 +49,10 @@ class MayaSessionPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will publish the current Maya session. The plugin requires
-        the session be saved to a file before validation will succeed. The file
-        will be published in place.
+        This plugin will save and publish a Photoshop document. If the document
+        has not been saved before or the path can not be determined, validation
+        will fail. If a version number is detected in the file name, the
+        document will be saved to the next version once publishing is complete.
         """
 
     @property
@@ -75,10 +75,14 @@ class MayaSessionPublishPlugin(HookBaseClass):
         part of its environment configuration.
         """
         return {
-            "Publish Type": {
-                "type": "shotgun_publish_type",
-                "default": "Maya Scene",
-                "description": "SG publish type to associate publishes with."
+            "File Types": {
+                "type": "list",
+                "default": "[]",
+                "description": (
+                    "List of file types to include. Each entry in the list "
+                    "is a list in which the first entry is the Shotgun "
+                    "published file type and subsequent entries are file "
+                    "extensions that should be associated.")
             },
         }
 
@@ -91,7 +95,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["maya.session"]
+        return ["photoshop.document"]
 
     def accept(self, settings, item):
         """
@@ -103,7 +107,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         dictionary with the following booleans:
 
             - accepted: Indicates if the plugin is interested in this value at
-                all. Required.
+               all. Required.
             - enabled: If True, the plugin will be enabled in the UI, otherwise
                 it will be disabled. Optional, True by default.
             - visible: If True, the plugin will be visible in the UI, otherwise
@@ -119,70 +123,59 @@ class MayaSessionPublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        path = cmds.file(query=True, sn=True)
-        modified = cmds.file(q=True, modified=True)
-        checked = True
+        document = item.properties.get("document")
+        if not document:
+            self.logger.warn("Could not determine the document for item")
+            return {"accepted": False}
 
-        if modified or not path:
-            # the session has unsaved changes. provide a save button and uncheck
-            # the item. the session will need to be saved before validation will
-            # succeed.
+        path = _document_path(document)
+
+        if not path:
+            # the document has not been saved before (no path determined).
+            # provide a save button. the document will need to be saved before
+            # validation will succeed.
             self.logger.warn(
-                "Unsaved changes in the session",
-                extra=_get_save_as_action()
+                "The Photoshop document '%s' has not been saved." %
+                (document.name,),
+                extra=self._get_save_as_action(document)
             )
-            checked = False
 
         self.logger.info(
-            "Maya publish plugin accepted the current Maya session.")
+            "Photoshop '%s' plugin accepted document: %s." %
+            (self.name, document.name)
+        )
         return {
             "accepted": True,
-            "checked": checked
+            "checked": True
         }
 
     def validate(self, settings, item):
         """
-        Validates the given item to check that it is ok to publish. Returns a
-        boolean to indicate validity.
+        Validates the given item to check that it is ok to publish.
+
+        Returns a boolean to indicate validity.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
+
         :returns: True if item is valid, False otherwise.
         """
 
         publisher = self.parent
-        path = cmds.file(query=True, sn=True)
-        modified = cmds.file(q=True, modified=True)
+        document = item.properties["document"]
+        path = _document_path(document)
 
-        if modified or not path:
-            # the session still requires saving. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
+        if not path:
+            # the document still requires saving. provide a save button.
+            # validation fails.
             self.logger.error(
-                "Unsaved changes in the session",
-                extra=_get_save_as_action()
+                "The Photoshop document '%s' has not been saved." %
+                (document.name,),
+                extra=self._get_save_as_action(document)
             )
             return False
-
-
-        # ensure we have an updated project root
-        project_root = cmds.workspace(q=True, rootDirectory=True)
-        item.properties["project_root"] = project_root
-
-        # warn if no project root could be determined.
-        if not project_root:
-            self.logger.warning(
-                "Your session is not part of a maya project.",
-                extra={
-                    "action_button": {
-                        "label": "Set Project",
-                        "tooltip": "Set the maya project",
-                        "callback": lambda: mel.eval('setProject ""')
-                    }
-                }
-            )
 
         # get the path in a normalized state. no trailing separator,
         # separators are appropriate for current os, no double separators,
@@ -224,6 +217,34 @@ class MayaSessionPublishPlugin(HookBaseClass):
                 }
             )
 
+        # if the file has a version number in it, see if the next version exists
+        next_version_path = publisher.util.get_next_version_path(path)
+        if next_version_path and os.path.exists(next_version_path):
+
+            # determine the next available version_number. just keep asking for
+            # the next one until we get one that doesn't exist.
+            while os.path.exists(next_version_path):
+                next_version_path = publisher.util.get_next_version_path(
+                    next_version_path)
+
+            # now extract the version number of the next available to display
+            # to the user
+            version = publisher.util.get_version_number(next_version_path)
+
+            self.logger.error(
+                "The next version of this file already exists on disk.",
+                extra={
+                    "action_button": {
+                        "label": "Save to v%s" % (version,),
+                        "tooltip": "Save to the next available version number, "
+                                   "v%s" % (version,),
+                        "callback": lambda: document.saveAs(
+                            publisher.engine.adobe.File(next_version_path))
+                    }
+                }
+            )
+            return False
+
         return True
 
     def publish(self, settings, item):
@@ -237,10 +258,15 @@ class MayaSessionPublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
+        document = item.properties["document"]
+        path = _document_path(document)
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(cmds.file(query=True, sn=True))
+        path = sgtk.util.ShotgunPath.normalize(path)
+
+        # ensure the session is saved
+        document.save()
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -248,6 +274,10 @@ class MayaSessionPublishPlugin(HookBaseClass):
 
         # extract the version number for publishing. use 1 if no version in path
         version_number = publisher.util.get_version_number(path) or 1
+
+        path_info = publisher.util.get_file_path_components(path)
+        extension = path_info["extension"]
+        publish_type = self._get_publish_type(extension, settings)
 
         # arguments for publish registration
         self.logger.info("Registering publish...")
@@ -259,9 +289,8 @@ class MayaSessionPublishPlugin(HookBaseClass):
             "name": publish_name,
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": settings["Publish Type"].value,
-            "dependency_paths":
-                self._maya_find_additional_session_dependencies(),
+            "published_file_type": publish_type,
+            "dependency_paths": []  # TODO: dependencies
         }
 
         # log the publish data for debugging
@@ -280,6 +309,11 @@ class MayaSessionPublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(
             **publish_data)
+
+        # inject the publish path such that children can refer to it when
+        # updating dependency information
+        item.properties["sg_publish_path"] = path
+
         self.logger.info("Publish registered!")
 
         # now that we've published. keep a handle on the path that was published
@@ -297,6 +331,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
+        document = item.properties.get("document")
 
         # get the data for the publish that was just created in SG
         publish_data = item.properties["sg_publish_data"]
@@ -320,85 +355,101 @@ class MayaSessionPublishPlugin(HookBaseClass):
             }
         )
 
-    def _maya_find_additional_session_dependencies(self):
+        # insert the path into the properties
+        item.properties["next_version_path"] = self._bump_file_version(
+            document, path)
+
+    def _bump_file_version(self, document, path):
         """
-        Find additional dependencies from the session
+        Save the supplied path to the next version on disk.
         """
-        # default implementation looks for references and
-        # textures (file nodes) and returns any paths that
-        # match a template defined in the configuration
-        ref_paths = set()
 
-        # first let's look at maya references
-        ref_nodes = cmds.ls(references=True)
-        for ref_node in ref_nodes:
-            # get the path:
-            ref_path = cmds.referenceQuery(ref_node, filename=True)
-            # make it platform dependent
-            # (maya uses C:/style/paths)
-            ref_path = ref_path.replace("/", os.path.sep)
-            if ref_path:
-                ref_paths.add(ref_path)
+        publisher = self.parent
+        version_number = publisher.util.get_version_number(path)
 
-        # now look at file texture nodes
-        for file_node in cmds.ls(l=True, type="file"):
-            # ensure this is actually part of this session and not referenced
-            if cmds.referenceQuery(file_node, isNodeReferenced=True):
-                # this is embedded in another reference, so don't include it in
-                # the breakdown
-                continue
+        if version_number is None:
+            self.logger.debug(
+                "No version number detected in the publish path. "
+                "Skipping the bump file version step."
+            )
+            return None
 
-            # get path and make it platform dependent
-            # (maya uses C:/style/paths)
-            texture_path = cmds.getAttr(
-                "%s.fileTextureName" % file_node).replace("/", os.path.sep)
-            if texture_path:
-                ref_paths.add(texture_path)
+        self.logger.info("Incrementing session file version number...")
 
-        return ref_paths
+        next_version_path = publisher.util.get_next_version_path(path)
 
+        # nothing to do if the next version path can't be determined or if it
+        # already exists.
+        if not next_version_path:
+            self.logger.warning("Could not determine the next version path.")
+            return None
+        elif os.path.exists(next_version_path):
+            self.logger.warning(
+                "The next version of the path already exists",
+                extra={
+                    "action_show_folder": {
+                        "path": next_version_path
+                    }
+                }
+            )
+            return None
 
-def _session_save_as(path=None):
-    """
-    A save as wrapper for the current session.
+        # save the session to the new path
+        document.saveAs(publisher.engine.adobe.File(next_version_path))
+        self.logger.info("Session saved as: %s" % (next_version_path,))
 
-    :param path: Optional path to save the current session as.
-    """
+        return next_version_path
 
-    if not path:
-        path = cmds.fileDialog(
-            mode=1, title="Save As", directoryMask='*.ma')
+    def _get_publish_type(self, extension, settings):
+        """
+        Get a publish type for the supplied extension and publish settings.
 
-    if not path:
-        # no path supplied and none returned via file dialog
-        return
+        :param extension: The file extension to find a publish type for
+        :param settings: The publish settings defining the publish types
 
-    # Maya can choose the wrong file type so we should set it here
-    # explicitly based on the extension
-    maya_file_type = None
-    if path.lower().endswith(".ma"):
-        maya_file_type = "mayaAscii"
-    elif path.lower().endswith(".mb"):
-        maya_file_type = "mayaBinary"
+        :return: A publish type or None if one could not be found.
+        """
 
-    cmds.file(rename=path)
+        # ensure lowercase and no dot
+        extension = extension.lstrip(".").lower()
 
-    # save the scene:
-    if maya_file_type:
-        cmds.file(save=True, force=True, type=maya_file_type)
-    else:
-        cmds.file(save=True, force=True)
+        for type_def in settings["File Types"].value:
 
+            publish_type = type_def[0]
+            file_extensions = type_def[1:]
 
-def _get_save_as_action():
-    """
+            if extension in file_extensions:
+                # found a matching type in settings. use it!
+                return publish_type
 
-    Simple helper for returning a log action dict for saving the session
-    """
-    return {
-        "action_button": {
-            "label": "Save",
-            "tooltip": "Save the current session",
-            "callback": _session_save_as
+        # no publish type identified. fall back to regular image type
+        return "Image"
+
+    def _get_save_as_action(self, document):
+        """
+        Simple helper for returning a log action dict for saving the session
+        """
+
+        ps_engine = self.parent.engine
+
+        return {
+            "action_button": {
+                "label": "Save As...",
+                "tooltip": "Save the current session",
+                "callback": lambda: ps_engine.save_as(document)
+            }
         }
-    }
+
+
+def _document_path(document):
+    """
+    Returns the path on disk to the supplied document. May be ``None`` if the
+    document has not been saved.
+    """
+
+    try:
+        path = document.fullName.fsName
+    except RuntimeError:
+        path = None
+
+    return path

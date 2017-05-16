@@ -24,15 +24,16 @@ houdini.project:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-publish2:
+      help_url: "@common.apps.tk-multi-publish2.help_url"
       collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/houdini.basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
-        - name: Houdini Scene Publisher
-          hook: "{config}/tk-multi-publish2/houdini.basic/file_publisher.py"
+        - '@common.settings.tk-multi-publish2.publish_file'
+        - '@common.settings.tk-multi-publish2.upload_version'
+        - name: Add version number to Houdini file name
+          hook: "{config}/tk-multi-publish2/houdini.basic/start_version_control.py"
           settings: {}
-        - name: Save the file to the next version
-          hook: "{config}/tk-multi-publish2/houdini.basic/version_up.py"
+        - name: Publish Houdini work file
+          hook: "{config}/tk-multi-publish2/houdini.basic/publish_houdini_session.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 

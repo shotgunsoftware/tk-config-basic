@@ -20,10 +20,9 @@ common.engines.tk-3dsmaxplus.location:
 
 # Houdini
 common.engines.tk-houdini.location:
-    path: https://github.com/shotgunsoftware/tk-houdini.git
-    version: 9263d6a4a0fc49fdaec28ac51a3f2af2507d2dcf
-    type: git_branch
-    branch: develop/zero_config
+  type: app_store
+  name: tk-houdini
+  version: v1.2.1
 
 # Maya
 common.engines.tk-maya.location:
@@ -41,7 +40,6 @@ common.engines.tk-nuke.location:
 
 # Photoshop
 common.engines.tk-photoshopcc.location:
-    path: https://github.com/shotgunsoftware/tk-photoshopcc.git
-    version: ce1d2dc901586cd580440647b4fb94cf7f970aa1
-    type: git_branch
-    branch: develop/zero_config
+  type: app_store
+  name: tk-photoshopcc
+  version: v1.1.2
