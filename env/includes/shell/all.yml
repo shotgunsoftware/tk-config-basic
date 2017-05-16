@@ -18,7 +18,9 @@ includes:
 
 shell.all:
   apps:
-    tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
+    tk-multi-launchapp:
+      use_software_entity: true
+      location: "@common.apps.tk-multi-launchapp.location"
 
   location:
     version: v0.5.1

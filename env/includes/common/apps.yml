@@ -29,13 +29,6 @@ common.apps.tk-multi-pythonconsole:
     type: app_store
     name: tk-multi-pythonconsole
 
-common.apps.tk-multi-launchapp:
-  use_software_entity: true
-  location:
-    type: app_store
-    name: tk-multi-launchapp
-    version: v0.9.1
-
 # locations for common apps
 
 common.apps.tk-multi-publish2.location:
@@ -52,3 +45,8 @@ common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
   version: v1.4.0
+
+common.apps.tk-multi-launchapp.location:
+  type: app_store
+  name: tk-multi-launchapp
+  version: v0.9.1

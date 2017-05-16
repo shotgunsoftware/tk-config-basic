@@ -27,7 +27,9 @@ desktop.project:
         - '@common.settings.tk-multi-publish2.version_creator'
       location: "@common.apps.tk-multi-publish2.location"
 
-    tk-multi-launchapp: '@common.apps.tk-multi-launchapp'
+    tk-multi-launchapp:
+      use_software_entity: true
+      location: "@common.apps.tk-multi-launchapp.location"
 
   collapse_rules:
   - {button_label: $app, match: Launch $app, menu_label: None}
