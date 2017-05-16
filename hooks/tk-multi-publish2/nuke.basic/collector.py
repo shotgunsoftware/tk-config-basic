@@ -38,13 +38,18 @@ class NukeSessionCollector(HookBaseClass):
         engine = publisher.engine
 
         if hasattr(engine, "studio_enabled") and engine.studio_enabled:
-            # running nuke studio
+            # running nuke studio.
             self.collect_current_nukestudio_session(parent_item)
-        else:
-            # running nuke
-            self.collect_current_nuke_session(parent_item)
 
-        self.collect_node_outputs(parent_item)
+            # since we're in NS, any additional collected outputs will be
+            # parented under the root item
+            session_item = parent_item
+        else:
+            # running nuke. ensure additional collected outputs are parented
+            # under the session
+            session_item = self.collect_current_nuke_session(parent_item)
+
+        self.collect_node_outputs(session_item)
 
     def collect_current_nuke_session(self, parent_item):
         """
@@ -85,6 +90,7 @@ class NukeSessionCollector(HookBaseClass):
         session_item.set_icon_from_path(icon_path)
 
         self.logger.info("Collected current Nuke script")
+        return session_item
 
     def collect_current_nukestudio_session(self, parent_item):
         """
@@ -104,6 +110,8 @@ class NukeSessionCollector(HookBaseClass):
             "nukestudio.png"
         )
 
+        active_project = hiero.ui.activeSequence().project()
+
         for project in hiero.core.projects():
 
             # create the session item for the publish hierarchy
@@ -121,12 +129,16 @@ class NukeSessionCollector(HookBaseClass):
             self.logger.info(
                 "Collected Nuke Studio project: %s" % (project.name(),))
 
-        # TODO: only the current project should be enabled
-        # get the active project. if it can be determined and matches this
-        # item's project, then it should be enabled.
-        #active_project = hiero.ui.activeSequence().project()
-        #if active_project and active_project.guid() == project.guid():
-            #enabled = True
+            # enable the active project and expand it. other projects are
+            # collapsed and disabled.
+            if active_project and active_project.guid() == project.guid():
+                session_item.expanded = True
+                session_item.checked = True
+            elif active_project:
+                # there is an active project, but this isn't it. collapse and
+                # disable this item
+                session_item.expanded = False
+                session_item.checked = False
 
     def collect_node_outputs(self, parent_item):
         """
@@ -162,8 +174,11 @@ class NukeSessionCollector(HookBaseClass):
                     "Processing %s node: %s" % (node_type, node.name()))
 
                 # file exists, let the basic collector handle it
-                item = super(NukeSessionCollector, self).process_file(
-                    parent_item, file_path)
+                item = super(NukeSessionCollector, self)._collect_file(
+                    parent_item,
+                    file_path,
+                    frame_sequence=True
+                )
 
                 # the item has been created. update the display name to include
                 # the nuke node to make it clear to the user how it was

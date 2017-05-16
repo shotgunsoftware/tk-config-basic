@@ -9,15 +9,17 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-import hou
+import hiero
 import sgtk
+from sgtk.platform.qt import QtGui
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class HoudiniVersionUpPlugin(HookBaseClass):
+class NukeStudioStartVersionControlPlugin(HookBaseClass):
     """
-    Plugin for creating the next version of a file.
+    Simple plugin to insert a version number into the nuke studio project file
+    path if one does not exist.
     """
 
     @property
@@ -39,7 +41,7 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Save the file to the next version"
+        return "Add version number to Nuke Studio project path"
 
     @property
     def description(self):
@@ -48,11 +50,9 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Detect the version number in the houdini file path and save it to the
-        next available version number. The plugin will only be available to
-        houdini files where a version number can be detected in the path. The
-        plugin will only create the next available version if the new path does
-        not already exist.
+        This plugin acts on Nuke Studio projects where a version number can not
+        be detected in the file name. If checked, this plugin will insert a
+        version number into the file name and save the session.
         """
 
     @property
@@ -64,7 +64,7 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["houdini.session"]
+        return ["nukestudio.project"]
 
     @property
     def settings(self):
@@ -114,43 +114,45 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = hou.hipFile.path()
-        checked = True
+        project = item.properties.get("project")
+        if not project:
+            self.logger.warn("Could not determine the project.")
+            return {"accepted": False}
 
-        if hou.hipFile.hasUnsavedChanges() or not path:
-            # the session has unsaved changes. provide a save button and uncheck
-            # the item. the session will need to be saved before validation will
-            # succeed.
-            self.logger.warn(
-                "Unsaved changes in the session",
-                extra=self._get_save_as_action()
-            )
-            checked = False
-        else:
-            # we have a path and there are no unsaved changes. make sure the
-            # path has a version number. we accept it regardless since it can be
-            # saved with a different file name while the publisher is open. but
-            # we will set it to be unchecked by default if there is no version
+        path = project.path()
 
-            # get the path in a normalized state. no trailing separator,
-            # separators are appropriate for current os, no double separators,
-            # etc.
-            path = sgtk.util.ShotgunPath.normalize(path)
+        if path:
             version_number = publisher.util.get_version_number(path)
-
-            if version_number is None:
-                self.logger.warn(
-                    "No version number detected in the file name",
-                    extra=_get_version_docs_action()
+            if version_number is not None:
+                self.logger.info(
+                    "Nuke Studio '%s' plugin rejected project: %s..." %
+                    (self.name, project.name())
                 )
-                checked = False
+                self.logger.info(
+                    "  There is already a version number in the file...")
+                self.logger.info("  Project file path: %s" % (path,))
+                return {"accepted": False}
+        else:
+            # the session has not been saved before (no path determined).
+            # provide a save button. the session will need to be saved before
+            # validation will succeed.
+            self.logger.warn(
+                "Nuke Studio project '%s' has not been saved." %
+                (project.name()),
+                extra=_get_save_as_action(project)
+            )
 
         self.logger.info(
-            "Houdini version up plugin accepted the current Houdini session.")
+            "Nuke Studio '%s' plugin accepted the project %s." %
+            (self.name, project.name()),
+            extra=_get_version_docs_action()
+        )
 
+        # accept the plugin, but don't force the user to add a version number
+        # (leave it unchecked)
         return {
             "accepted": True,
-            "checked": checked,
+            "checked": False
         }
 
     def validate(self, settings, item):
@@ -168,57 +170,28 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = hou.hipFile.path()
+        project = item.properties.get("project")
+        path = project.path()
 
-        if hou.hipFile.hasUnsavedChanges() or not path:
+        if not path:
             # the session still requires saving. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
+            # validation fails
             self.logger.error(
-                "Unsaved changes in the session",
-                extra=self._get_save_as_action()
-            )
-            return False
-        else:
-            # we have a path and there are no unsaved changes. make sure the
-            # path has a version number. if not, validation fails
-
-            # get the path in a normalized state. no trailing separator,
-            # separators are appropriate for current os, no double separators,
-            # etc.
-            path = sgtk.util.ShotgunPath.normalize(path)
-
-            version_number = publisher.util.get_version_number(path)
-
-            if version_number is None:
-                # still no version number in the file name. a warning was
-                # provided in accept(). validation fails
-                self.logger.error(
-                    "No version number detected in the file name",
-                    extra=_get_version_docs_action()
-                )
-                return False
-
-        next_version_path = publisher.util.get_next_version_path(path)
-
-        # nothing to do if the next version path can't be determined or if it
-        # already exists.
-        if not next_version_path:
-            self.logger.error("Could not determine the next version path.")
-            return False
-        elif os.path.exists(next_version_path):
-            self.logger.error(
-                "Next version already exists: %s" % (next_version_path,),
-                extra={
-                    "action_show_folder": {
-                        "path": next_version_path
-                    }
-                }
+                "The Nuke Studio project '%s' has not been saved." %
+                (project.name(),),
+                extra=_get_save_as_action(project)
             )
             return False
 
-        # insert the path into the properties for use during the publish phase
-        item.properties["next_version_path"] = next_version_path
+        # get the path to a versioned copy of the file.
+        version_path = publisher.util.get_version_path(path, "v001")
+        if os.path.exists(version_path):
+            self.logger.error(
+                "A file already exists with a version number. Please choose "
+                "another name.",
+                extra=_get_save_as_action(project)
+            )
+            return False
 
         return True
 
@@ -232,10 +205,25 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # get the next version path and save the document
-        next_version_path = item.properties["next_version_path"]
-        hou.hipFile.save(file_name=next_version_path)
-        self.logger.info("The Houdini session is now at the next version!")
+        publisher = self.parent
+        project = item.properties.get("project")
+        path = project.path()
+
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(path)
+
+        # ensure the session is saved in its current state
+        project.saveAs(path)
+
+        # get the path to a versioned copy of the file.
+        version_path = publisher.util.get_version_path(path, "v001")
+
+        # save to the new version path
+        project.saveAs(version_path)
+        self.logger.info(
+            "A version number has been added to the Nuke Studio project...")
+        self.logger.info("  Nuke Studio project path: %s" % (version_path,))
 
     def finalize(self, settings, item):
         """
@@ -250,20 +238,18 @@ class HoudiniVersionUpPlugin(HookBaseClass):
         """
         pass
 
-    def _get_save_as_action(self):
-        """
-        Simple helper for returning a log action dict for saving the session
-        """
 
-        houdini_engine = self.parent.engine
-
-        return {
-            "action_button": {
-                "label": "Save",
-                "tooltip": "Save the current session",
-                "callback": houdini_engine.save_as
-            }
+def _get_save_as_action(project):
+    """
+    Simple helper for returning a log action dict for saving the session
+    """
+    return {
+        "action_button": {
+            "label": "Save As...",
+            "tooltip": "Save the current session",
+            "callback": lambda: _project_save_as(project)
         }
+    }
 
 
 def _get_version_docs_action():
@@ -277,3 +263,29 @@ def _get_version_docs_action():
             "url": "https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-User-Guide-WIP-#What%20happens%20when%20you%20publish"
         }
     }
+
+
+def _project_save_as(project):
+    """
+    A save as wrapper for the current session.
+
+    :param path: Optional path to save the current session as.
+    """
+
+    # nuke studio/hiero don't appear to have a "save as" dialog accessible via
+    # python. so open our own Qt file dialog.
+    file_dialog = QtGui.QFileDialog(
+        parent=hiero.ui.mainWindow(),
+        caption="Save As",
+        directory=project.path(),
+        filter="Nuke Studio Files (*.hrox)"
+    )
+    file_dialog.setLabelText(QtGui.QFileDialog.Accept, "Save")
+    file_dialog.setLabelText(QtGui.QFileDialog.Reject, "Cancel")
+    file_dialog.setOption(QtGui.QFileDialog.DontResolveSymlinks)
+    file_dialog.setOption(QtGui.QFileDialog.DontUseNativeDialog)
+    if not file_dialog.exec_():
+        return
+    path = file_dialog.selectedFiles()[0]
+    project.saveAs(path)
+

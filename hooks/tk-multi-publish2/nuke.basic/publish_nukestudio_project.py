@@ -1,24 +1,25 @@
 # Copyright (c) 2017 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
 import pprint
+import hiero
 import sgtk
-
+from sgtk.platform.qt import QtGui
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class BasicFilePublishPlugin(HookBaseClass):
+class NukeStudioProjectPublishPlugin(HookBaseClass):
     """
-    Plugin for creating generic publishes in Shotgun
+    Plugin for publishing a Nuke Studio project.
     """
 
     @property
@@ -40,7 +41,7 @@ class BasicFilePublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish files/folders to Shotgun"
+        return "Publish Nuke Studio project"
 
     @property
     def description(self):
@@ -48,12 +49,17 @@ class BasicFilePublishPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return "Publishes files and folders to Shotgun."
+        return """
+        This plugin will save and publish a Nuke Studio project. If the project
+        has not been saved before or the path can not be determined, validation
+        will fail. If a version number is detected in the file name, the session
+        will be saved to the next version once publishing is complete.
+        """
 
     @property
     def settings(self):
         """
-        Dictionary defining the settings that this plugin expects to recieve
+        Dictionary defining the settings that this plugin expects to receive
         through the settings parameter in the accept, validate, publish and
         finalize methods.
 
@@ -66,18 +72,14 @@ class BasicFilePublishPlugin(HookBaseClass):
                     "description": "One line description of the setting"
             }
 
-        The type string should be one of the data types that toolkit accepts
-        as part of its environment configuration.
+        The type string should be one of the data types that toolkit accepts as
+        part of its environment configuration.
         """
         return {
-            "File Types": {
-                "type": "list",
-                "default": "[]",
-                "description": (
-                    "List of file types to include. Each entry in the list "
-                    "is a list in which the first entry is the Shotgun "
-                    "published file type and subsequent entries are file "
-                    "extensions that should be associated.")
+            "Publish Type": {
+                "type": "shotgun_publish_type",
+                "default": "NukeStudio Project",
+                "description": "SG publish type to associate publishes with."
             },
         }
 
@@ -90,7 +92,7 @@ class BasicFilePublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["file.*"]
+        return ["nukestudio.project"]
 
     def accept(self, settings, item):
         """
@@ -118,37 +120,62 @@ class BasicFilePublishPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        path = item.properties["path"]
+        project = item.properties.get("project")
+        if not project:
+            self.logger.warn("Could not determine the project.")
+            return {"accepted": False}
 
-        # log the accepted file and display a button to reveal it in the fs
+        path = project.path()
+
+        if not path:
+            # the session has not been saved before (no path determined).
+            # provide a save button. the session will need to be saved before
+            # validation will succeed.
+            self.logger.warn(
+                "The Nuke Studio project '%s' has not been saved." %
+                (project.name()),
+                extra=_get_save_as_action(project)
+            )
+
         self.logger.info(
-            "File publisher plugin accepted: %s" % (path,),
-            extra={
-                "action_show_folder": {
-                    "path": path
-                }
-            }
+            "Nuke Studio '%s' plugin accepted project: %s." %
+            (self.name, project.name())
         )
-
-        # return the accepted info
-        return {"accepted": True}
+        return {
+            "accepted": True,
+            "checked": True
+        }
 
     def validate(self, settings, item):
         """
-        Validates the given item to check that it is ok to publish.
-
-        Returns a boolean to indicate validity.
+        Validates the given item to check that it is ok to publish. Returns a
+        boolean to indicate validity.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
-
         :returns: True if item is valid, False otherwise.
         """
 
         publisher = self.parent
-        path = item.properties.get("path")
+        project = item.properties.get("project")
+        path = project.path()
+
+        if not path:
+            # the session still requires saving. provide a save button.
+            # validation fails.
+            self.logger.error(
+                "The Nuke Studio project '%s' has not been saved." %
+                (project.name(),),
+                extra=_get_save_as_action(project)
+            )
+            return False
+
+        # get the path in a normalized state. no trailing separator,
+        # separators are appropriate for current os, no double separators,
+        # etc.
+        sgtk.util.ShotgunPath.normalize(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
@@ -175,7 +202,7 @@ class BasicFilePublishPlugin(HookBaseClass):
             )
             self.logger.warn(
                 "Found %s conflicting publishes in Shotgun" %
-                    (len(publishes),),
+                (len(publishes),),
                 extra={
                     "action_show_more_info": {
                         "label": "Show Conflicts",
@@ -184,6 +211,33 @@ class BasicFilePublishPlugin(HookBaseClass):
                     }
                 }
             )
+
+        # if the file has a version number in it, see if the next version exists
+        next_version_path = publisher.util.get_next_version_path(path)
+        if next_version_path and os.path.exists(next_version_path):
+
+            # determine the next available version_number. just keep asking for
+            # the next one until we get one that doesn't exist.
+            while os.path.exists(next_version_path):
+                next_version_path = publisher.util.get_next_version_path(
+                    next_version_path)
+
+            # now extract the version number of the next available to display
+            # to the user
+            version = publisher.util.get_version_number(next_version_path)
+
+            self.logger.error(
+                "The next version of this file already exists on disk.",
+                extra={
+                    "action_button": {
+                        "label": "Save to v%s" % (version,),
+                        "tooltip": "Save to the next available version number, "
+                                   "v%s" % (version,),
+                        "callback": lambda: project.saveAs(next_version_path)
+                    }
+                }
+            )
+            return False
 
         return True
 
@@ -198,16 +252,15 @@ class BasicFilePublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = item.properties["path"]
+        project = item.properties.get("project")
+        path = project.path()
 
-        # get the publish path components
-        path_info = publisher.util.get_file_path_components(path)
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(path)
 
-        # determine the publish type
-        extension = path_info["extension"]
-
-        # get the publish type
-        publish_type = self._get_publish_type(extension, settings)
+        # ensure the session is saved
+        project.saveAs(path)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -218,7 +271,7 @@ class BasicFilePublishPlugin(HookBaseClass):
 
         # arguments for publish registration
         self.logger.info("Registering publish...")
-        publish_data= {
+        publish_data = {
             "tk": publisher.sgtk,
             "context": item.context,
             "comment": item.description,
@@ -226,7 +279,8 @@ class BasicFilePublishPlugin(HookBaseClass):
             "name": publish_name,
             "version_number": version_number,
             "thumbnail_path": item.get_thumbnail_as_path(),
-            "published_file_type": publish_type,
+            "published_file_type": settings["Publish Type"].value,
+            "dependency_paths": []  # TODO: dependencies
         }
 
         # log the publish data for debugging
@@ -245,13 +299,20 @@ class BasicFilePublishPlugin(HookBaseClass):
         # plugins to use.
         item.properties["sg_publish_data"] = sgtk.util.register_publish(
             **publish_data)
+
+        # inject the publish path such that children can refer to it when
+        # updating dependency information
+        item.properties["sg_publish_path"] = path
+
         self.logger.info("Publish registered!")
+
+        # now that we've published. keep a handle on the path that was published
+        item.properties["path"] = path
 
     def finalize(self, settings, item):
         """
-        Execute the finalization pass. This pass executes once
-        all the publish tasks have completed, and can for example
-        be used to version up files.
+        Execute the finalization pass. This pass executes once all the publish
+        tasks have completed, and can for example be used to version up files.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
@@ -260,6 +321,7 @@ class BasicFilePublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
+        project = item.properties.get("project")
 
         # get the data for the publish that was just created in SG
         publish_data = item.properties["sg_publish_data"]
@@ -283,37 +345,89 @@ class BasicFilePublishPlugin(HookBaseClass):
             }
         )
 
-    def _get_publish_type(self, extension, settings):
+        # insert the path into the properties
+        item.properties["next_version_path"] = self._bump_file_version(
+            project, path)
+
+    def _bump_file_version(self, project, path):
         """
-        Get a publish type for the supplied extension and publish settings.
-
-        :param extension: The file extension to find a publish type for
-        :param settings: The publish settings defining the publish types
-
-        :return: A publish type or None if one could not be found.
+        Save the supplied path to the next version on disk.
         """
 
-        # ensure lowercase and no dot
-        if extension:
-            extension = extension.lstrip(".").lower()
+        publisher = self.parent
+        version_number = publisher.util.get_version_number(path)
 
-            for type_def in settings["File Types"].value:
+        if version_number is None:
+            self.logger.debug(
+                "No version number detected in the publish path. "
+                "Skipping the bump file version step."
+            )
+            return None
 
-                publish_type = type_def[0]
-                file_extensions = type_def[1:]
+        self.logger.info("Incrementing session file version number...")
 
-                if extension in file_extensions:
-                    # found a matching type in settings. use it!
-                    return publish_type
+        next_version_path = publisher.util.get_next_version_path(path)
 
-        # --- no pre-defined publish type found...
+        # nothing to do if the next version path can't be determined or if it
+        # already exists.
+        if not next_version_path:
+            self.logger.warning("Could not determine the next version path.")
+            return None
+        elif os.path.exists(next_version_path):
+            self.logger.warning(
+                "The next version of the path already exists",
+                extra={
+                    "action_show_folder": {
+                        "path": next_version_path
+                    }
+                }
+            )
+            return None
 
-        if extension:
-            # publish type is based on extension
-            publish_type = "%s File" % extension.capitalize()
-        else:
-            # no extension, assume it is a folder
-            publish_type = "Folder"
+        # save the session to the new path
+        project.saveAs(next_version_path)
+        self.logger.info("Session saved as: %s" % (next_version_path,))
 
-        # no publish type identified!
-        return publish_type
+        return next_version_path
+
+
+def _get_save_as_action(project):
+    """
+    Simple helper for returning a log action dict for saving the session
+    """
+    return {
+        "action_button": {
+            "label": "Save As...",
+            "tooltip": "Save the current session",
+            "callback": lambda: _project_save_as(project)
+        }
+    }
+
+
+def _project_save_as(project):
+    """
+    A save as wrapper for the current session.
+
+    :param path: Optional path to save the current session as.
+    """
+
+    # TODO: consider moving to engine
+
+
+    # nuke studio/hiero don't appear to have a "save as" dialog accessible via
+    # python. so open our own Qt file dialog.
+    file_dialog = QtGui.QFileDialog(
+        parent=hiero.ui.mainWindow(),
+        caption="Save As",
+        directory=project.path(),
+        filter="Nuke Studio Files (*.hrox)"
+    )
+    file_dialog.setLabelText(QtGui.QFileDialog.Accept, "Save")
+    file_dialog.setLabelText(QtGui.QFileDialog.Reject, "Cancel")
+    file_dialog.setOption(QtGui.QFileDialog.DontResolveSymlinks)
+    file_dialog.setOption(QtGui.QFileDialog.DontUseNativeDialog)
+    if not file_dialog.exec_():
+        return
+    path = file_dialog.selectedFiles()[0]
+    project.saveAs(path)
+

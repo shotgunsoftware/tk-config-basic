@@ -11,6 +11,7 @@
 import glob
 import os
 import maya.cmds as cmds
+import maya.mel as mel
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
@@ -39,8 +40,33 @@ class MayaSessionCollector(HookBaseClass):
 
         # if we can determine a project root, collect other files to publish
         if project_root:
+
+            self.logger.info(
+                "Current Maya project is: %s." % (project_root,),
+                extra={
+                    "action_button": {
+                        "label": "Change Project",
+                        "tooltip": "Change to a different Maya project",
+                        "callback": lambda: mel.eval('setProject ""')
+                    }
+                }
+            )
+
             self.collect_playblasts(item, project_root)
             self.collect_alembic_caches(item, project_root)
+
+        else:
+
+            self.logger.warning(
+                "Could not determine the current Maya project.",
+                extra={
+                    "action_button": {
+                        "label": "Set Project",
+                        "tooltip": "Set the Maya project",
+                        "callback": lambda: mel.eval('setProject ""')
+                    }
+                }
+            )
 
     def collect_current_maya_session(self, parent_item):
         """
@@ -125,7 +151,7 @@ class MayaSessionCollector(HookBaseClass):
 
             # allow the base class to collect and create the item. it knows how
             # to handle alembic files
-            super(MayaSessionCollector, self).process_file(
+            super(MayaSessionCollector, self)._collect_file(
                 parent_item,
                 cache_path
             )
@@ -169,7 +195,7 @@ class MayaSessionCollector(HookBaseClass):
 
             # allow the base class to collect and create the item. it knows how
             # to handle movie files
-            item = super(MayaSessionCollector, self).process_file(
+            item = super(MayaSessionCollector, self)._collect_file(
                 parent_item,
                 movie_path
             )
@@ -207,9 +233,10 @@ class MayaSessionCollector(HookBaseClass):
             if rendered_paths:
                 # we only need one path to publish, so take the first one and
                 # let the base class collector handle it
-                item = super(MayaSessionCollector, self).process_file(
+                item = super(MayaSessionCollector, self)._collect_file(
                     parent_item,
-                    rendered_paths[0]
+                    rendered_paths[0],
+                    frame_sequence=True
                 )
 
                 # the item has been created. update the display name to include

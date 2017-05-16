@@ -17,7 +17,7 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class PhotoshopReviewPlugin(HookBaseClass):
+class PhotoshopUploadVersionPlugin(HookBaseClass):
     """
     Plugin for sending photoshop documents to shotgun for review.
     """
@@ -50,7 +50,7 @@ class PhotoshopReviewPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin exports and uploads a jpg copy of the Photoshop document to
+        This plugin exports and uploads a copy of the Photoshop document to
         Shotgun for review.
         """
 
@@ -119,30 +119,25 @@ class PhotoshopReviewPlugin(HookBaseClass):
             self.logger.warn("Could not determine the document for item")
             return {"accepted": False}
 
-        try:
-            path = document.fullName.fsName
-        except RuntimeError:
-            path = None
+        path = _document_path(document)
 
-        checked = True
-
-        if not document.saved or not path:
-            # the document hasn't been saved. provide a save button and uncheck
-            # the item. the document will need to be saved before validation
-            # will succeed.
+        if not path:
+            # the document has not been saved before (no path determined).
+            # provide a save button. the document will need to be saved before
+            # validation will succeed.
             self.logger.warn(
-                "Unsaved changes for document: %s" % (document.name,),
+                "The Photoshop document '%s' has not been saved." %
+                (document.name,),
                 extra=_get_save_action(document)
             )
-            checked = False
 
         self.logger.info(
-            "Photoshop Version upload plugin accepted document: %s" %
-            (document.name,)
+            "Photoshop '%s' plugin accepted document: %s" %
+            (self.name, document.name)
         )
         return {
             "accepted": True,
-            "checked": checked
+            "checked": True
         }
 
     def validate(self, settings, item):
@@ -160,15 +155,15 @@ class PhotoshopReviewPlugin(HookBaseClass):
         """
 
         document = item.properties["document"]
-        path = document.fullName.fsName
+        path = _document_path(document)
 
-        if not document.saved or not path:
-            # the document still hasn't been saved. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
+        if not path:
+            # the document still requires saving. provide a save button.
+            # validation fails.
             self.logger.error(
-                "Unsaved changes in the session",
-                extra=_get_save_action(document)
+                "The Photoshop document '%s' has not been saved." %
+                (document.name,),
+                extra=self._get_save_as_action(document)
             )
             return False
 
@@ -188,33 +183,38 @@ class PhotoshopReviewPlugin(HookBaseClass):
         engine = publisher.engine
         document = item.properties["document"]
 
-        with engine.context_changes_disabled():
+        path = _document_path(document)
+        upload_path = path
 
-            # remember the active document so that we can restore it.
-            previous_active_document = engine.adobe.app.activeDocument
+        file_info = publisher.util.get_file_path_components(path)
+        if file_info["extension"] in ["psd", "psb"]:
 
-            # make the document being processed the active document
-            engine.adobe.app.activeDocument = document
+            with engine.context_changes_disabled():
 
-            # path to a temp jpg file
-            jpg_path = os.path.join(
-                tempfile.gettempdir(),
-                "%s_sgtk.jpg" % uuid.uuid4().hex
-            )
+                # remember the active document so that we can restore it.
+                previous_active_document = engine.adobe.app.activeDocument
 
-            # jpg file/options
-            jpg_file = engine.adobe.File(jpg_path)
-            jpg_options = engine.adobe.JPEGSaveOptions
-            jpg_options.quality = 12
+                # make the document being processed the active document
+                engine.adobe.app.activeDocument = document
 
-            # save a jpg copy of the document
-            document.saveAs(jpg_file, jpg_options, True)
+                # path to a temp jpg file
+                upload_path = os.path.join(
+                    tempfile.gettempdir(),
+                    "%s_sgtk.jpg" % uuid.uuid4().hex
+                )
 
-            # restore the active document
-            engine.adobe.app.activeDocument = previous_active_document
+                # jpg file/options
+                jpg_file = engine.adobe.File(upload_path)
+                jpg_options = engine.adobe.JPEGSaveOptions
+                jpg_options.quality = 12
+
+                # save a jpg copy of the document
+                document.saveAs(jpg_file, jpg_options, True)
+
+                # restore the active document
+                engine.adobe.app.activeDocument = previous_active_document
 
         # use the original path for the version display name
-        path = document.fullName.fsName
         publish_name = publisher.util.get_publish_name(path)
 
         # populate the version data to send to SG
@@ -223,7 +223,8 @@ class PhotoshopReviewPlugin(HookBaseClass):
             "project": item.context.project,
             "code": publish_name,
             "description": item.description,
-            "entity": self._get_version_entity(item)
+            "entity": self._get_version_entity(item),
+            "sg_task": item.context.task
         }
 
         publish_data = item.properties.get("sg_publish_data")
@@ -252,12 +253,12 @@ class PhotoshopReviewPlugin(HookBaseClass):
         # stash the version info in the item just in case
         item.properties["sg_version_data"] = version
 
-        # upload the jpg copy to SG
+        # upload the file to SG
         self.logger.info("Uploading content...")
         self.parent.shotgun.upload(
             "Version",
             version["id"],
-            jpg_path,
+            upload_path,
             "sg_uploaded_movie"
         )
         self.logger.info("Upload complete!")
@@ -268,11 +269,11 @@ class PhotoshopReviewPlugin(HookBaseClass):
             self.parent.shotgun.upload_thumbnail(
                 publish_data["type"],
                 publish_data["id"],
-                jpg_path
+                upload_path
             )
             self.logger.info("Publish thumbnail updated!")
 
-        item.properties["jpg_path"] = jpg_path
+        item.properties["upload_path"] = upload_path
 
     def finalize(self, settings, item):
         """
@@ -288,7 +289,7 @@ class PhotoshopReviewPlugin(HookBaseClass):
         version = item.properties["sg_version_data"]
 
         self.logger.info(
-            "Verison uploaded for photoshop document",
+            "Version uploaded for Photoshop document",
             extra={
                 "action_show_in_shotgun": {
                     "label": "Show Version",
@@ -298,13 +299,13 @@ class PhotoshopReviewPlugin(HookBaseClass):
             }
         )
 
-        jpg_path = item.properties["jpg_path"]
+        upload_path = item.properties["upload_path"]
 
         # remove the tmp file
         try:
-            os.remove(jpg_path)
+            os.remove(upload_path)
         except Exception:
-            self.logger.warn("Unable to remove temp file: %s" % (jpg_path,))
+            self.logger.warn("Unable to remove temp file: %s" % (upload_path,))
             pass
 
     def _get_version_entity(self, item):
@@ -312,9 +313,7 @@ class PhotoshopReviewPlugin(HookBaseClass):
         Returns the best entity to link the version to.
         """
 
-        if item.context.task:
-            return item.context.task
-        elif item.context.entity:
+        if item.context.entity:
             return item.context.entity
         elif item.context.project:
             return item.context.project
@@ -333,3 +332,17 @@ def _get_save_action(document):
             "callback": lambda: document.save()
         }
     }
+
+
+def _document_path(document):
+    """
+    Returns the path on disk to the supplied document. May be ``None`` if the
+    document has not been saved.
+    """
+
+    try:
+        path = document.fullName.fsName
+    except RuntimeError:
+        path = None
+
+    return path

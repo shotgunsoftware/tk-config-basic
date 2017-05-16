@@ -15,7 +15,7 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class ShotgunReviewPlugin(HookBaseClass):
+class UploadVersionPlugin(HookBaseClass):
     """
     Plugin for sending quicktimes and images to shotgun for review.
     """
@@ -47,7 +47,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return """Uploads files to Shotgun for Review."""
+        return """Uploads a file Shotgun for Review."""
 
     @property
     def settings(self):
@@ -196,7 +196,8 @@ class ShotgunReviewPlugin(HookBaseClass):
             "project": item.context.project,
             "code": publish_name,
             "description": item.description,
-            "entity": self._get_version_entity(item)
+            "entity": self._get_version_entity(item),
+            "sg_task": item.context.task
         }
 
         if "sg_publish_data" in item.properties:
@@ -277,9 +278,7 @@ class ShotgunReviewPlugin(HookBaseClass):
         Returns the best entity to link the version to.
         """
 
-        if item.context.task:
-            return item.context.task
-        elif item.context.entity:
+        if item.context.entity:
             return item.context.entity
         elif item.context.project:
             return item.context.project

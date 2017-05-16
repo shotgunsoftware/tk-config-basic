@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Maya Integration when it
+# this configuration defines the behavior of the 3dsMax Integration when it
 # is running in its project level configuration
 
 includes:
@@ -25,15 +25,16 @@ includes:
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
     tk-multi-publish2:
+      help_url: "@common.apps.tk-multi-publish2.help_url"
       collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/3dsmax.basic/collector.py"
       publish_plugins:
-        - '@common.settings.tk-multi-publish2.file_publisher'
-        - '@common.settings.tk-multi-publish2.version_creator'
-        - name: 3ds Max Scene Publisher
-          hook: "{config}/tk-multi-publish2/3dsmax.basic/file_publisher.py"
+        - '@common.settings.tk-multi-publish2.publish_file'
+        - '@common.settings.tk-multi-publish2.upload_version'
+        - name: Add version number to Max file name
+          hook: "{config}/tk-multi-publish2/3dsmax.basic/start_version_control.py"
           settings: {}
-        - name: Save the file to the next version
-          hook: "{config}/tk-multi-publish2/3dsmax.basic/version_up.py"
+        - name: Publish Max work file
+          hook: "{config}/tk-multi-publish2/3dsmax.basic/publish_max_session.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 

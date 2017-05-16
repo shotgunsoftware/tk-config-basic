@@ -14,9 +14,10 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class PhotoshopVersionUpPlugin(HookBaseClass):
+class PhotoshopStartVersionControlPlugin(HookBaseClass):
     """
-    Plugin for creating the next version of a file.
+    Simple plugin to insert a version number into the photoshop document path if
+    one does not exist.
     """
 
     @property
@@ -38,7 +39,7 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Save the file to the next version"
+        return "Add version number to Photoshop document path"
 
     @property
     def description(self):
@@ -47,11 +48,9 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        Detect the version number in the photoshop document path and save it to
-        the next available version number. The plugin will only be available to
-        photoshop documents where a version number can be detected in the path.
-        The plugin will only create the next available version if the new path
-        does not already exist.
+        This plugin acts on Photoshop documents where a version number can not
+        be detected in the file name. If checked, this plugin will insert a
+        version number into the file name and save the session.
         """
 
     @property
@@ -112,56 +111,46 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
+        publisher = self.parent
         document = item.properties.get("document")
         if not document:
             self.logger.warn("Could not determine the document for item")
             return {"accepted": False}
 
-        publisher = self.parent
+        path = _document_path(document)
 
-        try:
-            path = document.fullName.fsName
-        except RuntimeError:
-            path = None
-
-        checked = True
-
-        if not document.saved or not path:
-            # the document hasn't been saved. provide a save button and uncheck
-            # the item. the document will need to be saved before validation
-            # will succeed.
-            self.logger.warn(
-                "Unsaved changes in the session",
-                extra=_get_save_action(document)
-            )
-            checked = False
-        else:
-            # we have a path. make sure the path has a version number. we accept
-            # it regardless since it can be saved with a different file name
-            # while the publisher is open. but we will set it to be unchecked
-            # by default if there is no version
-
-            # get the path in a normalized state. no trailing separator,
-            # separators are appropriate for current os, no double separators,
-            # etc.
-            path = sgtk.util.ShotgunPath.normalize(path)
+        if path:
             version_number = publisher.util.get_version_number(path)
-
-            if version_number is None:
-                self.logger.warn(
-                    "No version number detected in the file name",
-                    extra=_get_version_docs_action()
+            if version_number is not None:
+                self.logger.info(
+                    "Photoshop '%s' plugin rejected document: %s..." %
+                    (self.name, document.name)
                 )
-                checked = False
+                self.logger.info(
+                    "  There is already a version number in the file...")
+                self.logger.info("  Document file path: %s" % (path,))
+                return {"accepted": False}
+        else:
+            # the session has not been saved before (no path determined).
+            # provide a save button. the session will need to be saved before
+            # validation will succeed.
+            self.logger.warn(
+                "Photoshop document '%s' has not been saved." %
+                (document.name),
+                extra=self._get_save_as_action(document)
+            )
 
         self.logger.info(
-            "Photoshop version up plugin accepted document: %s." %
-            (document.name,)
+            "Photoshop '%s' plugin accepted the document %s." %
+            (self.name, document.name),
+            extra=_get_version_docs_action()
         )
 
+        # accept the plugin, but don't force the user to add a version number
+        # (leave it unchecked)
         return {
             "accepted": True,
-            "checked": checked,
+            "checked": False
         }
 
     def validate(self, settings, item):
@@ -180,54 +169,27 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
 
         publisher = self.parent
         document = item.properties["document"]
-        path = document.fullName.fsName
+        path = _document_path(document)
 
-        if not document.saved or not path:
-            # the document still hasn't been saved. provide a save button.
-            # validation fails since we don't want to save as the next version
-            # until the current changes have been saved.
+        if not path:
+            # the session still requires saving. provide a save button.
+            # validation fails
             self.logger.error(
-                "Unsaved changes in the session",
-                extra=_get_save_action(document)
-            )
-            return False
-        else:
-            # we have a path and there are no unsaved changes. make sure the
-            # path has a version number. if not, validation fails
-
-            # get the path in a normalized state. no trailing separator,
-            # separators are appropriate for current os, no double separators,
-            # etc.
-            path = sgtk.util.ShotgunPath.normalize(path)
-            version_number = publisher.util.get_version_number(path)
-
-            if version_number is None:
-                self.logger.error(
-                    "No version number detected in the file name",
-                    extra=_get_version_docs_action()
-                )
-                return False
-
-        next_version_path = publisher.util.get_next_version_path(path)
-
-        # nothing to do if the next version path can't be determined or if it
-        # already exists.
-        if not next_version_path:
-            self.logger.error("Could not determine the next version path.")
-            return False
-        elif os.path.exists(next_version_path):
-            self.logger.error(
-                "Next version already exists: %s" % (next_version_path,),
-                extra={
-                    "action_show_folder": {
-                        "path": next_version_path
-                    }
-                }
+                "The Photoshop document '%s' has not been saved." %
+                (document.name,),
+                extra=self._get_save_as_action(document)
             )
             return False
 
-        # insert the path into the properties for use during the publish phase
-        item.properties["next_version_path"] = next_version_path
+        # get the path to a versioned copy of the file.
+        version_path = publisher.util.get_version_path(path, "v001")
+        if os.path.exists(version_path):
+            self.logger.error(
+                "A file already exists with a version number. Please choose "
+                "another name.",
+                extra=self._get_save_as_action(document)
+            )
+            return False
 
         return True
 
@@ -241,12 +203,20 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
         :param item: Item to process
         """
 
+        publisher = self.parent
+        engine = publisher.engine
         document = item.properties["document"]
+        path = _document_path(document)
 
-        # get the next version path and save the document
-        next_version_path = item.properties["next_version_path"]
+        # get the path in a normalized state. no trailing separator, separators
+        # are appropriate for current os, no double separators, etc.
+        path = sgtk.util.ShotgunPath.normalize(path)
 
-        engine = self.parent.engine
+        # ensure the session is saved in its current state
+        document.saveAs(engine.adobe.File(path))
+
+        # get the path to a versioned copy of the file.
+        version_path = publisher.util.get_version_path(path, "v001")
 
         with engine.context_changes_disabled():
 
@@ -256,9 +226,11 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
             # make the document being processed the active document
             engine.adobe.app.activeDocument = document
 
-            document.saveAs(engine.adobe.File(next_version_path))
+            # save to the new version path
+            document.saveAs(engine.adobe.File(version_path))
             self.logger.info(
-                "The Photoshop document is now at the next version!")
+                "A version number has been added to the Photoshop document...")
+            self.logger.info("  Photoshop document path: %s" % (version_path,))
 
             # restore the active document
             engine.adobe.app.activeDocument = previous_active_document
@@ -276,18 +248,20 @@ class PhotoshopVersionUpPlugin(HookBaseClass):
         """
         pass
 
+    def _get_save_as_action(self, document):
+        """
+        Simple helper for returning a log action dict for saving the session
+        """
 
-def _get_save_action(document):
-    """
-    Simple helper for returning a log action dict for saving the session
-    """
-    return {
-        "action_button": {
-            "label": "Save",
-            "tooltip": "Save the current session",
-            "callback": lambda: document.save()
+        ps_engine = self.parent.engine
+
+        return {
+            "action_button": {
+                "label": "Save As...",
+                "tooltip": "Save the current session",
+                "callback": lambda: ps_engine.save_as(document)
+            }
         }
-    }
 
 
 def _get_version_docs_action():
@@ -302,3 +276,16 @@ def _get_version_docs_action():
         }
     }
 
+
+def _document_path(document):
+    """
+    Returns the path on disk to the supplied document. May be ``None`` if the
+    document has not been saved.
+    """
+
+    try:
+        path = document.fullName.fsName
+    except RuntimeError:
+        path = None
+
+    return path
