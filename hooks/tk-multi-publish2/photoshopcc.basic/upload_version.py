@@ -208,6 +208,9 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
                 jpg_options = engine.adobe.JPEGSaveOptions
                 jpg_options.quality = 12
 
+                # mark the temp upload path for removal
+                item.properties["remove_upload"] = True
+
                 # save a jpg copy of the document
                 document.saveAs(jpg_file, jpg_options, True)
 
@@ -302,11 +305,13 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
         upload_path = item.properties["upload_path"]
 
         # remove the tmp file
-        try:
-            os.remove(upload_path)
-        except Exception:
-            self.logger.warn("Unable to remove temp file: %s" % (upload_path,))
-            pass
+        if item.properties.get("remove_upload", False):
+            try:
+                os.remove(upload_path)
+            except Exception:
+                self.logger.warn(
+                    "Unable to remove temp file: %s" % (upload_path,))
+                pass
 
     def _get_version_entity(self, item):
         """
