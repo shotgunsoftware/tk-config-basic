@@ -46,7 +46,7 @@ class MaxSessionCollector(HookBaseClass):
                 extra={
                     "action_button": {
                         "label": "Change Project",
-                        "tooltip": "Change to a different Maya project",
+                        "tooltip": "Change to a different Max project",
                         "callback": _set_project
                     }
                 }
@@ -117,7 +117,7 @@ class MaxSessionCollector(HookBaseClass):
         Creates items for exported files
 
         :param parent_item: Parent Item instance
-        :param str project_root: The maya project root to search for exports
+        :param str project_root: The Max project root to search for exports
         """
 
         # ensure the alembic cache dir exists
@@ -153,7 +153,7 @@ class MaxSessionCollector(HookBaseClass):
         exists, look for movie files in a 'movies' subfolder.
 
         :param parent_item: Parent Item instance
-        :param str project_root: The maya project root to search for previews
+        :param str project_root: The Max project root to search for previews
         """
 
         # ensure the movies dir exists

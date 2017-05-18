@@ -40,7 +40,7 @@ class MayaStartVersionControlPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Add version number to Maya file name"
+        return "Begin file versioning"
 
     @property
     def description(self):
@@ -49,9 +49,19 @@ class MayaStartVersionControlPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin acts on Maya session files where a version number can not be
-        detected in the file name. If checked, this plugin will insert a version
-        number into the file name and save the session.
+        Adds a version number to the filename.<br><br>
+
+        Once a version number exists in the file, the publishing will
+        automatically bump the version number. For example,
+        <code>filename.ext</code> will be saved to
+        <code>filename.v001.ext</code>.<br><br>
+
+        If the session has not been saved, validation will fail and a button
+        will be provided in the logging output to save the file.<br><br>
+
+        If a file already exists on disk with a version number, validation will
+        fail and the logging output will include button to save the file to a
+        different name.<br><br>
         """
 
     @property

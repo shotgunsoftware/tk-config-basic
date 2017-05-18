@@ -30,10 +30,10 @@ includes:
       publish_plugins:
         - '@common.settings.tk-multi-publish2.publish_file'
         - '@common.settings.tk-multi-publish2.upload_version'
-        - name: Add version number to Max file name
+        - name: Begin file versioning
           hook: "{config}/tk-multi-publish2/3dsmax.basic/start_version_control.py"
           settings: {}
-        - name: Publish Max work file
+        - name: Publish to Shotgun
           hook: "{config}/tk-multi-publish2/3dsmax.basic/publish_max_session.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"

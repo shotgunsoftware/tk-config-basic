@@ -39,7 +39,7 @@ class UploadVersionPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Send files to Shotgun review"
+        return "Upload for review"
 
     @property
     def description(self):
@@ -47,7 +47,24 @@ class UploadVersionPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return """Uploads a file Shotgun for Review."""
+
+        publisher = self.parent
+
+        shotgun_url = publisher.sgtk.shotgun_url
+
+        media_page_url = "%s/page/media_center" % (shotgun_url,)
+        review_url = "https://www.shotgunsoftware.com/features-review"
+
+        return """
+        Upload the file to Shotgun for review.<br><br>
+
+        A <b>Version</b> entry will be created in Shotgun and a transcoded
+        copy of the file will be attached to it. The file can then be reviewed
+        via the project's <a href='%s'>Media</a> page, <a href='%s'>RV</a>, or
+        the <a href='%s'>Shotgun Review</a> mobile app.
+        """ % (media_page_url, review_url, review_url)
+
+        # TODO: when settings editable, describe upload vs. link
 
     @property
     def settings(self):

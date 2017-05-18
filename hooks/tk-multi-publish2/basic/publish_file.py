@@ -40,7 +40,7 @@ class BasicFilePublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish files/folders to Shotgun"
+        return "Publish to Shotgun"
 
     @property
     def description(self):
@@ -48,7 +48,35 @@ class BasicFilePublishPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-        return "Publishes files and folders to Shotgun."
+
+        loader_url = "https://support.shotgunsoftware.com/hc/en-us/articles/219033078"
+
+        return """
+        Publishes the file to Shotgun. A <b>Publish</b> entry will be
+        created in Shotgun which will include a reference to the file's current
+        path on disk. Other users will be able to access the published file via
+        the <b><a href='%s'>Loader</a></b> so long as they have access to
+        the file's location on disk.
+
+        <h3>File versioning</h3>
+        The <code>version</code> field of the resulting <b>Publish</b> in
+        Shotgun will also reflect the version number identified in the filename.
+        The basic worklfow recognizes the following version formats by default:
+
+        <ul>
+        <li><code>filename.v###.ext</code></li>
+        <li><code>filename_v###.ext</code></li>
+        <li><code>filename-v###.ext</code></li>
+        </ul>
+
+        <br><br><i>NOTE: any amount of version number padding is supported.</i>
+
+        <h3>Overwriting an existing publish</h3>
+        A file can be published multiple times however only the most recent
+        publish will be available to other users. Warnings will be provided
+        during validation if there are previous publishes.
+        """ % (loader_url,)
+        # TODO: add link to workflow docs
 
     @property
     def settings(self):
@@ -162,8 +190,6 @@ class BasicFilePublishPlugin(HookBaseClass):
         publish_name = publisher.util.get_publish_name(
             name_path, sequence=is_sequence)
 
-        self.logger.info("Publish name will be: %s" % (publish_name,))
-
         # see if there are any other publishes of this path with a status.
         # Note the name, context, and path *must* match the values supplied to
         # register_publish in the publish phase in order for this to return an
@@ -192,6 +218,9 @@ class BasicFilePublishPlugin(HookBaseClass):
                     }
                 }
             )
+
+        self.logger.info("A Publish will be created in Shotgun and linked to:")
+        self.logger.info("  %s" % (path,))
 
         return True
 
