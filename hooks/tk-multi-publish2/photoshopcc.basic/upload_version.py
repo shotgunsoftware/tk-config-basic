@@ -59,7 +59,7 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
         return """
         Upload the file to Shotgun for review.<br><br>
 
-        A <code>Version</code> entry will be created in Shotgun and a transcoded
+        A <b>Version</b> entry will be created in Shotgun and a transcoded
         copy of the file will be attached to it. The file can then be reviewed
         via the project's <a href='%s'>Media</a> page, <a href='%s'>RV</a>, or
         the <a href='%s'>Shotgun Review</a> mobile app.

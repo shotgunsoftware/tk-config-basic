@@ -48,15 +48,18 @@ class BasicFilePublishPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
+
+        loader_url = "https://support.shotgunsoftware.com/hc/en-us/articles/219033078"
+
         return """
-        Publishes the file to Shotgun. A <code>Publish</code> entry will be
+        Publishes the file to Shotgun. A <b>Publish</b> entry will be
         created in Shotgun which will include a reference to the file's current
         path on disk. Other users will be able to access the published file via
-        the <strong>Loader</strong> app so long as they have access to the
-        file's location on disk.
+        the <b><a href='%s'>Loader</a></b> so long as they have access to
+        the file's location on disk.
 
         <h3>File versioning</h3>
-        The <code>version</code> field of the resulting <code>Publish</code> in
+        The <code>version</code> field of the resulting <b>Publish</b> in
         Shotgun will also reflect the version number identified in the filename.
         The basic worklfow recognizes the following version formats by default:
 
@@ -72,7 +75,7 @@ class BasicFilePublishPlugin(HookBaseClass):
         A file can be published multiple times however only the most recent
         publish will be available to other users. Warnings will be provided
         during validation if there are previous publishes.
-        """
+        """ % (loader_url,)
         # TODO: add link to workflow docs
 
     @property
