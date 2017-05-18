@@ -9,6 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
+import nuke
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
@@ -59,15 +60,13 @@ class NukeSessionCollector(HookBaseClass):
         :param parent_item: Root item instance
         """
 
-        import nuke
-
         publisher = self.parent
 
         # get the current path
-        path = nuke.root().name()
+        path = _session_path()
 
         # determine the display name for the item
-        if path and path != "Root":
+        if path:
             file_info = publisher.util.get_file_path_components(path)
             display_name = file_info["filename"]
         else:
@@ -148,8 +147,6 @@ class NukeSessionCollector(HookBaseClass):
         :param parent_item: The parent item for any write geo nodes collected
         """
 
-        import nuke
-
         # iterate over all the known output types
         for node_type in _NUKE_OUTPUTS:
 
@@ -184,3 +181,12 @@ class NukeSessionCollector(HookBaseClass):
                 # the nuke node to make it clear to the user how it was
                 # collected within the current session.
                 item.name = "%s (%s)" % (item.name, node.name())
+
+
+def _session_path():
+    """
+    Return the path to the current session
+    :return:
+    """
+    root_name = nuke.root().name()
+    return None if root_name == "Root" else root_name

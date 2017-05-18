@@ -40,7 +40,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
         """
         One line display name describing the plugin
         """
-        return "Publish Max work file"
+        return "Publish to Shotgun"
 
     @property
     def description(self):
@@ -49,12 +49,47 @@ class MaxSessionPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
         return """
-        This plugin will save and publish the current Max session. If the
-        session has not been saved before or the path can not be determined,
-        validation will fail. If a version number is detected in the file name,
-        the session will be saved to the next version once publishing is
-        complete.
+        Publishes the file to Shotgun. A <code>Publish</code> entry will be
+        created in Shotgun which will include a reference to the file's current
+        path on disk. Other users will be able to access the published file via
+        the <strong>Loader</strong> app so long as they have access to the
+        file's location on disk.
+
+        If the session has not been saved, validation will fail and a button
+        will be provided in the logging output to save the file.
+
+        <h3>File versioning</h3>
+        If the filename contains a version number, the process will bump the
+        file to the next version after publishing.
+
+        The <code>version</code> field of the resulting <code>Publish</code> in
+        Shotgun will also reflect the version number identified in the filename.
+        The basic worklfow recognizes the following version formats by default:
+
+        <ul>
+        <li><code>filename.v###.ext</code></li>
+        <li><code>filename_v###.ext</code></li>
+        <li><code>filename-v###.ext</code></li>
+        </ul>
+
+        After publishing, if a version number is detected in the file, the file
+        will automatically be saved to the next incremental version number.
+        For example, <code>filename.v001.ext</code> will be published and copied
+        to <code>filename.v002.ext</code>
+
+        If the next incremental version of the file already exists on disk, the
+        validation step will produce a warning, and a button will be provided in
+        the logging output which will allow saving the session to the next
+        available version number prior to publishing.
+
+        <br><br><i>NOTE: any amount of version number padding is supported.</i>
+
+        <h3>Overwriting an existing publish</h3>
+        A file can be published multiple times however only the most recent
+        publish will be available to other users. Warnings will be provided
+        during validation if there are previous publishes.
         """
+        # TODO: add link to workflow docs
 
     @property
     def settings(self):
@@ -159,7 +194,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
             # the session still requires saving. provide a save button.
             # validation fails.
             self.logger.error(
-                "The Maya session has not been saved.",
+                "The Max session has not been saved.",
                 extra=_get_save_as_action()
             )
             return False
@@ -172,8 +207,6 @@ class MaxSessionPublishPlugin(HookBaseClass):
         # get the publish name for this file path. this will ensure we get a
         # consistent publish name when looking up existing publishes.
         publish_name = publisher.util.get_publish_name(path)
-
-        self.logger.info("Publish name will be: %s" % (publish_name,))
 
         # see if there are any other publishes of this path with a status.
         # Note the name, context, and path *must* match the values supplied to
@@ -230,6 +263,9 @@ class MaxSessionPublishPlugin(HookBaseClass):
                 }
             )
             return False
+
+        self.logger.info("A Publish will be created in Shotgun and linked to:")
+        self.logger.info("  %s" % (path,))
 
         return True
 

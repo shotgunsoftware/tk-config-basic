@@ -29,10 +29,10 @@ houdini.project:
       publish_plugins:
         - '@common.settings.tk-multi-publish2.publish_file'
         - '@common.settings.tk-multi-publish2.upload_version'
-        - name: Add version number to Houdini file name
+        - name: Begin file versioning
           hook: "{config}/tk-multi-publish2/houdini.basic/start_version_control.py"
           settings: {}
-        - name: Publish Houdini work file
+        - name: Publish to Shotgun
           hook: "{config}/tk-multi-publish2/houdini.basic/publish_houdini_session.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"

@@ -49,7 +49,7 @@ class HoudiniSessionCollector(HookBaseClass):
         Creates an item that represents the current houdini session.
 
         :param parent_item: Parent Item instance
-        :returns: Item of type maya.session
+        :returns: Item of type houdini.session
         """
 
         publisher = self.parent

@@ -41,12 +41,12 @@ common.settings.tk-multi-publish2.publish_file:
     File Types: *file_types
 
 common.settings.tk-multi-publish2.upload_version:
-  name: Send to Shotgun review
+  name: Upload for review
   hook: "{config}/tk-multi-publish2/basic/upload_version.py"
   settings: {}
 
 common.settings.tk-multi-publish2.publish_photoshop_document:
-  name: Publish Photoshop Document
+  name: Publish to Shotgun
   hook: "{config}/tk-multi-publish2/photoshopcc.basic/publish_photoshop_document.py"
   settings:
     File Types: *file_types

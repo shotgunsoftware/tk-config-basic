@@ -29,17 +29,17 @@ nuke.project:
       publish_plugins:
         - '@common.settings.tk-multi-publish2.publish_file'
         - '@common.settings.tk-multi-publish2.upload_version'
-        - name: Add version number to Nuke script
+        - name: Begin file versioning
           hook: "{config}/tk-multi-publish2/nuke.basic/nuke_start_version_control.py"
           settings: {}
-        - name: Add version number to Nuke Studio project path
+        - name: Begin file versioning
           hook: "{config}/tk-multi-publish2/nuke.basic/nukestudio_start_version_control.py"
           settings: {}
-        - name: Publish Nuke script
-          hook: "{config}/tk-multi-publish2/nuke.basic/publish_nuke_script.py"
+        - name: Publish to Shotgun
+          hook: "{config}/tk-multi-publish2/nuke.basic/nuke_publish_script.py"
           settings: {}
-        - name: Publish Nuke Studio project
-          hook: "{config}/tk-multi-publish2/nuke.basic/publish_nukestudio_project.py"
+        - name: Publish to Shotgun
+          hook: "{config}/tk-multi-publish2/nuke.basic/nukestudio_publish_project.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 
