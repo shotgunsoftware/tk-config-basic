@@ -174,7 +174,7 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
             self.logger.error(
                 "The Photoshop document '%s' has not been saved." %
                 (document.name,),
-                extra=self._get_save_as_action(document)
+                extra=_get_save_action(document)
             )
             return False
 
