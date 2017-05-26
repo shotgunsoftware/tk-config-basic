@@ -10,7 +10,6 @@
 
 import os
 import pprint
-import hiero
 import sgtk
 from sgtk.platform.qt import QtGui
 
@@ -450,9 +449,11 @@ def _project_save_as(project):
 
     :param path: Optional path to save the current session as.
     """
-
     # TODO: consider moving to engine
 
+    # import here since the hooks are imported into nuke and nukestudio.
+    # hiero module is only available in later versions of nuke
+    import hiero
 
     # nuke studio/hiero don't appear to have a "save as" dialog accessible via
     # python. so open our own Qt file dialog.
