@@ -39,7 +39,7 @@ common.engines.tk-nuke.location:
 common.engines.tk-photoshopcc.location:
     type: app_store
     name: tk-photoshopcc
-    version: v1.1.2
+    version: v1.1.5
 
 # Desktop
 common.engines.tk-desktop.location:
