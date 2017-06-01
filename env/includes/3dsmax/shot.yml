@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Maya Integration when it
+# this configuration defines the behavior of the 3dsMax Integration when it
 # is running in its shot level configuration
 
 includes:
@@ -18,46 +18,44 @@ includes:
 - ../common/apps.yml
 - ../common/settings/tk-multi-publish2.yml
 
-
-maya.shot:
+3dsmax.shot:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
     tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
 
     tk-multi-publish2:
       help_url: "@common.apps.tk-multi-publish2.help_url"
-      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
+      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/3dsmax.basic/collector.py"
       publish_plugins:
         - '@common.settings.tk-multi-publish2.publish_file'
         - '@common.settings.tk-multi-publish2.upload_version'
         - name: Begin file versioning
-          hook: "{config}/tk-multi-publish2/maya.basic/start_version_control.py"
+          hook: "{config}/tk-multi-publish2/3dsmax.basic/start_version_control.py"
           settings: {}
         - name: Publish to Shotgun
-          hook: "{config}/tk-multi-publish2/maya.basic/publish_maya_session.py"
+          hook: "{config}/tk-multi-publish2/3dsmax.basic/publish_max_session.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 
     tk-multi-loader2:
       action_mappings:
-        Alembic Cache: [reference, import]
-        Image: [texture_node, image_plane]
-        Maya Scene: [reference, import]
-        Photoshop Image: [texture_node, image_plane]
-        Rendered Image: [texture_node, image_plane]
-        Texture: [texture_node, image_plane]
-      actions_hook: '{self}/tk-maya_actions.py'
+        3dsmax Scene: [import, reference]
+        Alembic Cache: [import]
+      actions_hook: '{self}/tk-3dsmaxplus_actions.py'
+      download_thumbnails: true
       entities:
-      - caption: Current Shot
+      - caption: Current Project
         type: Hierarchy
-        root: "{context.shot}"
+        root: "{context.project}"
         publish_filters: []
       - caption: My Tasks
         type: Query
         entity_type: Task
         filters:
-        - [shot, is, '{context.shot}']
+        - [project, is, '{context.project}']
         - [task_assignees, is, '{context.user}']
         hierarchy: [entity, content]
       # ignore publishes without a status. with zero config, it is very easy
@@ -68,38 +66,30 @@ maya.shot:
       location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
-      actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
+      shotgun_fields_hook: '{self}/shotgun_fields.py'
+      actions_hook: '{self}/general_actions.py'
       action_mappings:
         PublishedFile:
-        - actions: [reference, import]
-          filters: {published_file_type: Alembic Cache}
-        - actions: [texture_node, image_plane]
-          filters: {published_file_type: Image}
-        - actions: [reference, import]
-          filters: {published_file_type: Maya Scene}
-        - actions: [texture_node, image_plane]
-          filters: {published_file_type: Photoshop Image}
-        - actions: [texture_node, image_plane]
-          filters: {published_file_type: Rendered Image}
-        - actions: [texture_node, image_plane]
-          filters: {published_file_type: Texture}
-        - actions: [publish_clipboard]
+        - actions:
+          - publish_clipboard
           filters: {}
         Task:
-        - actions: [assign_task, task_to_ip]
+        - actions:
+          - assign_task
+          - task_to_ip
           filters: {}
         Version:
-        - actions: [quicktime_clipboard, sequence_clipboard]
+        - actions:
+          - quicktime_clipboard
+          - sequence_clipboard
           filters: {}
       enable_context_switch: true
       location: "@common.apps.tk-multi-shotgunpanel.location"
 
-
-  location: "@common.engines.tk-maya.location"
+  location: "@common.engines.tk-3dsmaxplus.location"
   menu_favourites: []
-  run_at_startup:
-  - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
-  automatic_context_switch: false
+
+
 
 

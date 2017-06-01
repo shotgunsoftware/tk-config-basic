@@ -21,8 +21,6 @@ class PickEnvironment(Hook):
 
     def execute(self, context, **kwargs):
 
-        return "shot"
-
         if context.entity and context.step is None:
             # we have an entity but no step!
             if context.entity["type"] == "Shot":
@@ -31,7 +29,7 @@ class PickEnvironment(Hook):
         if context.entity and context.step:
             # we have a step and an entity
             if context.entity["type"] == "Shot":
-                return "shot_step"
+                return "shot"
 
         if context.project:
             return "project"

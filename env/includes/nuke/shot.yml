@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -10,7 +10,7 @@
 #
 
 # this configuration defines the behavior of the Maya Integration when it
-# is running in its project level configuration
+# is running in its shot level configuration
 
 includes:
 - ../common/frameworks.yml
@@ -19,33 +19,43 @@ includes:
 - ../common/settings/tk-multi-publish2.yml
 
 
-maya.project:
+nuke.shot:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
+
     tk-multi-publish2:
       help_url: "@common.apps.tk-multi-publish2.help_url"
-      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/maya.basic/collector.py"
+      collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/nuke.basic/collector.py"
       publish_plugins:
         - '@common.settings.tk-multi-publish2.publish_file'
         - '@common.settings.tk-multi-publish2.upload_version'
         - name: Begin file versioning
-          hook: "{config}/tk-multi-publish2/maya.basic/start_version_control.py"
+          hook: "{config}/tk-multi-publish2/nuke.basic/nuke_start_version_control.py"
+          settings: {}
+        - name: Begin file versioning
+          hook: "{config}/tk-multi-publish2/nuke.basic/nukestudio_start_version_control.py"
           settings: {}
         - name: Publish to Shotgun
-          hook: "{config}/tk-multi-publish2/maya.basic/publish_maya_session.py"
+          hook: "{config}/tk-multi-publish2/nuke.basic/nuke_publish_script.py"
+          settings: {}
+        - name: Publish to Shotgun
+          hook: "{config}/tk-multi-publish2/nuke.basic/nukestudio_publish_project.py"
           settings: {}
       location: "@common.apps.tk-multi-publish2.location"
 
     tk-multi-loader2:
       action_mappings:
-        Alembic Cache: [reference, import]
-        Image: [texture_node, image_plane]
-        Maya Scene: [reference, import]
-        Photoshop Image: [texture_node, image_plane]
-        Rendered Image: [texture_node, image_plane]
-        Texture: [texture_node, image_plane]
-      actions_hook: '{self}/tk-maya_actions.py'
+        Alembic Cache: [read_node]
+        Image: [read_node]
+        Movie: [read_node]
+        Nuke Script: [script_import]
+        NukeStudio Project: [open_project]
+        Photoshop Image: [read_node]
+        Rendered Image: [read_node]
+        Texture: [read_node]
+      actions_hook: '{self}/tk-nuke_actions.py'
       entities:
       - caption: Current Project
         type: Hierarchy
@@ -66,38 +76,34 @@ maya.project:
       location: "@common.apps.tk-multi-loader2.location"
 
     tk-multi-shotgunpanel:
-      actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
       action_mappings:
         PublishedFile:
-        - actions: [reference, import]
+        - actions: [read_node]
           filters: {published_file_type: Alembic Cache}
-        - actions: [texture_node, image_plane]
+        - actions: [read_node]
           filters: {published_file_type: Image}
-        - actions: [reference, import]
-          filters: {published_file_type: Maya Scene}
-        - actions: [texture_node, image_plane]
+        - actions: [read_node]
+          filters: {published_file_type: Movie}
+        - actions: [script_import]
+          filters: {published_file_type: Nuke Script}
+        - actions: [open_project]
+          filters: {published_file_type: NukeStudio Project}
+        - actions: [read_node]
           filters: {published_file_type: Photoshop Image}
-        - actions: [texture_node, image_plane]
+        - actions: [read_node]
           filters: {published_file_type: Rendered Image}
-        - actions: [texture_node, image_plane]
+        - actions: [read_node]
           filters: {published_file_type: Texture}
-        - actions: [publish_clipboard]
-          filters: {}
         Task:
         - actions: [assign_task, task_to_ip]
           filters: {}
-        Version:
-        - actions: [quicktime_clipboard, sequence_clipboard]
-          filters: {}
+      actions_hook: '{self}/general_actions.py:{self}/tk-nuke_actions.py'
       enable_context_switch: true
       location: "@common.apps.tk-multi-shotgunpanel.location"
 
-
-  location: "@common.engines.tk-maya.location"
+  location: "@common.engines.tk-nuke.location"
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
   automatic_context_switch: false
-
-
