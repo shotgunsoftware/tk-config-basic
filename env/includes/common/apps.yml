@@ -51,6 +51,12 @@ common.apps.tk-multi-launchapp.location:
   name: tk-multi-launchapp
   version: v0.9.3
 
+common.apps.tk-multi-setframerange:
+  location:
+    version: v0.3.0
+    type: app_store
+    name: tk-multi-setframerange
+
 # help urls
 
 common.apps.tk-multi-publish2.help_url: https://support.shotgunsoftware.com/hc/en-us/articles/115000067473#Publisher

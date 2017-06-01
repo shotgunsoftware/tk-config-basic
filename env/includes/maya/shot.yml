@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -10,7 +10,7 @@
 #
 
 # this configuration defines the behavior of the Maya Integration when it
-# is running in its project level configuration
+# is running in its shot level configuration
 
 includes:
 - ../common/frameworks.yml
@@ -19,11 +19,11 @@ includes:
 - ../common/settings/tk-multi-publish2.yml
 
 
-maya.project:
+maya.shot:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
-#    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
+    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
 
     tk-multi-publish2:
       help_url: "@common.apps.tk-multi-publish2.help_url"
@@ -49,15 +49,15 @@ maya.project:
         Texture: [texture_node, image_plane]
       actions_hook: '{self}/tk-maya_actions.py'
       entities:
-      - caption: Current Project
+      - caption: Current Shot
         type: Hierarchy
-        root: "{context.project}"
+        root: "{context.shot}"
         publish_filters: []
       - caption: My Tasks
         type: Query
         entity_type: Task
         filters:
-        - [project, is, '{context.project}']
+        - [shot, is, '{context.shot}']
         - [task_assignees, is, '{context.user}']
         hierarchy: [entity, content]
       # ignore publishes without a status. with zero config, it is very easy
