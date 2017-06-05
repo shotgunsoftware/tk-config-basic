@@ -139,7 +139,7 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
             self.logger.warn(
                 "The Photoshop document '%s' has not been saved." %
                 (document.name,),
-                extra=_get_save_action(document)
+                extra=self._get_save_as_action(document)
             )
 
         self.logger.info(
@@ -336,18 +336,20 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
         else:
             return None
 
+    def _get_save_as_action(self, document):
+        """
+        Simple helper for returning a log action dict for saving the session
+        """
 
-def _get_save_action(document):
-    """
-    Simple helper for returning a log action dict for saving the session
-    """
-    return {
-        "action_button": {
-            "label": "Save",
-            "tooltip": "Save the current session",
-            "callback": lambda: document.save()
+        engine = self.parent.engine
+
+        return {
+            "action_button": {
+                "label": "Save As...",
+                "tooltip": "Save the current session",
+                "callback": lambda: engine.save_as(document)
+            }
         }
-    }
 
 
 def _document_path(document):

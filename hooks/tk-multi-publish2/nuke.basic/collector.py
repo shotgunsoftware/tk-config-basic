@@ -99,6 +99,8 @@ class NukeSessionCollector(HookBaseClass):
         :param parent_item: Root item instance
         """
 
+        # import here since the hooks are imported into nuke and nukestudio.
+        # hiero module is only available in later versions of nuke
         import hiero.core
 
         # go ahead and build the path to the icon for use by any projects

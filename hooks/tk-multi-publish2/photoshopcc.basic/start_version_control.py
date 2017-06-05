@@ -223,7 +223,7 @@ class PhotoshopStartVersionControlPlugin(HookBaseClass):
         path = sgtk.util.ShotgunPath.normalize(path)
 
         # ensure the session is saved in its current state
-        document.saveAs(engine.adobe.File(path))
+        engine.save(document)
 
         # get the path to a versioned copy of the file.
         version_path = publisher.util.get_version_path(path, "v001")
@@ -237,7 +237,7 @@ class PhotoshopStartVersionControlPlugin(HookBaseClass):
             engine.adobe.app.activeDocument = document
 
             # save to the new version path
-            document.saveAs(engine.adobe.File(version_path))
+            engine.save_to_path(document, version_path)
             self.logger.info(
                 "A version number has been added to the Photoshop document...")
             self.logger.info("  Photoshop document path: %s" % (version_path,))
@@ -263,13 +263,13 @@ class PhotoshopStartVersionControlPlugin(HookBaseClass):
         Simple helper for returning a log action dict for saving the session
         """
 
-        ps_engine = self.parent.engine
+        engine = self.parent.engine
 
         return {
             "action_button": {
                 "label": "Save As...",
                 "tooltip": "Save the current session",
-                "callback": lambda: ps_engine.save_as(document)
+                "callback": lambda: engine.save_as(document)
             }
         }
 
