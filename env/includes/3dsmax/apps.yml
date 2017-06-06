@@ -1,0 +1,82 @@
+# Copyright (c) 2017 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# this include configuration defines the common apps of the 3dsMax Integration when it
+# is running in either its project or shot level configuration
+
+includes:
+- ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
+
+
+3dsmax.apps.tk-multi-publish2:
+  help_url: "@common.apps.tk-multi-publish2.help_url"
+  collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/3dsmax.basic/collector.py"
+  publish_plugins:
+    - '@common.settings.tk-multi-publish2.publish_file'
+    - '@common.settings.tk-multi-publish2.upload_version'
+    - name: Begin file versioning
+      hook: "{config}/tk-multi-publish2/3dsmax.basic/start_version_control.py"
+      settings: {}
+    - name: Publish to Shotgun
+      hook: "{config}/tk-multi-publish2/3dsmax.basic/publish_max_session.py"
+      settings: {}
+  location: "@common.apps.tk-multi-publish2.location"
+
+3dsmax.apps.tk-multi-loader2:
+  action_mappings:
+    3dsmax Scene: [import, reference]
+    Alembic Cache: [import]
+  actions_hook: '{self}/tk-3dsmaxplus_actions.py'
+  download_thumbnails: true
+  entities:
+  - caption: Current Project
+    type: Hierarchy
+    root: "{context.project}"
+    publish_filters: []
+  - caption: My Tasks
+    type: Query
+    entity_type: Task
+    filters:
+    - [project, is, '{context.project}']
+    - [task_assignees, is, '{context.user}']
+    hierarchy: [entity, content]
+  # ignore publishes without a status. with zero config, it is very easy
+  # to publish the same path multiple times. the default zero config publish
+  # plugins will clear the status of previous publishes of the same path.
+  # this filter means only the latest publish will be displayed.
+  publish_filters: [["sg_status_list", "is_not", null]]
+  location: "@common.apps.tk-multi-loader2.location"
+
+3dsmax.apps.tk-multi-shotgunpanel:
+  shotgun_fields_hook: '{self}/shotgun_fields.py'
+  actions_hook: '{self}/general_actions.py'
+  action_mappings:
+    PublishedFile:
+    - actions:
+      - publish_clipboard
+      filters: {}
+    Task:
+    - actions:
+      - assign_task
+      - task_to_ip
+      filters: {}
+    Version:
+    - actions:
+      - quicktime_clipboard
+      - sequence_clipboard
+      filters: {}
+  enable_context_switch: true
+  location: "@common.apps.tk-multi-shotgunpanel.location"
+
+
+
+
