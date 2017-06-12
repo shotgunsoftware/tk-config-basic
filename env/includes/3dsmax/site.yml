@@ -13,9 +13,9 @@
 # is running in its site level configuration
 
 includes:
-- ../common/frameworks.yml
 - ../common/engines.yml
 - ../common/apps.yml
+- apps.yml
 
 
 3dsmax.site:
@@ -47,26 +47,7 @@ includes:
       publish_filters: [["sg_status_list", "is_not", null]]
       location: "@common.apps.tk-multi-loader2.location"
 
-    tk-multi-shotgunpanel:
-      shotgun_fields_hook: '{self}/shotgun_fields.py'
-      actions_hook: '{self}/general_actions.py'
-      action_mappings:
-        PublishedFile:
-        - actions:
-          - publish_clipboard
-          filters: {}
-        Task:
-        - actions:
-          - assign_task
-          - task_to_ip
-          filters: {}
-        Version:
-        - actions:
-          - quicktime_clipboard
-          - sequence_clipboard
-          filters: {}
-      enable_context_switch: true
-      location: "@common.apps.tk-multi-shotgunpanel.location"
+    tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
 
   location: "@common.engines.tk-3dsmaxplus.location"
   menu_favourites: []
