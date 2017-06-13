@@ -51,4 +51,4 @@ common.engines.tk-flame.location:
 common.engines.tk-desktop.location:
     type: app_store
     name: tk-desktop
-    version: v2.2.4
+    version: v2.2.2
