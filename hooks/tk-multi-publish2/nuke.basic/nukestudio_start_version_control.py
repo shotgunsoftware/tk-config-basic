@@ -9,7 +9,6 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
-import hiero
 import sgtk
 from sgtk.platform.qt import QtGui
 
@@ -281,6 +280,9 @@ def _project_save_as(project):
 
     :param path: Optional path to save the current session as.
     """
+    # import here since the hooks are imported into nuke and nukestudio.
+    # hiero module is only available in later versions of nuke
+    import hiero
 
     # nuke studio/hiero don't appear to have a "save as" dialog accessible via
     # python. so open our own Qt file dialog.

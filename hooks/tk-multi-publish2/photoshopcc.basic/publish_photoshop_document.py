@@ -267,6 +267,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             # to the user
             version = publisher.util.get_version_number(next_version_path)
 
+            engine = publisher.engine
+
             self.logger.error(
                 "The next version of this file already exists on disk.",
                 extra={
@@ -274,8 +276,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
                         "label": "Save to v%s" % (version,),
                         "tooltip": "Save to the next available version number, "
                                    "v%s" % (version,),
-                        "callback": lambda: document.saveAs(
-                            publisher.engine.adobe.File(next_version_path))
+                        "callback": lambda: engine.save_to_path(document,
+                            next_version_path)
                     }
                 }
             )
@@ -297,6 +299,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         """
 
         publisher = self.parent
+        engine = publisher.engine
         document = item.properties["document"]
         path = _document_path(document)
 
@@ -304,8 +307,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         # are appropriate for current os, no double separators, etc.
         path = sgtk.util.ShotgunPath.normalize(path)
 
-        # ensure the session is saved
-        document.save()
+        # ensure the document is saved
+        engine.save(document)
 
         # get the publish name for this file path. this will ensure we get a
         # consistent name across version publishes of this file.
@@ -434,7 +437,8 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
             return None
 
         # save the session to the new path
-        document.saveAs(publisher.engine.adobe.File(next_version_path))
+        engine = publisher.engine
+        engine.save_to_path(document, next_version_path)
         self.logger.info("Session saved as: %s" % (next_version_path,))
 
         return next_version_path
@@ -469,13 +473,13 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         Simple helper for returning a log action dict for saving the session
         """
 
-        ps_engine = self.parent.engine
+        engine = self.parent.engine
 
         return {
             "action_button": {
                 "label": "Save As...",
                 "tooltip": "Save the current session",
-                "callback": lambda: ps_engine.save_as(document)
+                "callback": lambda: engine.save_as(document)
             }
         }
 
