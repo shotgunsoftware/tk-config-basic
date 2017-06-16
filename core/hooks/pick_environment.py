@@ -21,6 +21,9 @@ class PickEnvironment(Hook):
 
     def execute(self, context, **kwargs):
 
+        if context.entity and context.entity["type"] == "Shot":
+            return "shot"
+
         if context.project:
             return "project"
 

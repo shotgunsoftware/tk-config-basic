@@ -1,0 +1,31 @@
+# Copyright (c) 2017 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+description: Toolkit configuration to be loaded whenever an association with a
+             shot has been established.
+
+includes:
+- includes/houdini/shot.yml
+- includes/maya/shot.yml
+- includes/nuke/shot.yml
+- includes/desktop/project.yml
+- includes/shell/all.yml
+- includes/3dsmax/shot.yml
+- includes/shotgun/all.yml
+
+engines:
+  tk-houdini: '@houdini.shot'
+  tk-maya: '@maya.shot'
+  tk-nuke: '@nuke.shot'
+  tk-desktop: '@desktop.project'
+  tk-shell: '@shell.all'
+  tk-3dsmaxplus: '@3dsmax.shot'
+  tk-shotgun: '@shotgun.all'

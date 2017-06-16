@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -9,30 +9,31 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the 3dsMax Integration when it
-# is running in its project level configuration
+# this configuration defines the behavior of the Maya Integration when it
+# is running in its shot level configuration
 
 includes:
 - ../common/engines.yml
 - ../common/apps.yml
 - apps.yml
 
-3dsmax.project:
+maya.shot:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
-    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
 
-    tk-multi-publish2: '@3dsmax.apps.tk-multi-publish2'
+    tk-multi-publish2: '@maya.apps.tk-multi-publish2'
 
-    tk-multi-loader2: '@3dsmax.apps.tk-multi-loader2'
+    tk-multi-loader2: '@maya.apps.tk-multi-loader2'
 
-    tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
+    tk-multi-shotgunpanel: '@maya.apps.tk-multi-shotgunpanel'
 
-  location: "@common.engines.tk-3dsmaxplus.location"
+  location: "@common.engines.tk-maya.location"
   menu_favourites: []
+  run_at_startup:
+  - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
-
-
+  automatic_context_switch: false
 
 
