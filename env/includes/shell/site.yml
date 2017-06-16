@@ -15,20 +15,12 @@
 includes:
 - ../common/frameworks.yml
 - ../common/apps.yml
-- ../common/settings/tk-multi-publish2.yml
 
-shell.all:
+shell.site:
   apps:
     tk-multi-launchapp:
       use_software_entity: true
       location: "@common.apps.tk-multi-launchapp.location"
-
-    tk-multi-publish2:
-      collector: "{config}/tk-multi-publish2/basic/collector.py"
-      publish_plugins:
-        - '@common.settings.tk-multi-publish2.publish_file'
-        - '@common.settings.tk-multi-publish2.upload_version'
-      location: "@common.apps.tk-multi-publish2.location"
 
   location:
     version: v0.5.1

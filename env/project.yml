@@ -18,7 +18,7 @@ includes:
 - includes/nuke/project.yml
 - includes/flame/project.yml
 - includes/desktop/project.yml
-- includes/shell/all.yml
+- includes/shell/project.yml
 - includes/photoshopcc/project.yml
 - includes/3dsmax/project.yml
 - includes/shotgun/all.yml
@@ -28,7 +28,7 @@ engines:
   tk-maya: '@maya.project'
   tk-nuke: '@nuke.project'
   tk-desktop: '@desktop.project'
-  tk-shell: '@shell.all'
+  tk-shell: '@shell.project'
   tk-photoshopcc: '@photoshopcc.project'
   tk-3dsmaxplus: '@3dsmax.project'
   tk-shotgun: '@shotgun.all'
