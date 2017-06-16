@@ -28,6 +28,9 @@ includes:
       action_mappings:
         3dsmax Scene: [import, reference]
         Alembic Cache: [import]
+        Image: [texture_node]
+        Rendered Image: [texture_node]
+        Texture: [texture_node]
       actions_hook: '{self}/tk-3dsmaxplus_actions.py'
       entities:
       - caption: Project

@@ -39,10 +39,16 @@ common.engines.tk-nuke.location:
 common.engines.tk-photoshopcc.location:
     type: app_store
     name: tk-photoshopcc
-    version: v1.1.2
+    version: v1.1.5
+
+# Flame
+common.engines.tk-flame.location:
+    type: app_store
+    name: tk-flame
+    version: v1.9.2
 
 # Desktop
 common.engines.tk-desktop.location:
     type: app_store
     name: tk-desktop
-    version: v2.1.6
+    version: v2.2.4
