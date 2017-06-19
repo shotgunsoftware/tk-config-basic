@@ -17,7 +17,7 @@ includes:
 - includes/maya/shot.yml
 - includes/nuke/shot.yml
 - includes/desktop/project.yml
-- includes/shell/all.yml
+- includes/shell/project.yml
 - includes/3dsmax/shot.yml
 - includes/shotgun/all.yml
 
@@ -26,6 +26,6 @@ engines:
   tk-maya: '@maya.shot'
   tk-nuke: '@nuke.shot'
   tk-desktop: '@desktop.project'
-  tk-shell: '@shell.all'
+  tk-shell: '@shell.project'
   tk-3dsmaxplus: '@3dsmax.shot'
   tk-shotgun: '@shotgun.all'
