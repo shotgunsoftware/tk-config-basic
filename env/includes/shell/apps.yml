@@ -1,0 +1,29 @@
+# Copyright (c) 2017 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# this include configuration defines the common apps used by the Tank command 
+# shared by several of its different configurations
+
+
+includes:
+- ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
+
+shell.apps.tk-multi-launchapp:
+  use_software_entity: true
+  location: "@common.apps.tk-multi-launchapp.location"
+
+shell.apps.tk-multi-publish2:
+  collector: "{config}/tk-multi-publish2/basic/collector.py"
+  publish_plugins:
+    - '@common.settings.tk-multi-publish2.publish_file'
+    - '@common.settings.tk-multi-publish2.upload_version'
+  location: "@common.apps.tk-multi-publish2.location"
