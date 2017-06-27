@@ -13,6 +13,7 @@
 # is running in its project level configuration
 
 includes:
+- ../common/engines.yml
 - ../common/frameworks.yml
 - ../common/apps.yml
 - ../common/settings/tk-multi-publish2.yml
@@ -32,7 +33,4 @@ shotgun.all:
       use_software_entity: true
       location: "@common.apps.tk-multi-launchapp.location"
 
-  location:
-    type: app_store
-    name: tk-shotgun
-    version: v0.5.3
+  location: "@common.engines.tk-shotgun.location"

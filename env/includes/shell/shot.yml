@@ -13,6 +13,7 @@
 # is running in a shot environment
 
 includes:
+- ../common/engines.yml
 - apps.yml
 
 shell.shot:
@@ -21,7 +22,4 @@ shell.shot:
 
     tk-multi-publish2: '@shell.apps.tk-multi-publish2'
 
-  location:
-    version: v0.5.2
-    type: app_store
-    name: tk-shell
+  location: "@common.engines.tk-shell.location"
