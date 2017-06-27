@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -10,7 +10,7 @@
 #
 
 # this configuration defines the behavior of the Photoshop Integration when it
-# is running in its project level configuration
+# is running in its shot level configuration
 
 includes:
 - ../common/engines.yml
@@ -18,7 +18,7 @@ includes:
 - apps.yml
 
 
-photoshopcc.project:
+photoshopcc.shot:
   apps:
     tk-multi-about: "@common.apps.tk-multi-about"
 
