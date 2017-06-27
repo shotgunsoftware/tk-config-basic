@@ -13,14 +13,10 @@
 # is running in all environments
 
 includes:
-- ../common/frameworks.yml
-- ../common/apps.yml
+- apps.yml
 
 shell.site:
-  apps:
-    tk-multi-launchapp:
-      use_software_entity: true
-      location: "@common.apps.tk-multi-launchapp.location"
+  apps: '@shell.apps.tk-multi-launchapp'
 
   location:
     version: v0.5.1
