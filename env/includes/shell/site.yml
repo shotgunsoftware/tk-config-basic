@@ -16,7 +16,8 @@ includes:
 - apps.yml
 
 shell.site:
-  apps: '@shell.apps.tk-multi-launchapp'
+  apps:
+    tk-multi-launchapp: '@shell.apps.tk-multi-launchapp'
 
   location:
     version: v0.5.1
