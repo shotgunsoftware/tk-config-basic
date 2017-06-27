@@ -52,3 +52,17 @@ common.engines.tk-desktop.location:
     type: app_store
     name: tk-desktop
     version: v2.2.4
+
+# Shell
+common.engines.tk-shell.location:
+    type: app_store
+    name: tk-shell
+    version: v0.5.2
+
+# shotgun
+common.engines.tk-shotgun.location:
+    type: app_store
+    name: tk-shotgun
+    version: v0.5.3
+
+
