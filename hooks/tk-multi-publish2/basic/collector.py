@@ -54,18 +54,21 @@ COMMON_FILE_INFO = {
         "item_type": "file.photoshop",
     },
     "Rendered Image": {
-        "extensions": ["dpx", "exr"],
+        "extensions": ["dpx", "exr", "cin"],
         "icon": "image_sequence.png",
         "item_type": "file.image",
     },
     "Texture Image": {
-        "extensions": ["tiff", "tx", "tga", "dds", "rat"],
+        "extensions": ["tiff", "tx", "tga", "dds", "rat", "cin"],
         "icon": "texture.png",
         "item_type": "file.texture",
     },
+    "Reference Image": {
+        "extensions": ["jpg", "jpeg"],
+        "icon": "texture.png",
+        "item_type": "file.image",
+    },
 }
-
-
 
 class BasicSceneCollector(HookBaseClass):
     """
@@ -96,9 +99,11 @@ class BasicSceneCollector(HookBaseClass):
 
         # handle files and folders differently
         if os.path.isdir(path):
+            self.logger.info("Folder detected : Collecting folder(s).")
             self._collect_folder(parent_item, path)
             return None
         else:
+            self.logger.info("File detected : Collecting file.")
             return self._collect_file(parent_item, path)
 
     def _collect_file(self, parent_item, path, frame_sequence=False):
@@ -159,7 +164,7 @@ class BasicSceneCollector(HookBaseClass):
             file_item.properties["is_sequence"] = True
             file_item.properties["sequence_files"] = [path]
 
-        self.logger.info("Collected file: %s" % (evaluated_path,))
+        self.logger.info("Collected file: {0} : {1}".format(evaluated_path,file_item))
 
         return file_item
 
@@ -177,12 +182,24 @@ class BasicSceneCollector(HookBaseClass):
         folder = sgtk.util.ShotgunPath.normalize(folder)
 
         publisher = self.parent
+
         img_sequences = publisher.util.get_frame_sequences(
             folder, IMAGE_EXTENSIONS_LIST)
 
         file_items = []
 
+        # dictionary to store cache of all files already processed
+        # by the image sequence processor
+
+        seq_cache = []
+
+        # Scan for image sequences first
         for (image_seq_path, img_seq_files) in img_sequences:
+
+            # Add images not already in the image cache
+            for i in img_seq_files:
+                if i not in seq_cache:
+                    seq_cache.append(i)
 
             # get info for the extension
             item_info = self._get_item_info(image_seq_path)
@@ -226,6 +243,39 @@ class BasicSceneCollector(HookBaseClass):
             self.logger.info("Collected file: %s" % (image_seq_path,))
 
             file_items.append(file_item)
+
+        # recurse through any subfolders
+        for f in os.listdir(folder):
+            # initialise var to store new items to process
+            newItems=[]
+
+            # build the full path of the new path to process
+            newItemPath = os.path.join(folder,f)
+
+            # check if the path is a file or directory
+            isDir = os.path.isdir(newItemPath)
+
+            if isDir:
+                # if it's a directory, run the scan again
+
+                # scan the folder and get the new items
+                newItems = self._collect_folder(parent_item, newItemPath)
+
+                # add the items to our main item list
+                file_items+=newItems
+            else:
+                # otherwise it's a file, so lets process it.
+                
+                # check that we haven't already processed the file as part of an image sequence.
+                if newItemPath not in seq_cache:
+                    # file not found in image sequence, so lets process it as a single file
+                    newItems.append(self._collect_file(parent_item, newItemPath))
+
+                    # add the item to our main item list
+                    file_items+=newItems
+
+                else:
+                    self.logger.info(". . File already processed in sequence : {0}".format(newItemPath))
 
         if not file_items:
             self.logger.warn("No image sequences found in: %s" % (folder,))
@@ -302,6 +352,9 @@ class BasicSceneCollector(HookBaseClass):
 
         # construct a full path to the icon given the name defined above
         icon_path = self._get_icon_path(icon_name)
+
+        # see if there's a template from the filename
+
 
         # everything should be populated. return the dictionary
         return dict(
