@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -10,13 +10,13 @@
 #
 
 # this configuration defines the behavior of the Tank command when it
-# is running in all environments
+# is running in a shot environment
 
 includes:
 - ../common/engines.yml
 - apps.yml
 
-shell.project:
+shell.shot:
   apps:
     tk-multi-launchapp: '@shell.apps.tk-multi-launchapp'
 
