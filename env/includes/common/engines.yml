@@ -57,7 +57,7 @@ common.engines.tk-desktop.location:
 common.engines.tk-shell.location:
     type: app_store
     name: tk-shell
-    version: v0.5.2
+    version: v0.5.1
 
 # shotgun
 common.engines.tk-shotgun.location:
