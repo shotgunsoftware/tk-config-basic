@@ -44,12 +44,12 @@ common.apps.tk-multi-loader2.location:
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
-  version: v1.4.2
+  version: v1.4.3
 
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
-  version: v0.9.3
+  version: v0.9.4
 
 common.apps.tk-multi-setframerange:
   location:
