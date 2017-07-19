@@ -15,5 +15,5 @@ display_name: "Toolkit Basic Configuration"
 description: "Zero configuration Shotgun Toolkit workflow."
 
 # Required minimum versions for this item to run
-requires_shotgun_version: "v6.3.0"
-requires_core_version: "v0.18.18"
+requires_shotgun_version: "v7.2.0"
+requires_core_version: "v0.18.96"
