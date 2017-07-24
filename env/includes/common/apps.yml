@@ -33,7 +33,7 @@ common.apps.tk-multi-pythonconsole:
 
 common.apps.tk-multi-publish2.location:
   type: app_store
-  version: v1.1.4
+  version: v1.1.8
   name: tk-multi-publish2
 
 common.apps.tk-multi-loader2.location:
