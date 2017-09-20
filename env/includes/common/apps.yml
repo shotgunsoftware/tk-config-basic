@@ -39,12 +39,12 @@ common.apps.tk-multi-publish2.location:
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
-  version: v1.17.5
+  version: v1.17.7
 
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
-  version: v1.4.7
+  version: v1.4.8
 
 common.apps.tk-multi-launchapp.location:
   type: app_store
