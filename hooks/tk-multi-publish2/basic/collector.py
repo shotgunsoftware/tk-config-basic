@@ -119,8 +119,8 @@ class BasicSceneCollector(HookBaseClass):
 
         # get info for the extension
         item_info = self._get_item_info(path)
-        item_type = item_info["item_type"].encode("utf-8")
-        type_display = item_info["type_display"].encode("utf-8")
+        item_type = item_info["item_type"]
+        type_display = item_info["type_display"]
         evaluated_path = path
         is_sequence = False
 
@@ -294,7 +294,7 @@ class BasicSceneCollector(HookBaseClass):
 
             if category_type:
                 # the category portion of the mimetype
-                category = category_type.split("/")[0]
+                category = category_type.split("/")[0].encode("utf-8")
 
                 type_display = "%s File" % (category.title(),)
                 item_type = "file.%s" % (category,)
