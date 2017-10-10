@@ -119,8 +119,8 @@ class BasicSceneCollector(HookBaseClass):
 
         # get info for the extension
         item_info = self._get_item_info(path)
-        item_type = item_info["item_type"]
-        type_display = item_info["type_display"]
+        item_type = item_info["item_type"].encode("utf-8")
+        type_display = item_info["type_display"].encode("utf-8")
         evaluated_path = path
         is_sequence = False
 
