@@ -12,8 +12,6 @@
 # core API that should be used at runtime.
 
 location:
-#  type: app_store
-#  name: tk-core
-#  version: v0.18.110
-  type: dev
-  path: d:/Workspace/shotgun/tk-core
+  type: app_store
+  name: tk-core
+  version: v0.18.110
