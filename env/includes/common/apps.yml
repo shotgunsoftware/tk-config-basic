@@ -32,10 +32,12 @@ common.apps.tk-multi-pythonconsole:
 # locations for common apps
 
 common.apps.tk-multi-publish2.location:
-  type: app_store
-  version: v1.1.9
-  name: tk-multi-publish2
-
+  #type: app_store
+  #version: v1.1.9
+  #name: tk-multi-publish2
+  type: path
+  path: d:/Workspace/shotgun/tk-multi-publish2
+  
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
