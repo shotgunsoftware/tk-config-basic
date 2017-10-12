@@ -247,8 +247,8 @@ class UploadVersionPlugin(HookBaseClass):
 
         if settings["Upload"].value:
             self.logger.info("Uploading content...")
-            # the upload function triggers calls to os.path.* methods that may not give expected results when incput string is encoded in utf-8,
-            # therefore we call decode("utf-8") on path below.
+            # the upload function triggers calls to os.path.* methods that
+            # may not work with utf-8 encoded strings
             self.parent.shotgun.upload(
                 "Version",
                 version["id"],
