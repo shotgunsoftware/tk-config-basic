@@ -23,14 +23,14 @@ publish_type_to_extensions: &file_types
   - [Nuke Script, nk]
   - [Photoshop Image, psd, psb]
   - [Rendered Image, dpx, exr]
-  - [Texture, tiff, tx, tga, dds]
+  - [Texture, tif, tiff, tx, tga, dds]
   - [Image, jpeg, jpg, png]
   - [Movie, mov, mp4]
 
 image_publish_type_to_extensions: &image_file_types
   - [Photoshop Image, psd, psb]
   - [Rendered Image, dpx, exr]
-  - [Texture, tiff, tx, tga, dds]
+  - [Texture, tif, tiff, tx, tga, dds]
   - [Image, jpeg, jpg, png]
   - [Movie, mov, mp4]
 
