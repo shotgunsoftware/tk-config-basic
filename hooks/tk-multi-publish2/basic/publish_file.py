@@ -258,7 +258,10 @@ class BasicFilePublishPlugin(HookBaseClass):
             name_path, sequence=is_sequence)
 
         # extract the version number for publishing. use 1 if no version in path
-        version_number = publisher.util.get_version_number(path) or 1
+        # also make sure we are handling None and 0 diffrently
+        version_number = publisher.util.get_version_number(path)
+        if version_number is None:
+            version_number = 1
 
         # if the parent item has a publish path, include it in the list of
         # dependencies
