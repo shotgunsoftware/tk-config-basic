@@ -201,7 +201,8 @@ class MayaSessionPublishPlugin(HookBaseClass):
                 "The Maya session has not been saved.",
                 extra=_get_save_as_action()
             )
-            return False
+            # this exception should be cought by plugin.py run_validate() and propagate to tree_node_task.py validate()
+            raise Exception("The Maya session has not been saved.")
 
         # ensure we have an updated project root
         project_root = cmds.workspace(q=True, rootDirectory=True)
