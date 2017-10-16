@@ -247,8 +247,8 @@ class UploadVersionPlugin(HookBaseClass):
 
         if settings["Upload"].value:
             self.logger.info("Uploading content...")
-            # the upload function triggers calls to os.path.* methods that
-            # may not work with utf-8 encoded strings
+            # upload() triggers calls to os.path.* methods in tk-core python.py that
+            # may not work with utf-8
             self.parent.shotgun.upload(
                 "Version",
                 version["id"],

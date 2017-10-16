@@ -272,7 +272,7 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
         self.parent.shotgun.upload(
             "Version",
             version["id"],
-            upload_path,
+            upload_path.decode("utf-8"),
             "sg_uploaded_movie"
         )
         self.logger.info("Upload complete!")

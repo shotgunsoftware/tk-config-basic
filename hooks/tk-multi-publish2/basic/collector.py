@@ -293,8 +293,13 @@ class BasicSceneCollector(HookBaseClass):
             (category_type, _) = mimetypes.guess_type(filename)
 
             if category_type:
-                # category members are used in constructing items which contain utf-8 encoded strings, hence the encode() below
-                category = category_type.split("/")[0].encode("utf-8")
+                # make sure category_type is utf-8 encoded
+                if isinstance(category_type, unicode):
+                   category_type = category_type.encode("utf-8")
+                elif isinstance(category_type, str):
+                   category_type = unicode(category_type,"utf-8")
+
+                category = category_type.split("/")[0]
 
                 type_display = "%s File" % (category.title(),)
                 item_type = "file.%s" % (category,)
