@@ -13,6 +13,7 @@ import pprint
 import tempfile
 import uuid
 import sgtk
+import sys
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -267,12 +268,19 @@ class PhotoshopUploadVersionPlugin(HookBaseClass):
         # stash the version info in the item just in case
         item.properties["sg_version_data"] = version
 
+        # upload() triggers calls to os.path.* methods in tk-core python.py that
+        # may not work with utf-8
+        if sys.platform.startswith("win")  == True:
+          upload_path_call = upload_path.decode("utf-8")
+        else:
+          upload_path_call = upload_path
+
         # upload the file to SG
         self.logger.info("Uploading content...")
         self.parent.shotgun.upload(
             "Version",
             version["id"],
-            upload_path.decode("utf-8"),
+            upload_path_call,
             "sg_uploaded_movie"
         )
         self.logger.info("Upload complete!")
