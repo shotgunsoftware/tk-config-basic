@@ -197,11 +197,13 @@ class MayaSessionPublishPlugin(HookBaseClass):
         if not path:
             # the session still requires saving. provide a save button.
             # validation fails.
+            session_error_message = "The Maya session has not been saved."
             self.logger.error(
-                "The Maya session has not been saved.",
+                session_error_message,
                 extra=_get_save_as_action()
             )
-            return False
+            # this exception should be cought by plugin.py run_validate() and propagate to tree_node_task.py validate()
+            raise Exception(session_error_message)
 
         # ensure we have an updated project root
         project_root = cmds.workspace(q=True, rootDirectory=True)
@@ -271,9 +273,9 @@ class MayaSessionPublishPlugin(HookBaseClass):
             # now extract the version number of the next available to display
             # to the user
             version = publisher.util.get_version_number(next_version_path)
-
+            version_error_message = "The next version of this file already exists on disk."
             self.logger.error(
-                "The next version of this file already exists on disk.",
+                version_error_message,
                 extra={
                     "action_button": {
                         "label": "Save to v%s" % (version,),
@@ -283,7 +285,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
                     }
                 }
             )
-            return False
+            raise Exception(version_error_message)
 
         self.logger.info("A Publish will be created in Shotgun and linked to:")
         self.logger.info("  %s" % (path,))

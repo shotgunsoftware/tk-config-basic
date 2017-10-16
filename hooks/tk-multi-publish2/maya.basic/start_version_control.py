@@ -178,11 +178,12 @@ class MayaStartVersionControlPlugin(HookBaseClass):
         if not path:
             # the session still requires saving. provide a save button.
             # validation fails
+            session_error_message = "The Maya session has not been saved."
             self.logger.error(
-                "The Maya session has not been saved.",
+                session_error_message,
                 extra=_get_save_as_action()
             )
-            return False
+            raise Exception(session_error_message)
 
         # get the path to a versioned copy of the file.
         version_path = publisher.util.get_version_path(path, "v001")
@@ -192,7 +193,7 @@ class MayaStartVersionControlPlugin(HookBaseClass):
                 "another name.",
                 extra=_get_save_as_action()
             )
-            return False
+            raise Exception("A file already exists with a version number. Please choose another name.")
 
         return True
 
