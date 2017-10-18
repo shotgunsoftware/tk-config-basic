@@ -59,7 +59,7 @@ COMMON_FILE_INFO = {
         "item_type": "file.image",
     },
     "Texture Image": {
-        "extensions": ["tiff", "tx", "tga", "dds", "rat"],
+        "extensions": ["tif", "tiff", "tx", "tga", "dds", "rat"],
         "icon": "texture.png",
         "item_type": "file.texture",
     },
