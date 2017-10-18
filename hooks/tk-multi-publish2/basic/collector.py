@@ -293,7 +293,8 @@ class BasicSceneCollector(HookBaseClass):
             (category_type, _) = mimetypes.guess_type(filename)
 
             if category_type:
-                # make sure category_type is utf-8 encoded
+                # mimetypes.guess_type() output use default system encoding.
+                # make sure it is utf-8 encoded.
                 if isinstance(category_type, unicode):
                    category_type = category_type.encode("utf-8")
                 elif isinstance(category_type, str):
