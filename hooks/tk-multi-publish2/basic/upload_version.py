@@ -11,6 +11,7 @@
 import os
 import pprint
 import sgtk
+import sys
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -247,12 +248,18 @@ class UploadVersionPlugin(HookBaseClass):
 
         if settings["Upload"].value:
             self.logger.info("Uploading content...")
-            # the upload function triggers calls to os.path.* methods that
-            # may not work with utf-8 encoded strings
+
+            # upload() triggers calls to os.path.* methods in tk-core python.py that
+            # may not work with utf-8
+            if sys.platform.startswith("win")  == True:
+              upload_path_call = path.decode("utf-8")
+            else:
+              upload_path_call = path
+
             self.parent.shotgun.upload(
                 "Version",
                 version["id"],
-                path.decode("utf-8"),
+                upload_path_call,
                 "sg_uploaded_movie"
             )
         elif thumb:
