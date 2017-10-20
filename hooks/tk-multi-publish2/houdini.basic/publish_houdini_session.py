@@ -194,13 +194,14 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         path = _session_path()
 
         if not path:
+            session_error_message = "The Houdini session has not been saved."
             # the session still requires saving. provide a save button.
             # validation fails.
             self.logger.error(
-                "The Houdini session has not been saved.",
+                session_error_message,
                 extra=self._get_save_as_action()
             )
-            return False
+            raise Exception(session_error_message)
 
         # get the path in a normalized state. no trailing separator,
         # separators are appropriate for current os, no double separators,
@@ -254,8 +255,9 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
             # to the user
             version = publisher.util.get_version_number(next_version_path)
 
+            version_error_message = "The next version of this file already exists on disk."
             self.logger.error(
-                "The next version of this file already exists on disk.",
+                version_error_message,
                 extra={
                     "action_button": {
                         "label": "Save to v%s" % (version,),
@@ -265,7 +267,7 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
                     }
                 }
             )
-            return False
+            raise Exception(version_error_message)
 
         self.logger.info("A Publish will be created in Shotgun and linked to:")
         self.logger.info("  %s" % (path,))

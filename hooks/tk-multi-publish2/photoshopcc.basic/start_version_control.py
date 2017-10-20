@@ -182,14 +182,14 @@ class PhotoshopStartVersionControlPlugin(HookBaseClass):
         path = _document_path(document)
 
         if not path:
+            save_error_message = "The Photoshop document '%s' has not been saved." % (document.name,)
             # the session still requires saving. provide a save button.
             # validation fails
             self.logger.error(
-                "The Photoshop document '%s' has not been saved." %
-                (document.name,),
+                save_error_message,
                 extra=self._get_save_as_action(document)
             )
-            return False
+            raise Exception(save_error_message)
 
         # get the path to a versioned copy of the file.
         version_path = publisher.util.get_version_path(path, "v001")
@@ -199,7 +199,7 @@ class PhotoshopStartVersionControlPlugin(HookBaseClass):
                 "another name.",
                 extra=self._get_save_as_action(document)
             )
-            return False
+            raise Exception("A file already exists with a version number. Please choose another name.")
 
         return True
 

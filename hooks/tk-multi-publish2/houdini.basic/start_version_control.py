@@ -176,13 +176,14 @@ class HoudiniStartVersionControlPlugin(HookBaseClass):
         path = _session_path()
 
         if not path:
+            save_error_message = "The Houdini session has not been saved."
             # the session still requires saving. provide a save button.
             # validation fails
             self.logger.error(
-                "The Houdini session has not been saved.",
+                save_error_message,
                 extra=self._get_save_as_action()
             )
-            return False
+            raise Exception(save_error_message)
 
         # get the path to a versioned copy of the file.
         version_path = publisher.util.get_version_path(path, "v001")
@@ -192,7 +193,7 @@ class HoudiniStartVersionControlPlugin(HookBaseClass):
                 "another name.",
                 extra=self._get_save_as_action()
             )
-            return False
+            raise Exception("A file already exists with a version number. Please choose another name")
 
         return True
 
