@@ -183,14 +183,14 @@ class NukeStudioStartVersionControlPlugin(HookBaseClass):
         path = project.path()
 
         if not path:
+            save_error_message = "The Nuke Studio project '%s' has not been saved." % (project.name(),)
             # the session still requires saving. provide a save button.
             # validation fails
             self.logger.error(
-                "The Nuke Studio project '%s' has not been saved." %
-                (project.name(),),
+                save_error_message,
                 extra=_get_save_as_action(project)
             )
-            return False
+            raise Exception(save_error_message)
 
         # get the path to a versioned copy of the file.
         version_path = publisher.util.get_version_path(path, "v001")
@@ -200,7 +200,7 @@ class NukeStudioStartVersionControlPlugin(HookBaseClass):
                 "another name.",
                 extra=_get_save_as_action(project)
             )
-            return False
+            raise Exception("A file already exists with a version number. Please choose another name")
 
         return True
 

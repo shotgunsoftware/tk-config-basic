@@ -196,11 +196,14 @@ class MaxSessionPublishPlugin(HookBaseClass):
         if not path:
             # the session still requires saving. provide a save button.
             # validation fails.
+            session_error_message = "The Max session has not been saved."
             self.logger.error(
-                "The Max session has not been saved.",
+                session_error_message,
                 extra=_get_save_as_action()
             )
-            return False
+
+            # this exception should be cought by plugin.py run_validate() and propagate to tree_node_task.py validate()
+            raise Exception(session_error_message)
 
         # get the path in a normalized state. no trailing separator,
         # separators are appropriate for current os, no double separators,
@@ -254,8 +257,10 @@ class MaxSessionPublishPlugin(HookBaseClass):
             # to the user
             version = publisher.util.get_version_number(next_version_path)
 
+            version_error_message = "The next version of this file already exists on disk."
+
             self.logger.error(
-                "The next version of this file already exists on disk.",
+                version_error_message,
                 extra={
                     "action_button": {
                         "label": "Save to v%s" % (version,),
@@ -265,7 +270,7 @@ class MaxSessionPublishPlugin(HookBaseClass):
                     }
                 }
             )
-            return False
+            raise Exception(version_error_message)
 
         self.logger.info("A Publish will be created in Shotgun and linked to:")
         self.logger.info("  %s" % (path,))

@@ -206,14 +206,14 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
         path = _document_path(document)
 
         if not path:
+            save_error_message = "The Photoshop document '%s' has not been saved." % (document.name,)
             # the document still requires saving. provide a save button.
             # validation fails.
             self.logger.error(
-                "The Photoshop document '%s' has not been saved." %
-                (document.name,),
+                save_error_message,
                 extra=self._get_save_as_action(document)
             )
-            return False
+            raise Exception(save_error_message)
 
         # get the path in a normalized state. no trailing separator,
         # separators are appropriate for current os, no double separators,
@@ -269,8 +269,10 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
 
             engine = publisher.engine
 
+            version_error_message = "The next version of this file already exists on disk."
+
             self.logger.error(
-                "The next version of this file already exists on disk.",
+                version_error_message,
                 extra={
                     "action_button": {
                         "label": "Save to v%s" % (version,),
@@ -281,7 +283,7 @@ class PhotoshopCCDocumentPublishPlugin(HookBaseClass):
                     }
                 }
             )
-            return False
+            raise Exception(version_error_message)
 
         self.logger.info("A Publish will be created in Shotgun and linked to:")
         self.logger.info("  %s" % (path,))
