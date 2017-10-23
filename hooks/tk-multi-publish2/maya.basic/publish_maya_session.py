@@ -202,7 +202,7 @@ class MayaSessionPublishPlugin(HookBaseClass):
                 session_error_message,
                 extra=_get_save_as_action()
             )
-            # this exception should be cought by plugin.py run_validate() and propagate to tree_node_task.py validate()
+            # this exception should be caught by plugin.py run_validate() and propagate to tree_node_task.py validate()
             raise Exception(session_error_message)
 
         # ensure we have an updated project root
