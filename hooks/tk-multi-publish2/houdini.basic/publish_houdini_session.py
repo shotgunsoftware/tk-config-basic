@@ -296,7 +296,10 @@ class HoudiniSessionPublishPlugin(HookBaseClass):
         publish_name = publisher.util.get_publish_name(path)
 
         # extract the version number for publishing. use 1 if no version in path
-        version_number = publisher.util.get_version_number(path) or 1
+        # also make sure we are handling None and 0 differently
+        version_number = publisher.util.get_version_number(path)
+        if version_number is None:
+            version_number = 1
 
         # arguments for publish registration
         self.logger.info("Registering publish...")
