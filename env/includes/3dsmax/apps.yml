@@ -19,15 +19,15 @@ includes:
 
 3dsmax.apps.tk-multi-publish2:
   help_url: "@common.apps.tk-multi-publish2.help_url"
-  collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/3dsmax.basic/collector.py"
+  collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
   publish_plugins:
     - '@common.settings.tk-multi-publish2.publish_file'
     - '@common.settings.tk-multi-publish2.upload_version'
     - name: Begin file versioning
-      hook: "{config}/tk-multi-publish2/3dsmax.basic/start_version_control.py"
+      hook: "{engine}/tk-multi-publish2/basic/start_version_control.py"
       settings: {}
     - name: Publish to Shotgun
-      hook: "{config}/tk-multi-publish2/3dsmax.basic/publish_max_session.py"
+      hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py:"
       settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 

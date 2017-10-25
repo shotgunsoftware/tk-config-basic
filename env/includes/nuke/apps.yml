@@ -19,21 +19,21 @@ includes:
 
 nuke.apps.tk-multi-publish2:
   help_url: "@common.apps.tk-multi-publish2.help_url"
-  collector: "{config}/tk-multi-publish2/basic/collector.py:{config}/tk-multi-publish2/nuke.basic/collector.py"
+  collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
   publish_plugins:
     - '@common.settings.tk-multi-publish2.publish_file'
     - '@common.settings.tk-multi-publish2.upload_version'
     - name: Begin file versioning
-      hook: "{config}/tk-multi-publish2/nuke.basic/nuke_start_version_control.py"
+      hook: "{engine}/tk-multi-publish2/basic/nuke_start_version_control.py"
       settings: {}
     - name: Begin file versioning
-      hook: "{config}/tk-multi-publish2/nuke.basic/nukestudio_start_version_control.py"
+      hook: "{engine}/tk-multi-publish2/basic/nukestudio_start_version_control.py"
       settings: {}
     - name: Publish to Shotgun
-      hook: "{config}/tk-multi-publish2/nuke.basic/nuke_publish_script.py"
+      hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/nuke_publish_script.py"
       settings: {}
     - name: Publish to Shotgun
-      hook: "{config}/tk-multi-publish2/nuke.basic/nukestudio_publish_project.py"
+      hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/nukestudio_publish_project.py"
       settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
