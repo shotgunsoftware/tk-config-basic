@@ -39,7 +39,7 @@ common.engines.tk-maya.location:
     type: git_branch
     branch: 44077_def2_pub2_templates
     path: https://github.com/shotgunsoftware/tk-maya.git
-    version: 16934b660382ca2c2afff1344dc14c17cc912538
+    version: c8eb779caab0bd5e715d3a3543c88978b6c29e16
 
 # Nuke
 common.engines.tk-nuke.location:
