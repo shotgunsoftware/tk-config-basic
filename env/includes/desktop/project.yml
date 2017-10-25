@@ -25,7 +25,7 @@ desktop.project:
 
     tk-multi-publish2:
       help_url: "@common.apps.tk-multi-publish2.help_url"
-      collector: "{config}/tk-multi-publish2/basic/collector.py"
+      collector: "{self}/collector.py"
       publish_plugins:
         - '@common.settings.tk-multi-publish2.publish_file'
         - '@common.settings.tk-multi-publish2.upload_version'
