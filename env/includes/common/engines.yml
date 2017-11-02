@@ -71,18 +71,25 @@ common.engines.tk-flame.location:
 common.engines.tk-desktop.location:
     type: app_store
     name: tk-desktop
-    version: v2.3.11
+    version: v2.3.12
 
 # Shell
 common.engines.tk-shell.location:
-    type: app_store
-    name: tk-shell
-    version: v0.5.4
+    #type: app_store
+    #name: tk-shell
+    #version: v0.5.4
+    type: git_branch
+    branch: master
+    path: https://github.com/shotgunsoftware/tk-shell.git
+    version: a3386c2f069b02a953bfffaba9fdb52e4d0bb53b
 
 # shotgun
 common.engines.tk-shotgun.location:
-    type: app_store
-    name: tk-shotgun
-    version: v0.6.0
-
+    #type: app_store
+    #name: tk-shotgun
+    #version: v0.6.0
+    type: git_branch
+    branch: master
+    path: https://github.com/shotgunsoftware/tk-shell.git
+    version: 1de9dfba61d3eaf75241f24dfa31fb23781b3ee0
 
