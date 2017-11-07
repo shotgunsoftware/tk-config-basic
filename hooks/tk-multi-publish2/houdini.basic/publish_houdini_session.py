@@ -442,7 +442,15 @@ def _save_session(path):
     """
     Save the current session to the supplied path.
     """
-    hou.hipFile.save(file_name=path)
+    current_file = sgtk.util.ShotgunPath.normalize(_session_path())
+    path = sgtk.util.ShotgunPath.normalize(path)
+
+    # So if the destination is the same file as the current scene, omit the file name to avoid the
+    # bug.
+    if path == current_file:
+        hou.hipFile.save()
+    else:
+        hou.hipFile.save(file_name=path)
 
 
 def _session_path():
