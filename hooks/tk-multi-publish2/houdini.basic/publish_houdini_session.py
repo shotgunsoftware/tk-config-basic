@@ -442,7 +442,10 @@ def _save_session(path):
     """
     Save the current session to the supplied path.
     """
-    hou.hipFile.save(file_name=path)
+    # We need to flip the slashes on Windows to avoid a bug in Houdini. If we don't
+    # the next Save As dialog will have the filename box populated with the complete
+    # file path.
+    hou.hipFile.save(file_name=path.replace("\\", "/").encode("utf-8"))
 
 
 def _session_path():
