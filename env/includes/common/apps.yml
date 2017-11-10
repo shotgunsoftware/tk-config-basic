@@ -53,7 +53,7 @@ common.apps.tk-multi-shotgunpanel.location:
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
-  version: v0.9.11
+  version: v0.9.12
 
 common.apps.tk-multi-setframerange:
   location:
