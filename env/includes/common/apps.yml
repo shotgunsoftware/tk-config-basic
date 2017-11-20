@@ -33,8 +33,8 @@ common.apps.tk-multi-pythonconsole:
 
 common.apps.tk-multi-publish2.location:
   type: app_store
-  version: v1.1.9
   name: tk-multi-publish2
+  version: v2.0.2
 
 common.apps.tk-multi-loader2.location:
   type: app_store
@@ -49,7 +49,7 @@ common.apps.tk-multi-shotgunpanel.location:
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
-  version: v0.9.11
+  version: v0.9.13
 
 common.apps.tk-multi-setframerange:
   location:
