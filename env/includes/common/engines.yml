@@ -45,13 +45,13 @@ common.engines.tk-photoshopcc.location:
 common.engines.tk-flame.location:
     type: app_store
     name: tk-flame
-    version: v1.10.0
+    version: v1.11.4
 
 # Desktop
 common.engines.tk-desktop.location:
     type: app_store
     name: tk-desktop
-    version: v2.4.0
+    version: v2.4.2
 
 # Shell
 common.engines.tk-shell.location:

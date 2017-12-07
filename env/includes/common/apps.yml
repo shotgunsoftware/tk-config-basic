@@ -19,7 +19,7 @@ includes:
 
 common.apps.tk-multi-about:
   location:
-    version: v0.2.5
+    version: v0.2.7
     type: app_store
     name: tk-multi-about
 
@@ -34,22 +34,22 @@ common.apps.tk-multi-pythonconsole:
 common.apps.tk-multi-publish2.location:
   type: app_store
   name: tk-multi-publish2
-  version: v2.0.2
+  version: v2.0.3
 
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
-  version: v1.18.0
+  version: v1.18.1
 
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
-  version: v1.4.8
+  version: v1.4.9
 
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
-  version: v0.9.13
+  version: v0.9.15
 
 common.apps.tk-multi-setframerange:
   location:
