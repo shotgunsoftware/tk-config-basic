@@ -29,6 +29,12 @@ common.apps.tk-multi-pythonconsole:
     type: app_store
     name: tk-multi-pythonconsole
 
+common.apps.tk-multi-setframerange:
+  location:
+    version: v0.3.0
+    type: app_store
+    name: tk-multi-setframerange
+
 # locations for common apps
 
 common.apps.tk-multi-publish2.location:
@@ -51,11 +57,9 @@ common.apps.tk-multi-launchapp.location:
   name: tk-multi-launchapp
   version: v0.9.15
 
-common.apps.tk-multi-setframerange:
-  location:
-    version: v0.3.0
-    type: app_store
-    name: tk-multi-setframerange
+common.apps.tk-nuke-quickreview.location:
+  type: dev
+  path: /Users/manne/Documents/work_dev/toolkit/tk-nuke-quickreview
 
 # help urls
 
