@@ -93,5 +93,5 @@ nuke.apps.tk-multi-shotgunpanel:
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"
 
-nuke.apps.tk-nuke-quickdailies2:
-  location: "@common.apps.tk-nuke-quickdailies2.location"
+nuke.apps.tk-nuke-quickreview:
+  location: "@common.apps.tk-nuke-quickreview.location"
