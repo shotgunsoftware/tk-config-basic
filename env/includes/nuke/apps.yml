@@ -40,15 +40,15 @@ nuke.apps.tk-multi-publish2:
 nuke.apps.tk-multi-loader2:
   action_mappings:
     Alembic Cache: [read_node]
-    Image: [read_node]
-    Movie: [read_node]
     Flame Render: [read_node]
     Flame Quicktime: [read_node]
+    Image: [read_node]
+    Movie: [read_node]
+    Nuke Script: [script_import]
+    NukeStudio Project: [open_project]
     Photoshop Image: [read_node]
     Rendered Image: [read_node]
     Texture: [read_node]
-    Nuke Script: [script_import]
-    NukeStudio Project: [open_project]
   actions_hook: '{self}/tk-nuke_actions.py'
   entities:
   - caption: Current Project
