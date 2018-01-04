@@ -40,6 +40,8 @@ nuke.apps.tk-multi-publish2:
 nuke.apps.tk-multi-loader2:
   action_mappings:
     Alembic Cache: [read_node]
+    Flame Render: [read_node]
+    Flame Quicktime: [read_node]
     Image: [read_node]
     Movie: [read_node]
     Nuke Script: [script_import]
@@ -76,6 +78,10 @@ nuke.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Image}
     - actions: [read_node]
       filters: {published_file_type: Movie}
+    - actions: [read_node]
+      filters: {published_file_type: Flame Render}
+    - actions: [read_node]
+      filters: {published_file_type: Flame Quicktime}
     - actions: [script_import]
       filters: {published_file_type: Nuke Script}
     - actions: [open_project]
