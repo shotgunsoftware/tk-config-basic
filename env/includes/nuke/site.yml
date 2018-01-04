@@ -27,6 +27,8 @@ nuke.site:
         Alembic Cache: [read_node]
         Image: [read_node]
         Movie: [read_node]
+        Flame Render: [read_node]
+        Flame Quicktime: [read_node]
         Nuke Script: [script_import]
         NukeStudio Project: [open_project]
         Photoshop Image: [read_node]
