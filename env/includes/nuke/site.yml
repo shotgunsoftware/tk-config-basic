@@ -25,6 +25,8 @@ nuke.site:
     tk-multi-loader2:
       action_mappings:
         Alembic Cache: [read_node]
+        Flame Render: [read_node]
+        Flame Quicktime: [read_node]
         Image: [read_node]
         Movie: [read_node]
         Nuke Script: [script_import]
