@@ -48,10 +48,9 @@ common.apps.tk-multi-loader2.location:
   version: v1.18.1
 
 common.apps.tk-multi-shotgunpanel.location:
-  type: dev
-  path: /Users/manne/Documents/work_dev/toolkit/tk-multi-shotgunpanel
+  type: app_store
   name: tk-multi-shotgunpanel
-  version: v1.4.9
+  version: v1.5.0
 
 common.apps.tk-multi-launchapp.location:
   type: app_store
@@ -59,8 +58,9 @@ common.apps.tk-multi-launchapp.location:
   version: v0.9.15
 
 common.apps.tk-nuke-quickreview.location:
-  type: dev
-  path: /Users/manne/Documents/work_dev/toolkit/tk-nuke-quickreview
+  type: app_store
+  name: tk-nuke-quickreview
+  version: v1.0.1
 
 # help urls
 
