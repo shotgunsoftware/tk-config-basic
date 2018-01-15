@@ -29,12 +29,18 @@ common.apps.tk-multi-pythonconsole:
     type: app_store
     name: tk-multi-pythonconsole
 
+common.apps.tk-multi-setframerange:
+  location:
+    version: v0.3.0
+    type: app_store
+    name: tk-multi-setframerange
+
 # locations for common apps
 
 common.apps.tk-multi-publish2.location:
   type: app_store
   name: tk-multi-publish2
-  version: v2.0.6
+  version: v2.0.9
 
 common.apps.tk-multi-loader2.location:
   type: app_store
@@ -44,18 +50,17 @@ common.apps.tk-multi-loader2.location:
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
-  version: v1.4.9
+  version: v1.5.0
 
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
   version: v0.9.15
 
-common.apps.tk-multi-setframerange:
-  location:
-    version: v0.3.0
-    type: app_store
-    name: tk-multi-setframerange
+common.apps.tk-nuke-quickreview.location:
+  type: app_store
+  name: tk-nuke-quickreview
+  version: v1.0.1
 
 # help urls
 

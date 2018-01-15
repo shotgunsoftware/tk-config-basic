@@ -30,6 +30,8 @@ nuke.shot:
 
     tk-multi-shotgunpanel: '@nuke.apps.tk-multi-shotgunpanel'
 
+    tk-nuke-quickreview: '@nuke.apps.tk-nuke-quickreview'
+
   location: "@common.engines.tk-nuke.location"
   menu_favourites: []
   run_at_startup:
