@@ -40,6 +40,7 @@ desktop.project:
   default_group: Studio
   groups:
   - matches:
+    - '*Fla*'
     - '*Houdini*'
     - '*Mari*'
     - '*Max*'
@@ -53,7 +54,4 @@ desktop.project:
   - matches:
     - '*Hiero*'
     name: Editorial Tools
-  - matches:
-    - '*Fla*'
-    name: Finishing Tools
   location: "@common.engines.tk-desktop.location"
