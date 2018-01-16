@@ -19,7 +19,7 @@ includes:
 
 common.apps.tk-multi-about:
   location:
-    version: v0.2.7
+    version: v0.2.8
     type: app_store
     name: tk-multi-about
 
@@ -40,7 +40,7 @@ common.apps.tk-multi-setframerange:
 common.apps.tk-multi-publish2.location:
   type: app_store
   name: tk-multi-publish2
-  version: v2.0.9
+  version: v2.0.12
 
 common.apps.tk-multi-loader2.location:
   type: app_store
