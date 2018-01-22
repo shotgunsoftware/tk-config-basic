@@ -61,7 +61,7 @@ includes:
 
 3dsmax.apps.tk-multi-shotgunpanel:
   shotgun_fields_hook: '{self}/shotgun_fields.py'
-  actions_hook: '{self}/tk-3dsmaxplus_actions.py'
+  actions_hook: '{self}/general_actions.py:{self}/tk-3dsmaxplus_actions.py'
   action_mappings:
     PublishedFile:
     - actions: [import]
