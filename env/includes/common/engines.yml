@@ -31,11 +31,9 @@ common.engines.tk-maya.location:
 
 # Nuke
 common.engines.tk-nuke.location:
-    # type: app_store
-    # name: tk-nuke
-    # version: v0.9.4
-    type: dev
-    path: /git/tk-nuke
+    type: app_store
+    name: tk-nuke
+    version: v0.9.4
 
 # Photoshop
 common.engines.tk-photoshopcc.location:
