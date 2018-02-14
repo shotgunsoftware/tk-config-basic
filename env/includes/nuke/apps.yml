@@ -35,6 +35,9 @@ nuke.apps.tk-multi-publish2:
     - name: Publish to Shotgun
       hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/nukestudio_publish_project.py"
       settings: {}
+    - name: Update Flame Clip
+      hook: "{engine}/tk-multi-publish2/basic/nuke_update_flame_clip.py"
+      settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
 nuke.apps.tk-multi-loader2:
