@@ -31,6 +31,7 @@ shotgun.all:
     tk-multi-launchapp:
       scan_all_projects: true
       use_software_entity: true
+      hook_before_register_command: "{config}/tk-multi-launchapp/before_register_command.py"
       location: "@common.apps.tk-multi-launchapp.location"
 
   location: "@common.engines.tk-shotgun.location"
