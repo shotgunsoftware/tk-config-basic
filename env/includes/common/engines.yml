@@ -63,5 +63,5 @@ common.engines.tk-shell.location:
 common.engines.tk-shotgun.location:
     type: app_store
     name: tk-shotgun
-    version: v0.7.0
+    version: v0.8.1
 
