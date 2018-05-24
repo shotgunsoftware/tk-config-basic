@@ -26,6 +26,7 @@ engines:
   tk-houdini: '@houdini.shot'
   tk-maya: '@maya.shot'
   tk-nuke: '@nuke.shot'
+  tk-nukestudio: '@nukestudio.shot'
   tk-flame: '@flame.shot'
   tk-shell: '@shell.shot'
   tk-photoshopcc: '@photoshopcc.shot'

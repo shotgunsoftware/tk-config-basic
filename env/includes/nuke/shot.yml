@@ -38,3 +38,24 @@ nuke.shot:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
   automatic_context_switch: false
+
+nukestudio.shot:
+  apps:
+    tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
+
+    tk-multi-publish2: '@nuke.apps.tk-multi-publish2'
+
+    tk-multi-loader2: '@nukestudio.apps.tk-multi-loader2'
+
+    tk-multi-shotgunpanel: '@nukestudio.apps.tk-multi-shotgunpanel'
+
+    tk-nuke-quickreview: '@nuke.apps.tk-nuke-quickreview'
+
+  location: "@common.engines.tk-nuke.location"
+  menu_favourites: []
+  run_at_startup:
+  - {app_instance: tk-multi-shotgunpanel, name: ''}
+  launch_builtin_plugins: [basic]
+  automatic_context_switch: false
