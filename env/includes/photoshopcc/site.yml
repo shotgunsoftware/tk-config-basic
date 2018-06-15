@@ -53,3 +53,4 @@ photoshopcc.site:
   shelf_favorites: []
   debug_logging: true
   location: "@common.engines.tk-photoshopcc.location"
+  automatic_context_switch: false
