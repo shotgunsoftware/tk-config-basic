@@ -21,7 +21,7 @@ common.engines.tk-3dsmaxplus.location:
 common.engines.tk-houdini.location:
     type: app_store
     name: tk-houdini
-    version: v1.5.5
+    version: v1.5.6
 
 # Maya
 common.engines.tk-maya.location:
@@ -33,25 +33,25 @@ common.engines.tk-maya.location:
 common.engines.tk-nuke.location:
     type: app_store
     name: tk-nuke
-    version: v0.11.0
+    version: v0.11.1
 
 # Photoshop
 common.engines.tk-photoshopcc.location:
     type: app_store
     name: tk-photoshopcc
-    version: v1.6.0
+    version: v1.6.2
 
 # Flame
 common.engines.tk-flame.location:
     type: app_store
     name: tk-flame
-    version: v1.13.2
+    version: v1.13.4
 
 # Desktop
 common.engines.tk-desktop.location:
     type: app_store
     name: tk-desktop
-    version: v2.4.11
+    version: v2.4.12
 
 # Shell
 common.engines.tk-shell.location:
