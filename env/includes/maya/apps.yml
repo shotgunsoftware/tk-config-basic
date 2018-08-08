@@ -77,7 +77,7 @@ maya.apps.tk-multi-shotgunpanel:
     - actions: [publish_clipboard]
       filters: {}
     Task:
-    - actions: [assign_task, task_to_ip]
+    - actions: [assign_task, task_to_ip, task_to_rev]
       filters: {}
     Version:
     - actions: [quicktime_clipboard, sequence_clipboard, add_to_playlist]

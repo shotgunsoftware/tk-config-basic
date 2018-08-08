@@ -81,6 +81,7 @@ houdini.apps.tk-multi-shotgunpanel:
       - actions:
         - assign_task
         - task_to_ip
+        - task_to_rev
         filters: {}
       Version:
       - actions:
