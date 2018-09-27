@@ -33,19 +33,19 @@ common.engines.tk-maya.location:
 common.engines.tk-nuke.location:
     type: app_store
     name: tk-nuke
-    version: v0.11.3
+    version: v0.11.4
 
 # Photoshop
 common.engines.tk-photoshopcc.location:
     type: app_store
     name: tk-photoshopcc
-    version: v1.6.2
+    version: v1.6.3
 
 # Flame
 common.engines.tk-flame.location:
     type: app_store
     name: tk-flame
-    version: v1.14.0
+    version: v1.14.4
 
 # Desktop
 common.engines.tk-desktop.location:

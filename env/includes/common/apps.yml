@@ -40,22 +40,22 @@ common.apps.tk-multi-setframerange:
 common.apps.tk-multi-publish2.location:
   type: app_store
   name: tk-multi-publish2
-  version: v2.1.6
+  version: v2.1.7
 
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
-  version: v1.19.1
+  version: v1.19.2
 
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
-  version: v1.6.2
+  version: v1.6.3
 
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
-  version: v0.10.0
+  version: v0.10.1
 
 common.apps.tk-nuke-quickreview.location:
   type: app_store
