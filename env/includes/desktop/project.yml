@@ -21,6 +21,13 @@ includes:
 desktop.project:
   apps:
 
+    tk-multi-devutils:
+      location:
+        type: git_branch
+        branch: SG-8048-devtools
+        path: git@github.com:shotgunsoftware/tk-multi-devutils.git
+        version: fac5a18113aa908c4f9c4ff0f47d025dc569170e
+
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
     tk-multi-publish2:
