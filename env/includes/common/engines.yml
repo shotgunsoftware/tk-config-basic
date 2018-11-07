@@ -45,7 +45,7 @@ common.engines.tk-photoshopcc.location:
 common.engines.tk-flame.location:
     type: app_store
     name: tk-flame
-    version: v1.14.4
+    version: v1.14.6
 
 # Desktop
 common.engines.tk-desktop.location:
