@@ -35,3 +35,11 @@ shotgun.all:
       location: "@common.apps.tk-multi-launchapp.location"
 
   location: "@common.engines.tk-shotgun.location"
+
+shotgun.publishedfile:
+  apps:
+
+    settings.tk-shotgun-launchfolder:
+      location: "@common.apps.tk-shotgun-launchfolder.location"
+
+  location: "@common.engines.tk-shotgun.location"
