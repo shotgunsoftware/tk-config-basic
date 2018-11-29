@@ -13,6 +13,7 @@ description: Toolkit configuration to be loaded whenever an association with a
              shot has been established.
 
 includes:
+- includes/desktop2/all.yml
 - includes/houdini/shot.yml
 - includes/maya/shot.yml
 - includes/nuke/shot.yml
@@ -23,6 +24,7 @@ includes:
 - includes/shotgun/all.yml
 
 engines:
+  tk-desktop2: '@desktop2.all'
   tk-houdini: '@houdini.shot'
   tk-maya: '@maya.shot'
   tk-nuke: '@nuke.shot'

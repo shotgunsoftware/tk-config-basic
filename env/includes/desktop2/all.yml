@@ -1,0 +1,36 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# this configuration defines the behavior of the Shotgun Desktop when it
+# is running in any configuration except the site configuration.
+
+includes:
+- ../common/engines.yml
+- ../common/frameworks.yml
+- ../common/apps.yml
+- ../common/settings/tk-multi-publish2.yml
+
+desktop2.all:
+  apps:
+
+    tk-multi-publish2:
+      collector: "{self}/collector.py"
+      publish_plugins:
+        - '@common.settings.tk-multi-publish2.publish_file'
+        - '@common.settings.tk-multi-publish2.upload_version'
+      location: "@common.apps.tk-multi-publish2.location"
+
+    tk-multi-launchapp:
+      scan_all_projects: true
+      use_software_entity: true
+      location: "@common.apps.tk-multi-launchapp.location"
+
+  location: "@common.engines.tk-desktop2.location"
