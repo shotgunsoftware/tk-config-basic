@@ -18,6 +18,7 @@ includes:
 - includes/maya/site.yml
 - includes/nuke/site.yml
 - includes/desktop/site.yml
+- includes/desktop2/site.yml
 - includes/shell/site.yml
 - includes/photoshopcc/site.yml
 - includes/3dsmax/site.yml
@@ -29,6 +30,7 @@ engines:
   tk-nuke: '@nuke.site'
   tk-nukestudio: '@nuke.site'
   tk-desktop: '@desktop.site'
+  tk-desktop2: '@desktop2.site'
   tk-shell: '@shell.site'
   tk-photoshopcc: '@photoshopcc.site'
   tk-3dsmaxplus: '@3dsmax.site'
