@@ -41,6 +41,12 @@ common.engines.tk-photoshopcc.location:
   name: tk-photoshopcc
   version: v1.6.3
 
+# After Effects
+common.engines.tk-aftereffectscc.location:
+  type: app_store
+  name: tk-aftereffectscc
+  version: v1.0.0
+
 # Flame
 common.engines.tk-flame.location:
   type: app_store

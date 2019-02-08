@@ -21,6 +21,7 @@ includes:
 - includes/desktop2/site.yml
 - includes/shell/site.yml
 - includes/photoshopcc/site.yml
+- includes/aftereffectscc/site.yml
 - includes/3dsmax/site.yml
 - includes/shotgun/all.yml
 
@@ -33,6 +34,7 @@ engines:
   tk-desktop2: '@desktop2.site'
   tk-shell: '@shell.site'
   tk-photoshopcc: '@photoshopcc.site'
+  tk-aftereffectscc: '@aftereffectscc.site'
   tk-3dsmaxplus: '@3dsmax.site'
   tk-shotgun: '@shotgun.all'
 

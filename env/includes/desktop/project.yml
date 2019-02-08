@@ -49,6 +49,7 @@ desktop.project:
     - '*Motion*'
     - '*Nuke*'
     - '*Photoshop*'
+    - '*After*'
     - 'CC*'
     - '*Softimage*'
     name: Creative Tools
