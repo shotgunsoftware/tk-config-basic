@@ -17,7 +17,7 @@ includes:
 - ../common/settings/tk-multi-publish2.yml
 
 
-aftereffectscc.apps.tk-multi-publish2:
+aftereffects.apps.tk-multi-publish2:
   help_url: "@common.apps.tk-multi-publish2.help_url"
   collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
   publish_plugins:
@@ -36,12 +36,9 @@ aftereffectscc.apps.tk-multi-publish2:
       hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_version.py"
       settings:
           Movie Output Module: AVI DV PAL 48kHz
-    - name: Upload project for review
-      hook: "{engine}/tk-multi-publish2/basic/upload_project_version.py"
-      settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
-aftereffectscc.apps.tk-multi-loader2:
+aftereffects.apps.tk-multi-loader2:
   action_mappings:
     After Effects Project: [add_to_project, add_to_comp]
     Maya Scene: [add_to_project, add_to_comp]
@@ -69,7 +66,7 @@ aftereffectscc.apps.tk-multi-loader2:
   publish_filters: [["sg_status_list", "is_not", null]]
   location: "@common.apps.tk-multi-loader2.location"
 
-aftereffectscc.apps.tk-multi-shotgunpanel:
+aftereffects.apps.tk-multi-shotgunpanel:
   shotgun_fields_hook: "{self}/shotgun_fields.py"
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
   action_mappings:

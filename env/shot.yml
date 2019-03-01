@@ -20,7 +20,7 @@ includes:
 - includes/flame/shot.yml
 - includes/shell/shot.yml
 - includes/photoshopcc/shot.yml
-- includes/aftereffectscc/shot.yml
+- includes/aftereffects/shot.yml
 - includes/3dsmax/shot.yml
 - includes/shotgun/all.yml
 
@@ -33,6 +33,6 @@ engines:
   tk-flame: '@flame.shot'
   tk-shell: '@shell.shot'
   tk-photoshopcc: '@photoshopcc.shot'
-  tk-aftereffectscc: '@aftereffectscc.shot'
+  tk-aftereffects: '@aftereffects.shot'
   tk-3dsmaxplus: '@3dsmax.shot'
   tk-shotgun: '@shotgun.all'

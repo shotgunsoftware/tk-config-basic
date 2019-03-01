@@ -17,7 +17,7 @@ includes:
 - ../common/apps.yml
 - apps.yml
 
-aftereffectscc.site:
+aftereffects.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
@@ -29,7 +29,7 @@ aftereffectscc.site:
         Rendered Image: [add_as_a_layer, open_file]
         Image: [add_as_a_layer, open_file]
         Texture: [add_as_a_layer, open_file]
-      actions_hook: '{self}/tk-aftereffectscc_actions.py'
+      actions_hook: '{self}/tk-aftereffects_actions.py'
       entities:
       - caption: Project
         type: Hierarchy
@@ -48,9 +48,9 @@ aftereffectscc.site:
       publish_filters: [["sg_status_list", "is_not", null]]
       location: "@common.apps.tk-multi-loader2.location"
 
-    tk-multi-shotgunpanel: '@aftereffectscc.apps.tk-multi-shotgunpanel'
+    tk-multi-shotgunpanel: '@aftereffects.apps.tk-multi-shotgunpanel'
 
   shelf_favorites: []
   debug_logging: true
-  location: "@common.engines.tk-aftereffectscc.location"
+  location: "@common.engines.tk-aftereffects.location"
   automatic_context_switch: false

@@ -21,7 +21,7 @@ includes:
 - includes/desktop2/all.yml
 - includes/shell/project.yml
 - includes/photoshopcc/project.yml
-- includes/aftereffectscc/project.yml
+- includes/aftereffects/project.yml
 - includes/3dsmax/project.yml
 - includes/shotgun/all.yml
 
@@ -34,7 +34,7 @@ engines:
   tk-desktop2: '@desktop2.all'
   tk-shell: '@shell.project'
   tk-photoshopcc: '@photoshopcc.project'
-  tk-aftereffectscc: '@aftereffectscc.project'
+  tk-aftereffects: '@aftereffects.project'
   tk-3dsmaxplus: '@3dsmax.project'
   tk-shotgun: '@shotgun.all'
   tk-flame: '@flame.project'
