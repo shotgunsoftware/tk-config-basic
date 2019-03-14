@@ -35,7 +35,7 @@ aftereffects.apps.tk-multi-publish2:
     - name: Upload for review
       hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_version.py"
       settings:
-          Movie Output Module: AVI DV PAL 48kHz
+          Movie Output Module: Lossless with Alpha
   location: "@common.apps.tk-multi-publish2.location"
 
 aftereffects.apps.tk-multi-loader2:
