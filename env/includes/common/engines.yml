@@ -21,25 +21,25 @@ common.engines.tk-3dsmaxplus.location:
 common.engines.tk-houdini.location:
   type: app_store
   name: tk-houdini
-  version: v1.6.0
+  version: v1.6.1
 
 # Maya
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
-  version: v0.9.6
+  version: v0.9.7
 
 # Nuke
 common.engines.tk-nuke.location:
   type: app_store
   name: tk-nuke
-  version: v0.11.5
+  version: v0.12.0
 
 # Photoshop
 common.engines.tk-photoshopcc.location:
   type: app_store
   name: tk-photoshopcc
-  version: v1.7.1
+  version: v1.7.2
 
 # After Effects
 common.engines.tk-aftereffects.location:
