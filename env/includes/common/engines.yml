@@ -51,7 +51,7 @@ common.engines.tk-aftereffects.location:
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
-  version: v1.14.9
+  version: v1.15.1
 
 # Desktop
 common.engines.tk-desktop.location:
