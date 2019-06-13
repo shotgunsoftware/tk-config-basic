@@ -61,9 +61,10 @@ common.engines.tk-desktop.location:
 
 # Desktop2
 common.engines.tk-desktop2.location:
-  type: app_store
-  name: tk-desktop2
-  version: v1.1.0
+  type: git_branch
+  branch: master
+  path: https://github.com/shotgunsoftware/tk-desktop2.git
+  version: 3bfe3d4835ef757fb2365bc07b6b5a329d744b35
 
 # Shell
 common.engines.tk-shell.location:
