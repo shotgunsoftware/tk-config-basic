@@ -64,7 +64,9 @@ common.engines.tk-desktop2.location:
   type: git_branch
   branch: VMR-2223-open-from-web
   path: https://github.com/shotgunsoftware/tk-desktop2.git
-  version: 3bfe3d4835ef757fb2365bc07b6b5a329d744b35
+  version: 49c31c03ffa8eafb45d6834f29b689d0ff245bca
+  #type: dev
+  #path: /Users/ohrstrm/dev/tk-desktop2
 
 # Shell
 common.engines.tk-shell.location:
