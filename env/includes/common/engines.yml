@@ -53,6 +53,13 @@ common.engines.tk-flame.location:
   name: tk-flame
   version: v1.15.3
 
+# Alias
+common.engines.tk-alias.location:
+  type: git_branch
+  branch: SHOT-3055
+  path: 'git@git.autodesk.com:shotgun-for-automotive/tk-alias.git'
+  version: '039bf71433ecda0932db31092d1c01e40852ab30'
+
 # Desktop
 common.engines.tk-desktop.location:
   type: app_store

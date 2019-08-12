@@ -23,6 +23,7 @@ includes:
 - includes/photoshopcc/site.yml
 - includes/aftereffects/site.yml
 - includes/3dsmax/site.yml
+- includes/alias/site.yml
 - includes/shotgun/all.yml
 
 engines:
