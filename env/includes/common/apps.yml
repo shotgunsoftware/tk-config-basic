@@ -43,7 +43,6 @@ common.apps.tk-multi-publish2.location:
   path: 'https://github.com/barbara-darkshot/tk-multi-publish2.git'
   version: '7200d358bc4e21d51e6f9f71536b0f932fc95e96'
 
-
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
@@ -52,7 +51,7 @@ common.apps.tk-multi-loader2.location:
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
-  version: v1.6.3
+  version: v1.6.4
 
 common.apps.tk-multi-launchapp.location:
   type: app_store
