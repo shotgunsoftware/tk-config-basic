@@ -57,8 +57,13 @@ common.engines.tk-flame.location:
 common.engines.tk-alias.location:
   type: git_branch
   branch: master
-  path: 'https://github.com/shotgunsoftware/tk-alias.git'
-  version: '12b43246a97c62c7565aebe75fb512507e84ffa9'
+  path: "https://github.com/shotgunsoftware/tk-alias.git"
+  version: "b78f35b77dc32b746a342545d1af19336de0d046"
+
+# Alias
+common.engines.tk-vred.location:
+  type: dev
+  path: "Y:\\SGTK\\devs\\tk-vred"
 
 # Desktop
 common.engines.tk-desktop.location:
