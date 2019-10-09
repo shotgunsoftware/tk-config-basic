@@ -24,16 +24,14 @@ alias.site:
 
     tk-multi-loader2:
       action_mappings:
-        Alias: [import]
-        WREF Translation: [reference]
-        IGES Translation: [import]
-        IGS Translation: [import]
-        STEP Translation: [import]
-        STP Translation: [import]
-        STL Translation: [import]
-        JT Translation: [import]
-        CATPart Translation: [import]
-        FBX Translation: [import]
+        Alias File: [import]
+        Wref File: [reference]
+        Igs File: [import]
+        Stp File: [import]
+        Stl File: [import]
+        Jt File: [import]
+        CATPart File: [import]
+        Fbx File: [import]
         Image: [texture_node]
         Photoshop Image: [texture_node]
       actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
