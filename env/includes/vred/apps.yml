@@ -34,7 +34,7 @@ vred.apps.tk-multi-loader2:
     Stp File: [import]
     Stl File: [import]
     Jt File: [import]
-    CATPart File: [import]
+    Catpart File: [import]
     Fbx File: [import]
     VRED Scene: [load]
     Osb File: [import]
@@ -73,7 +73,7 @@ vred.apps.tk-multi-shotgunpanel:
     - actions: [import]
       filters: {published_file_type: Jt File}
     - actions: [import]
-      filters: {published_file_type: CATPart File}
+      filters: {published_file_type: Catpart File}
     - actions: [import]
       filters: {published_file_type: Fbx File}
     - actions: [load]

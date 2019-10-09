@@ -38,7 +38,7 @@ alias.apps.tk-multi-loader2:
     Stp File: [import]
     Stl File: [import]
     Jt File: [import]
-    CATPart File: [import]
+    Catpart File: [import]
     Fbx File: [import]
     Image: [texture_node]
     Photoshop Image: [texture_node]
@@ -79,7 +79,7 @@ alias.apps.tk-multi-shotgunpanel:
     - actions: [import]
       filters: {published_file_type: Jt File}
     - actions: [import]
-      filters: {published_file_type: CATPart File}
+      filters: {published_file_type: Catpart File}
     - actions: [import]
       filters: {published_file_type: Fbx File}
     - actions: [texture_node]
