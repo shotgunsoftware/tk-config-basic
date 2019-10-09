@@ -32,16 +32,14 @@ alias.apps.tk-multi-publish2:
 
 alias.apps.tk-multi-loader2:
   action_mappings:
-    Alias: [import]
-    WREF Translation: [reference]
-    IGES Translation: [import]
-    IGS Translation: [import]
-    STEP Translation: [import]
-    STP Translation: [import]
-    STL Translation: [import]
-    JT Translation: [import]
-    CATPart Translation: [import]
-    FBX Translation: [import]
+    Alias File: [import]
+    Wref File: [reference]
+    Igs File: [import]
+    Stp File: [import]
+    Stl File: [import]
+    Jt File: [import]
+    CATPart File: [import]
+    Fbx File: [import]
     Image: [texture_node]
     Photoshop Image: [texture_node]
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
@@ -69,25 +67,21 @@ alias.apps.tk-multi-shotgunpanel:
   action_mappings:
     PublishedFile:
     - actions: [import]
-      filters: {published_file_type: Alias}
+      filters: {published_file_type: Alias File}
     - actions: [reference]
-      filters: {published_file_type: WREF Translation}
+      filters: {published_file_type: Wref File}
     - actions: [import]
-      filters: {published_file_type: IGES Translation}
+      filters: {published_file_type: Igs File}
     - actions: [import]
-      filters: {published_file_type: IGS Translation}
+      filters: {published_file_type: Stp File}
     - actions: [import]
-      filters: {published_file_type: STEP Translation}
+      filters: {published_file_type: Stl File}
     - actions: [import]
-      filters: {published_file_type: STP Translation}
+      filters: {published_file_type: Jt File}
     - actions: [import]
-      filters: {published_file_type: STL Translation}
+      filters: {published_file_type: CATPart File}
     - actions: [import]
-      filters: {published_file_type: JT Translation}
-    - actions: [import]
-      filters: {published_file_type: CATPart Translation}
-    - actions: [import]
-      filters: {published_file_type: FBX Translation}
+      filters: {published_file_type: Fbx File}
     - actions: [texture_node]
       filters: {published_file_type: Image}
     - actions: [texture_node]
