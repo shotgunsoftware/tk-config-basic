@@ -22,6 +22,9 @@ vred.apps.tk-multi-publish2:
   publish_plugins:
   - '@common.settings.tk-multi-publish2.publish_file'
   - '@common.settings.tk-multi-publish2.upload_version'
+  - name: Begin file versioning
+    hook: "{engine}/tk-multi-publish2/basic/start_version_control.py"
+    settings: {}
   - name: Publish to Shotgun
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
