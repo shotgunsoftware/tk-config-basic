@@ -38,12 +38,9 @@ common.apps.tk-multi-setframerange:
 # locations for common apps
 
 common.apps.tk-multi-publish2.location:
-#  type: git_branch
-#  branch: SG-13576
-#  path: 'https://github.com/barbara-darkshot/tk-multi-publish2.git'
-#  version: '7200d358bc4e21d51e6f9f71536b0f932fc95e96'
-  type: dev
-  path: "Y:\\SGTK\\devs\\tk-multi-publish2"
+  type: app_store
+  name: tk-multi-publish2
+  version: v2.3.8
 
 common.apps.tk-multi-loader2.location:
   type: app_store

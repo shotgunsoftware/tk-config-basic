@@ -62,8 +62,10 @@ common.engines.tk-alias.location:
 
 # Alias
 common.engines.tk-vred.location:
-  type: dev
-  path: "Y:\\SGTK\\devs\\tk-vred"
+  type: git_branch
+  branch: SHOT-3056
+  path: "https://github.com/shotgunsoftware/tk-vred.git"
+  version: "e5bae874d70ab993e5233784b20a57d6abb69022"
 
 # Desktop
 common.engines.tk-desktop.location:
