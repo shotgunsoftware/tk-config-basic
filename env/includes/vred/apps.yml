@@ -28,6 +28,12 @@ vred.apps.tk-multi-publish2:
   - name: Publish to Shotgun
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
+  - name: Publish Rendering to Shotgun
+    hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_rendering.py"
+    settings: {}
+  - name: Upload for review
+    hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_version.py"
+    settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
 vred.apps.tk-multi-loader2:
