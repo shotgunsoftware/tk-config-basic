@@ -27,13 +27,13 @@ common.engines.tk-houdini.location:
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
-  version: v0.9.7
+  version: v0.9.8
 
 # Nuke
 common.engines.tk-nuke.location:
   type: app_store
   name: tk-nuke
-  version: v0.12.2
+  version: v0.12.3
 
 # Photoshop
 common.engines.tk-photoshopcc.location:
@@ -51,7 +51,7 @@ common.engines.tk-aftereffects.location:
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
-  version: v1.15.3
+  version: v1.15.4
 
 # Alias
 common.engines.tk-alias.location:
@@ -77,7 +77,7 @@ common.engines.tk-desktop.location:
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
-  version: v1.2.4
+  version: v1.2.5
 
 # Shell
 common.engines.tk-shell.location:
