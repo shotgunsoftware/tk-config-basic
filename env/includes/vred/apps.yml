@@ -45,7 +45,7 @@ vred.apps.tk-multi-loader2:
     Jt File: [import]
     Catpart File: [import]
     Fbx File: [import]
-    VRED Scene: [load]
+    VRED Scene: [import]
     Osb File: [import]
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   entities:
