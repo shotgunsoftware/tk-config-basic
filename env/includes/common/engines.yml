@@ -58,14 +58,14 @@ common.engines.tk-alias.location:
   type: git_branch
   branch: master
   path: "https://github.com/shotgunsoftware/tk-alias.git"
-  version: "9a82c9e7b84d3427da1ebebe625f096e0c702387"
+  version: "043d4106889a4583ff0f512569de032517b22c87"
 
 # Alias
 common.engines.tk-vred.location:
   type: git_branch
   branch: master
   path: "https://github.com/shotgunsoftware/tk-vred.git"
-  version: "5e49041dd552640f01c7d2883674bb49e4df2994"
+  version: "82140969af7f09435cdc4df99a9d7d0a1406d20b"
 
 # Desktop
 common.engines.tk-desktop.location:
