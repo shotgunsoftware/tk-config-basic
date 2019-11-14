@@ -56,13 +56,13 @@ common.engines.tk-flame.location:
 # Alias
 common.engines.tk-alias.location:
   type: app_store
-  name: tk-flame
+  name: tk-alias
   version: v2.0.3
 
 # Alias
 common.engines.tk-vred.location:
   type: app_store
-  name: tk-flame
+  name: tk-vred
   version: v2.0.2
 
 # Desktop
