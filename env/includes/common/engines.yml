@@ -59,7 +59,7 @@ common.engines.tk-alias.location:
   name: tk-alias
   version: v2.0.3
 
-# Alias
+# VRED
 common.engines.tk-vred.location:
   type: app_store
   name: tk-vred
