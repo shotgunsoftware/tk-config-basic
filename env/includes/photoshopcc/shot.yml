@@ -30,6 +30,8 @@ photoshopcc.shot:
 
     tk-multi-shotgunpanel: "@photoshopcc.apps.tk-multi-shotgunpanel"
 
+    tk-multi-submitreview: "@photoshopcc.apps.tk-multi-reviewsubmission"
+
   shelf_favorites: []
   debug_logging: true
   location: "@common.engines.tk-photoshopcc.location"

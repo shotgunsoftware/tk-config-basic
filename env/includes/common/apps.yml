@@ -57,6 +57,11 @@ common.apps.tk-multi-launchapp.location:
   name: tk-multi-launchapp
   version: v0.10.3
 
+common.apps.tk-multi-reviewsubmission.location:
+  type: app_store
+  name: tk-multi-reviewsubmission
+  version: v1.0.0-rc1
+  
 common.apps.tk-nuke-quickreview.location:
   type: app_store
   name: tk-nuke-quickreview
@@ -66,6 +71,8 @@ common.apps.tk-shotgun-launchfolder.location:
   type: app_store
   name: tk-shotgun-launchfolder
   version: v0.2.1
+
+
 
 # help urls
 
