@@ -12,10 +12,9 @@
 # locations for common engines
 
 # 3dsMax
-common.engines.tk-3dsmaxplus.location:
-  type: app_store
-  name: tk-3dsmaxplus
-  version: v0.5.8
+common.engines.tk-3dsmax.location:
+  type: dev
+  path: "$DEV_ROOT/gitlocal/tk-3dsmax"
 
 # Houdini
 common.engines.tk-houdini.location:

@@ -35,6 +35,6 @@ engines:
   tk-shell: '@shell.site'
   tk-photoshopcc: '@photoshopcc.site'
   tk-aftereffects: '@aftereffects.site'
-  tk-3dsmaxplus: '@3dsmax.site'
+  tk-3dsmax: '@3dsmax.site'
   tk-shotgun: '@shotgun.all'
 

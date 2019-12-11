@@ -38,7 +38,7 @@ includes:
     Image: [texture_node]
     Rendered Image: [texture_node]
     Texture: [texture_node]
-  actions_hook: '{self}/tk-3dsmaxplus_actions.py'
+  actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   download_thumbnails: true
   entities:
   - caption: Current Project
@@ -61,7 +61,7 @@ includes:
 
 3dsmax.apps.tk-multi-shotgunpanel:
   shotgun_fields_hook: '{self}/shotgun_fields.py'
-  actions_hook: '{self}/general_actions.py:{self}/tk-3dsmaxplus_actions.py'
+  actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
   action_mappings:
     PublishedFile:
     - actions: [import]

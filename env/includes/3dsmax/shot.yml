@@ -31,7 +31,7 @@ includes:
 
     tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
 
-  location: "@common.engines.tk-3dsmaxplus.location"
+  location: "@common.engines.tk-3dsmax.location"
   menu_favourites: []
   launch_builtin_plugins: [basic]
 
