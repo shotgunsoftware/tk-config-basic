@@ -53,6 +53,18 @@ common.engines.tk-flame.location:
   name: tk-flame
   version: v1.15.5
 
+# Alias
+common.engines.tk-alias.location:
+  type: app_store
+  name: tk-alias
+  version: v2.0.4
+
+# VRED
+common.engines.tk-vred.location:
+  type: app_store
+  name: tk-vred
+  version: v2.0.2
+
 # Desktop
 common.engines.tk-desktop.location:
   type: app_store
