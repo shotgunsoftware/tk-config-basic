@@ -25,6 +25,7 @@ includes:
 - includes/3dsmax/project.yml
 - includes/alias/project.yml
 - includes/vred/project.yml
+- includes/sketchbook/project.yml
 - includes/shotgun/all.yml
 
 engines:
@@ -42,3 +43,4 @@ engines:
   tk-flame: '@flame.project'
   tk-alias: '@alias.project'
   tk-vred: '@vred.project'
+  tk-sketchbook: '@sketchbook.project'
