@@ -1,0 +1,27 @@
+# Copyright (c) 2017 asset_stepgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the asset_stepgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the asset_stepgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by asset_stepgun Software Inc.
+#
+
+description: Toolkit configuration to be loaded whenever an association with a
+             asset_step has been established.
+
+includes:
+- includes/desktop2/all.yml
+- includes/shell/asset_step.yml
+- includes/maya/asset_step.yml
+- includes/photoshopcc/asset_step.yml
+- includes/shotgun/all.yml
+
+engines:
+  tk-desktop2: '@desktop2.all'
+  tk-shell: '@shell.asset_step'
+  tk-maya: '@maya.asset_step'
+  tk-photoshopcc: '@photoshopcc.asset_step'
+  tk-shotgun: '@shotgun.all'

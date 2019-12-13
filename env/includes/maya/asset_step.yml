@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -10,15 +10,14 @@
 #
 
 # this configuration defines the behavior of the Maya Integration when it
-# is running in its project level configuration
+# is running in its asset_step level configuration
 
 includes:
 - ../common/engines.yml
 - ../common/apps.yml
 - apps.yml
 
-
-maya.project:
+maya.asset_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
@@ -28,6 +27,8 @@ maya.project:
 
     tk-multi-shotgunpanel: '@maya.apps.tk-multi-shotgunpanel'
 
+    tk-multi-reviewsubmission: '@maya.apps.tk-multi-reviewsubmission'
+    
   location: "@common.engines.tk-maya.location"
   menu_favourites: []
   run_at_startup:

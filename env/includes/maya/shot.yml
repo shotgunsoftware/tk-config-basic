@@ -28,8 +28,6 @@ maya.shot:
     tk-multi-loader2: '@maya.apps.tk-multi-loader2'
 
     tk-multi-shotgunpanel: '@maya.apps.tk-multi-shotgunpanel'
-
-    tk-multi-reviewsubmission: '@maya.apps.tk-multi-reviewsubmission'
     
   location: "@common.engines.tk-maya.location"
   menu_favourites: []
