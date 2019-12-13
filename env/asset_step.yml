@@ -14,14 +14,25 @@ description: Toolkit configuration to be loaded whenever an association with a
 
 includes:
 - includes/desktop2/all.yml
-- includes/shell/asset_step.yml
+- includes/houdini/asset_step.yml
 - includes/maya/asset_step.yml
+- includes/nuke/asset_step.yml
+- includes/flame/asset_step.yml
+- includes/shell/asset_step.yml
 - includes/photoshopcc/asset_step.yml
+- includes/aftereffects/asset_step.yml
+- includes/3dsmax/asset_step.yml
 - includes/shotgun/all.yml
 
 engines:
   tk-desktop2: '@desktop2.all'
-  tk-shell: '@shell.asset_step'
+  tk-houdini: '@houdini.asset_step'
   tk-maya: '@maya.asset_step'
+  tk-nuke: '@nuke.asset_step'
+  tk-nukestudio: '@nukestudio.asset_step'
+  tk-flame: '@flame.asset_step'
+  tk-shell: '@shell.asset_step'
   tk-photoshopcc: '@photoshopcc.asset_step'
+  tk-aftereffects: '@aftereffects.asset_step'
+  tk-3dsmaxplus: '@3dsmax.asset_step'
   tk-shotgun: '@shotgun.all'

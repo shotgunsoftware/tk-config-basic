@@ -1,0 +1,61 @@
+# Copyright (c) 2017 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+# this configuration defines the behavior of the Nuke Integration when it
+# is running in its shot_step level configuration
+
+includes:
+- ../common/engines.yml
+- ../common/apps.yml
+- apps.yml
+
+
+nuke.shot_step:
+  apps:
+    tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
+
+    tk-multi-publish2: '@nuke.apps.tk-multi-publish2'
+
+    tk-multi-loader2: '@nuke.apps.tk-multi-loader2'
+
+    tk-multi-shotgunpanel: '@nuke.apps.tk-multi-shotgunpanel'
+
+    tk-nuke-quickreview: '@nuke.apps.tk-nuke-quickreview'
+
+  location: "@common.engines.tk-nuke.location"
+  menu_favourites: []
+  run_at_startup:
+  - {app_instance: tk-multi-shotgunpanel, name: ''}
+  launch_builtin_plugins: [basic]
+  automatic_context_switch: false
+
+nukestudio.shot_step:
+  apps:
+    tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
+
+    tk-multi-publish2: '@nuke.apps.tk-multi-publish2'
+
+    tk-multi-loader2: '@nukestudio.apps.tk-multi-loader2'
+
+    tk-multi-shotgunpanel: '@nukestudio.apps.tk-multi-shotgunpanel'
+
+    tk-nuke-quickreview: '@nuke.apps.tk-nuke-quickreview'
+
+  location: "@common.engines.tk-nuke.location"
+  menu_favourites: []
+  run_at_startup:
+  - {app_instance: tk-multi-shotgunpanel, name: ''}
+  launch_builtin_plugins: [basic]
+  automatic_context_switch: false
