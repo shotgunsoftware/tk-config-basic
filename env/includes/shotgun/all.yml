@@ -34,6 +34,9 @@ shotgun.all:
       hook_before_register_command: "{config}/tk-multi-launchapp/before_register_command.py"
       location: "@common.apps.tk-multi-launchapp.location"
 
+    tk-shotgun-folders:
+      location: "@common.apps.tk-shotgun-folders.location"
+
   location: "@common.engines.tk-shotgun.location"
 
 shotgun.publishedfile:

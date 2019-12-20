@@ -13,3 +13,13 @@
 # to the correct location.
 
 # the zero configuration setup does not define any storage points.
+
+shotgun_storage:
+  type: navchain
+  description: A top-level root folder for production data.
+
+  project_mac_field: sg_mac_root
+  project_linux_field: sg_linux_root
+  project_windows_field: sg_windows_root
+
+  default: true

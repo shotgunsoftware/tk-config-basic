@@ -37,6 +37,11 @@ common.apps.tk-multi-setframerange:
 
 # locations for common apps
 
+common.apps.tk-multi-workfiles2.location:
+  type: app_store
+  name: tk-multi-workfiles2
+  version: v0.11.14
+
 common.apps.tk-multi-publish2.location:
   type: app_store
   name: tk-multi-publish2
@@ -66,6 +71,11 @@ common.apps.tk-shotgun-launchfolder.location:
   type: app_store
   name: tk-shotgun-launchfolder
   version: v0.2.1
+
+common.apps.tk-shotgun-folders.location:
+  type: app_store
+  name: tk-shotgun-folders
+  version: v0.1.7
 
 # help urls
 

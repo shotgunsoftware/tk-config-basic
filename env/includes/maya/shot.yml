@@ -20,17 +20,16 @@ includes:
 maya.shot:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
-
     tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
-
     tk-multi-publish2: '@maya.apps.tk-multi-publish2'
-
     tk-multi-loader2: '@maya.apps.tk-multi-loader2'
-
     tk-multi-shotgunpanel: '@maya.apps.tk-multi-shotgunpanel'
+    tk-multi-workfiles2: "@maya.apps.tk-multi-workfiles2.launch_at_startup"
 
   location: "@common.engines.tk-maya.location"
-  menu_favourites: []
+  menu_favourites:
+  - {app_instance: tk-multi-workfiles2, name: File Open...}
+
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]

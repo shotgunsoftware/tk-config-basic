@@ -16,6 +16,32 @@ includes:
 - ../common/apps.yml
 - ../common/settings/tk-multi-publish2.yml
 
+maya.apps.tk-multi-workfiles2.launch_at_startup:
+  template_publish: maya_publish
+  template_publish_area: publish_area_maya
+  template_work: maya_work
+  template_work_area: work_area_maya
+  entities:
+  - caption: Assets
+    entity_type: Asset
+    hierarchy: [sg_asset_type, code]
+    filters:
+    sub_hierarchy:
+      entity_type: Task
+      filters:
+      link_field: entity
+      hierarchy: [step]
+  - caption: Shots
+    entity_type: Shot
+    filters:
+    hierarchy: [sg_sequence, code]
+    sub_hierarchy:
+      entity_type: Task
+      filters:
+      link_field: entity
+      hierarchy: [step]
+  location: '@common.apps.tk-multi-workfiles2.location'
+
 maya.apps.tk-multi-publish2:
   help_url: "@common.apps.tk-multi-publish2.help_url"
   collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
