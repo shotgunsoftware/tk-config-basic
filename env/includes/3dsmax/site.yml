@@ -18,7 +18,7 @@ includes:
 - apps.yml
 
 
-3dsmax.site:
+3dsmaxplus.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
@@ -50,8 +50,46 @@ includes:
       publish_filters: [["sg_status_list", "is_not", null]]
       location: "@common.apps.tk-multi-loader2.location"
 
-    tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
+    tk-multi-shotgunpanel: '@3dsmaxplus.apps.tk-multi-shotgunpanel'
 
   location: "@common.engines.tk-3dsmaxplus.location"
+  menu_favourites: []
+  launch_builtin_plugins: [basic]
+
+3dsmax.site:
+  apps:
+    tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
+    tk-multi-loader2:
+      action_mappings:
+        3dsmax Scene: [import, reference]
+        Alembic Cache: [import]
+        Image: [texture_node]
+        Rendered Image: [texture_node]
+        Texture: [texture_node]
+      actions_hook: '{engine}/tk-multi-loader2/basic/scene_actions.py'
+      entities:
+      - caption: Project
+        type: Hierarchy
+        root:
+        publish_filters: []
+      - caption: My Tasks
+        type: Query
+        entity_type: Task
+        filters:
+        - [task_assignees, is, '{context.user}']
+        hierarchy: [project, entity, content]
+      # ignore publishes without a status. with zero config, it is very easy
+      # to publish the same path multiple times. the default zero config publish
+      # plugins will clear the status of previous publishes of the same path.
+      # this filter means only the latest publish will be displayed.
+      publish_filters: [["sg_status_list", "is_not", null]]
+      location: "@common.apps.tk-multi-loader2.location"
+
+    tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
+
+  location: "@common.engines.tk-3dsmax.location"
   menu_favourites: []
   launch_builtin_plugins: [basic]
