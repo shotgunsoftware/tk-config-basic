@@ -18,7 +18,7 @@ includes:
 
 # tk-3dsmaxplus app settings
 
-3dsmaxplus.apps.tk-multi-publish2: &3dsmaxplus.apps.tk-multi-publish2
+3dsmaxplus.apps.tk-multi-publish2: &3dsmaxplus_apps_tk-multi-publish2
   help_url: "@common.apps.tk-multi-publish2.help_url"
   collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
   publish_plugins:
@@ -32,7 +32,7 @@ includes:
       settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
-3dsmaxplus.apps.tk-multi-loader2: &3dsmaxplus.apps.tk-multi-loader2
+3dsmaxplus.apps.tk-multi-loader2: &3dsmaxplus_apps_tk-multi-loader2
   action_mappings:
     3dsmax Scene: [import, reference]
     Alembic Cache: [import]
@@ -60,7 +60,7 @@ includes:
   publish_filters: [["sg_status_list", "is_not", null]]
   location: "@common.apps.tk-multi-loader2.location"
 
-3dsmaxplus.apps.tk-multi-shotgunpanel: &3dsmaxplus.apps.tk-multi-shotgunpanel
+3dsmaxplus.apps.tk-multi-shotgunpanel: &3dsmaxplus_apps_tk-multi-shotgunpanel
   shotgun_fields_hook: '{self}/shotgun_fields.py'
   actions_hook: '{self}/general_actions.py:{self}/tk-3dsmaxplus_actions.py'
   action_mappings:
@@ -93,12 +93,12 @@ includes:
 
 # tk-3dsmax app settings
 
-3dsmax.apps.tk-multi-publish2: *3dsmaxplus.apps.tk-multi-publish2
+3dsmax.apps.tk-multi-publish2: *3dsmaxplus_apps_tk-multi-publish2
 
 3dsmax.apps.tk-multi-loader2:
-  <<: *3dsmax.apps.tk-multi-loader2
+  <<: *3dsmaxplus_apps_tk-multi-loader2
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
 
 3dsmax.apps.tk-multi-shotgunpanel:
-  <<: *3dsmax.apps.tk-multi-shotgunpanel
+  <<: *3dsmaxplus_apps_tk-multi-shotgunpanel
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
