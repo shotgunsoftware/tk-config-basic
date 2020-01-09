@@ -31,4 +31,3 @@ class PickEnvironment(Hook):
             return "project"
 
         return "site"
-

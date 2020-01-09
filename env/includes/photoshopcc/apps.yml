@@ -83,4 +83,3 @@ photoshopcc.apps.tk-multi-shotgunpanel:
       filters: {}
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"
-

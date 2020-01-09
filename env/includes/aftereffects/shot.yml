@@ -34,4 +34,3 @@ aftereffects.shot:
   debug_logging: true
   location: "@common.engines.tk-aftereffects.location"
   automatic_context_switch: false
-
