@@ -92,13 +92,10 @@ includes:
   location: "@common.apps.tk-multi-shotgunpanel.location"
 
 # tk-3dsmax app settings
-
 3dsmax.apps.tk-multi-publish2: *3dsmaxplus_apps_tk-multi-publish2
-
 3dsmax.apps.tk-multi-loader2:
   <<: *3dsmaxplus_apps_tk-multi-loader2
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
-
 3dsmax.apps.tk-multi-shotgunpanel:
   <<: *3dsmaxplus_apps_tk-multi-shotgunpanel
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"

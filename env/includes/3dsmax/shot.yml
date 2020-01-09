@@ -42,11 +42,8 @@ includes:
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
     tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
-
     tk-multi-publish2: '@3dsmax.apps.tk-multi-publish2'
-
     tk-multi-loader2: '@3dsmax.apps.tk-multi-loader2'
-
     tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
 
   location: "@common.engines.tk-3dsmax.location"

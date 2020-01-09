@@ -33,17 +33,14 @@ includes:
   menu_favourites: []
   launch_builtin_plugins: [basic]
 
-
 3dsmax.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
-
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
     tk-multi-publish2: '@3dsmax.apps.tk-multi-publish2'
 
     tk-multi-loader2: '@3dsmax.apps.tk-multi-loader2'
-
     tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
 
   location: "@common.engines.tk-3dsmax.location"
