@@ -34,7 +34,3 @@ includes:
   location: "@common.engines.tk-3dsmaxplus.location"
   menu_favourites: []
   launch_builtin_plugins: [basic]
-
-
-
-

@@ -17,5 +17,3 @@ common.settings.tk-multi-publish2.upload_version:
   name: Upload for review
   hook: "{self}/upload_version.py"
   settings: {}
-
-
