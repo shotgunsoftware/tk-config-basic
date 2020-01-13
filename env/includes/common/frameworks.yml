@@ -49,7 +49,7 @@ frameworks:
       name: tk-framework-desktopserver
   tk-framework-desktopclient_v0.x.x:
     location:
-      version: v0.0.7
+      version: v0.0.8
       type: app_store
       name: tk-framework-desktopclient
       
