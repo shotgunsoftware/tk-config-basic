@@ -87,6 +87,7 @@ photoshopcc.apps.tk-multi-shotgunpanel:
 photoshopcc.apps.tk-multi-reviewsubmission:
   display_name: Send for review
   render_media_hook: '{self}/render_media.py:{self}/{engine_name}/render_media.py'
+  submitter_hook: '{self}/submitter_create.py'
   movie_width: 1920
   movie_height: 1080
   location: "@common.apps.tk-multi-reviewsubmission.location"
