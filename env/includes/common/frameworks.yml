@@ -24,12 +24,12 @@ frameworks:
       name: tk-framework-qtwidgets
   tk-framework-shotgunutils_v4.x.x:
     location:
-      version: v4.4.15
+      version: v5.7.0
       type: app_store
       name: tk-framework-shotgunutils
   tk-framework-shotgunutils_v5.x.x:
     location:
-      version: v5.6.2
+      version: v5.7.0
       type: app_store
       name: tk-framework-shotgunutils
   tk-framework-adminui_v0.x.x:
