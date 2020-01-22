@@ -9,14 +9,14 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this include configuration defines the common apps of the Maya Integration when it
-# is running in either its project or shot level configuration
+# this include configuration defines the common apps of the Alias Integration when it
+# is running in either its project or asset level configuration
 
 includes:
 - ../common/apps.yml
 - ../common/settings/tk-multi-publish2.yml
 
-maya.apps.tk-multi-publish2:
+alias.apps.tk-multi-publish2:
   help_url: "@common.apps.tk-multi-publish2.help_url"
   collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
   publish_plugins:
@@ -30,15 +30,19 @@ maya.apps.tk-multi-publish2:
     settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
-maya.apps.tk-multi-loader2:
+alias.apps.tk-multi-loader2:
   action_mappings:
-    Alembic Cache: [reference, import]
-    Image: [texture_node, image_plane]
-    Maya Scene: [reference, import]
-    Photoshop Image: [texture_node, image_plane]
-    Rendered Image: [texture_node, image_plane]
-    Texture: [texture_node, image_plane]
-  actions_hook: '{self}/tk-maya_actions.py'
+    Alias File: [import]
+    Wref File: [reference]
+    Igs File: [import]
+    Stp File: [import]
+    Stl File: [import]
+    Jt File: [import]
+    Catpart File: [import]
+    Fbx File: [import]
+    Image: [texture_node]
+    Photoshop Image: [texture_node]
+  actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   entities:
   - caption: Current Project
     type: Hierarchy
@@ -58,22 +62,30 @@ maya.apps.tk-multi-loader2:
   publish_filters: [["sg_status_list", "is_not", null]]
   location: "@common.apps.tk-multi-loader2.location"
 
-maya.apps.tk-multi-shotgunpanel:
-  actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
+alias.apps.tk-multi-shotgunpanel:
+  actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
   action_mappings:
     PublishedFile:
-    - actions: [reference, import]
-      filters: {published_file_type: Alembic Cache}
-    - actions: [texture_node, image_plane]
+    - actions: [import]
+      filters: {published_file_type: Alias File}
+    - actions: [reference]
+      filters: {published_file_type: Wref File}
+    - actions: [import]
+      filters: {published_file_type: Igs File}
+    - actions: [import]
+      filters: {published_file_type: Stp File}
+    - actions: [import]
+      filters: {published_file_type: Stl File}
+    - actions: [import]
+      filters: {published_file_type: Jt File}
+    - actions: [import]
+      filters: {published_file_type: Catpart File}
+    - actions: [import]
+      filters: {published_file_type: Fbx File}
+    - actions: [texture_node]
       filters: {published_file_type: Image}
-    - actions: [reference, import]
-      filters: {published_file_type: Maya Scene}
-    - actions: [texture_node, image_plane]
+    - actions: [texture_node]
       filters: {published_file_type: Photoshop Image}
-    - actions: [texture_node, image_plane]
-      filters: {published_file_type: Rendered Image}
-    - actions: [texture_node, image_plane]
-      filters: {published_file_type: Texture}
     - actions: [publish_clipboard]
       filters: {}
     Task:
@@ -84,11 +96,3 @@ maya.apps.tk-multi-shotgunpanel:
       filters: {}
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"
-
-maya.apps.tk-multi-reviewsubmission:
-  display_name: Playblast to Create
-  render_media_hook: '{self}/render_media.py:{self}/{engine_name}/render_media.py'
-  submitter_hook: '{self}/submitter_create.py'
-  movie_width: 1920
-  movie_height: 1080
-  location: "@common.apps.tk-multi-reviewsubmission.location"

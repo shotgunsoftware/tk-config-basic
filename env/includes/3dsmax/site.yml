@@ -18,13 +18,13 @@ includes:
 - apps.yml
 
 
-3dsmax.site:
+3dsmaxplus.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
-    tk-multi-loader2:
+    tk-multi-loader2: &3dsmaxplus_site_tk-multi-loader2
       action_mappings:
         3dsmax Scene: [import, reference]
         Alembic Cache: [import]
@@ -50,8 +50,24 @@ includes:
       publish_filters: [["sg_status_list", "is_not", null]]
       location: "@common.apps.tk-multi-loader2.location"
 
-    tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
+    tk-multi-shotgunpanel: '@3dsmaxplus.apps.tk-multi-shotgunpanel'
 
   location: "@common.engines.tk-3dsmaxplus.location"
+  menu_favourites: []
+  launch_builtin_plugins: [basic]
+
+3dsmax.site:
+  apps:
+    tk-multi-about: '@common.apps.tk-multi-about'
+
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
+    tk-multi-loader2:
+      <<: *3dsmaxplus_site_tk-multi-loader2
+      actions_hook: '{engine}/tk-multi-loader2/basic/scene_actions.py'
+
+    tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
+
+  location: "@common.engines.tk-3dsmax.location"
   menu_favourites: []
   launch_builtin_plugins: [basic]

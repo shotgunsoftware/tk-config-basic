@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Nuke Integration when it
+# this configuration defines the behavior of the VRED Integration when it
 # is running in its site level configuration
 
 includes:
@@ -17,24 +17,23 @@ includes:
 - ../common/apps.yml
 - apps.yml
 
-
-nuke.site:
+vred.site:
   apps:
+
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-loader2:
       action_mappings:
-        Alembic Cache: [read_node]
-        Flame Render: [read_node]
-        Flame Quicktime: [read_node]
-        Image: [read_node]
-        Movie: [read_node]
-        Nuke Script: [script_import]
-        NukeStudio Project: [open_project]
-        Photoshop Image: [read_node]
-        Rendered Image: [read_node]
-        Texture: [read_node]
-      actions_hook: '{self}/tk-nuke_actions.py'
+        Alias File: [import]
+        Igs File: [import]
+        Stp File: [import]
+        Stl File: [import]
+        Jt File: [import]
+        Catpart File: [import]
+        Fbx File: [import]
+        VRED Scene: [import]
+        Osb File: [import]
+      actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
       entities:
       - caption: Project
         type: Hierarchy
@@ -53,12 +52,11 @@ nuke.site:
       publish_filters: [["sg_status_list", "is_not", null]]
       location: "@common.apps.tk-multi-loader2.location"
 
-    tk-multi-shotgunpanel: '@nuke.apps.tk-multi-shotgunpanel'
+    tk-multi-shotgunpanel: '@vred.apps.tk-multi-shotgunpanel'
 
-
-  location: "@common.engines.tk-nuke.location"
-  automatic_context_switch: false
+  location: "@common.engines.tk-vred.location"
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
+  automatic_context_switch: false

@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Houdini Integration when it
+# this configuration defines the behavior of the VRED Integration when it
 # is running in its project level configuration
 
 includes:
@@ -18,17 +18,17 @@ includes:
 - apps.yml
 
 
-houdini.project:
+vred.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
-    tk-multi-publish2: '@houdini.apps.tk-multi-publish2'
+    tk-multi-publish2: '@vred.apps.tk-multi-publish2'
 
-    tk-multi-loader2: '@houdini.apps.tk-multi-loader2'
+    tk-multi-loader2: '@vred.apps.tk-multi-loader2'
 
-    tk-multi-shotgunpanel: '@houdini.apps.tk-multi-shotgunpanel'
+    tk-multi-shotgunpanel: '@vred.apps.tk-multi-shotgunpanel'
 
-  location: "@common.engines.tk-houdini.location"
+  location: "@common.engines.tk-vred.location"
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
