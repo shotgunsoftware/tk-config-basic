@@ -28,12 +28,10 @@ maya.asset_step:
     tk-multi-shotgunpanel: '@maya.apps.tk-multi-shotgunpanel'
 
     tk-multi-reviewsubmission: '@maya.apps.tk-multi-reviewsubmission'
-    
+
   location: "@common.engines.tk-maya.location"
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
   automatic_context_switch: false
-
-

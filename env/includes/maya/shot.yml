@@ -28,7 +28,7 @@ maya.shot:
     tk-multi-loader2: '@maya.apps.tk-multi-loader2'
 
     tk-multi-shotgunpanel: '@maya.apps.tk-multi-shotgunpanel'
-    
+
   location: "@common.engines.tk-maya.location"
   menu_favourites: []
   run_at_startup:
