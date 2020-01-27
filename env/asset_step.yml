@@ -34,5 +34,6 @@ engines:
   tk-shell: '@shell.asset_step'
   tk-photoshopcc: '@photoshopcc.asset_step'
   tk-aftereffects: '@aftereffects.asset_step'
-  tk-3dsmaxplus: '@3dsmax.asset_step'
+  tk-3dsmaxplus: '@3dsmaxplus.asset_step'
+  tk-3dsmax: '@3dsmax.asset_step'
   tk-shotgun: '@shotgun.all'
