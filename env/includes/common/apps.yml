@@ -60,7 +60,7 @@ common.apps.tk-multi-launchapp.location:
 common.apps.tk-multi-reviewsubmission.location:
   type: app_store
   name: tk-multi-reviewsubmission
-  version: v1.0.0-rc6
+  version: v1.0.0
   
 common.apps.tk-nuke-quickreview.location:
   type: app_store
