@@ -24,8 +24,17 @@ class PickEnvironment(Hook):
         if context.source_entity and context.source_entity["type"] == "PublishedFile":
             return "publishedfile"
 
-        if context.entity and context.entity["type"] == "Shot":
-            return "shot"
+        if context.entity and context.step is None:
+            # We have an entity but no step.
+            if context.entity["type"] == "Shot":
+                return "shot"
+
+        if context.entity and context.task:
+            # We have an entity and a task.
+            if context.entity["type"] == "Shot":
+                return "shot_step"
+            if context.entity["type"] == "Asset":
+                return "asset_step"
 
         if context.project:
             return "project"

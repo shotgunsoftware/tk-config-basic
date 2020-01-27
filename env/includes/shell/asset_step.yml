@@ -9,17 +9,17 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Flame Integration when it
-# is running in its shot level configuration
+# this configuration defines the behavior of the Tank command when it
+# is running in a asset_step environment
 
 includes:
 - ../common/engines.yml
+- apps.yml
 
-
-# the flame integration is built into flame
-# we only include the engine here so that we can launch flame
-# from shotgun desktop and shotgun.
-flame.shot:
+shell.asset_step:
   apps:
-  location: "@common.engines.tk-flame.location"
-  use_builtin_plugin: true
+    tk-multi-launchapp: '@shell.apps.tk-multi-launchapp'
+
+    tk-multi-publish2: '@shell.apps.tk-multi-publish2'
+
+  location: "@common.engines.tk-shell.location"

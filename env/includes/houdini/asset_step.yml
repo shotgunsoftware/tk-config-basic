@@ -9,29 +9,29 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Maya Integration when it
-# is running in its shot level configuration
+# this configuration defines the behavior of the Houdini Integration when it
+# is running in its asset_step level configuration
 
 includes:
 - ../common/engines.yml
 - ../common/apps.yml
 - apps.yml
 
-maya.shot:
+
+houdini.asset_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
-    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
+    tk-multi-publish2: '@houdini.apps.tk-multi-publish2'
 
-    tk-multi-publish2: '@maya.apps.tk-multi-publish2'
+    tk-multi-loader2: '@houdini.apps.tk-multi-loader2'
 
-    tk-multi-loader2: '@maya.apps.tk-multi-loader2'
+    tk-multi-shotgunpanel: '@houdini.apps.tk-multi-shotgunpanel'
 
-    tk-multi-shotgunpanel: '@maya.apps.tk-multi-shotgunpanel'
-    
-  location: "@common.engines.tk-maya.location"
+  location: "@common.engines.tk-houdini.location"
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
   automatic_context_switch: false
+
