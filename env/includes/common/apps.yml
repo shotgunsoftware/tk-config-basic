@@ -62,6 +62,11 @@ common.apps.tk-multi-reviewsubmission.location:
   name: tk-multi-reviewsubmission
   version: v1.0.0
 
+common.apps.tk-multi-setframerange.location:
+  version: v0.4.0
+  type: app_store
+  name: tk-multi-setframerange
+
 common.apps.tk-nuke-quickreview.location:
   type: app_store
   name: tk-nuke-quickreview

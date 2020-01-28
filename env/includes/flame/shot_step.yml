@@ -23,4 +23,3 @@ flame.shot_step:
   apps:
   location: "@common.engines.tk-flame.location"
   use_builtin_plugin: true
-

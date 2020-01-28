@@ -29,7 +29,7 @@ photoshopcc.project:
     tk-multi-loader2: "@photoshopcc.apps.tk-multi-loader2"
 
     tk-multi-shotgunpanel: "@photoshopcc.apps.tk-multi-shotgunpanel"
-    
+
   shelf_favorites: []
   debug_logging: true
   location: "@common.engines.tk-photoshopcc.location"

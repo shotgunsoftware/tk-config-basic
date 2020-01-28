@@ -92,6 +92,9 @@ includes:
   location: "@common.apps.tk-multi-shotgunpanel.location"
 
 # tk-3dsmax app settings
+3dsmax.apps.tk-multi-setframerange:
+  hook_frame_operation: "{engine}/tk-multi-setframerange/basic/frame_operations.py"
+  location: "@common.apps.tk-multi-setframerange.location"
 3dsmax.apps.tk-multi-publish2: *3dsmaxplus_apps_tk-multi-publish2
 3dsmax.apps.tk-multi-loader2:
   <<: *3dsmaxplus_apps_tk-multi-loader2

@@ -28,7 +28,7 @@ includes:
     tk-multi-loader2: '@3dsmaxplus.apps.tk-multi-loader2'
 
     tk-multi-shotgunpanel: '@3dsmaxplus.apps.tk-multi-shotgunpanel'
-    
+
   location: "@common.engines.tk-3dsmaxplus.location"
   menu_favourites: []
   launch_builtin_plugins: [basic]
@@ -45,7 +45,7 @@ includes:
     tk-multi-loader2: '@3dsmax.apps.tk-multi-loader2'
 
     tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
-    
+
   location: "@common.engines.tk-3dsmax.location"
   menu_favourites: []
   launch_builtin_plugins: [basic]
