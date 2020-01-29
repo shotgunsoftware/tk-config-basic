@@ -21,8 +21,6 @@ photoshopcc.shot_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
-    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
-
     tk-multi-publish2: '@photoshopcc.apps.tk-multi-publish2'
 
     tk-multi-loader2: '@photoshopcc.apps.tk-multi-loader2'
