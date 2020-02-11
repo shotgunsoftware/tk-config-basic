@@ -25,7 +25,7 @@ common.apps.tk-multi-about:
 
 common.apps.tk-multi-pythonconsole:
   location:
-    version: v1.1.2
+    version: v1.2.0
     type: app_store
     name: tk-multi-pythonconsole
 
