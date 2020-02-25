@@ -60,7 +60,7 @@ common.apps.tk-multi-launchapp.location:
 common.apps.tk-multi-reviewsubmission.location:
   type: app_store
   name: tk-multi-reviewsubmission
-  version: v1.0.1
+  version: v1.0.2
 
 common.apps.tk-multi-setframerange.location:
   version: v0.4.0
