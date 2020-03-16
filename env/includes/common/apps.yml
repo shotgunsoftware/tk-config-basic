@@ -31,7 +31,7 @@ common.apps.tk-multi-pythonconsole:
 
 common.apps.tk-multi-setframerange:
   location:
-    version: v0.4.0
+    version: v0.4.1
     type: app_store
     name: tk-multi-setframerange
 
@@ -63,7 +63,7 @@ common.apps.tk-multi-reviewsubmission.location:
   version: v1.0.2
 
 common.apps.tk-multi-setframerange.location:
-  version: v0.4.0
+  version: v0.4.1
   type: app_store
   name: tk-multi-setframerange
 
