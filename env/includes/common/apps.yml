@@ -55,7 +55,7 @@ common.apps.tk-multi-shotgunpanel.location:
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
-  version: v0.11.1
+  version: v0.11.2
 
 common.apps.tk-multi-reviewsubmission.location:
   type: app_store
