@@ -75,7 +75,7 @@ common.engines.tk-vred.location:
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
-  version: v2.4.14
+  version: v2.5.0
 
 # Desktop2
 common.engines.tk-desktop2.location:
