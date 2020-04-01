@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -9,13 +9,17 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Shotgun Desktop when it
-# is running in its site level configuration
+# this configuration defines the behavior of the Flame Integration when it
+# is running in its shot_step level configuration
 
 includes:
 - ../common/engines.yml
-- ../common/frameworks.yml
 
-desktop2.site:
+
+# the flame integration is built into flame
+# we only include the engine here so that we can launch flame
+# from shotgun desktop and shotgun.
+flame.shot_step:
   apps:
-  location: "@common.engines.tk-desktop2.location"
+  location: "@common.engines.tk-flame.location"
+  use_builtin_plugin: true

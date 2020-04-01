@@ -9,8 +9,8 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Photoshop Integration when it
-# is running in its shot level configuration
+# this configuration defines the behavior of the After Effects Integration when it
+# is running in its asset_step level configuration
 
 includes:
 - ../common/engines.yml
@@ -18,19 +18,19 @@ includes:
 - apps.yml
 
 
-photoshopcc.shot:
+aftereffects.asset_step:
   apps:
     tk-multi-about: "@common.apps.tk-multi-about"
 
     tk-multi-pythonconsole: "@common.apps.tk-multi-pythonconsole"
 
-    tk-multi-publish2: "@photoshopcc.apps.tk-multi-publish2"
+    tk-multi-publish2: "@aftereffects.apps.tk-multi-publish2"
 
-    tk-multi-loader2: "@photoshopcc.apps.tk-multi-loader2"
+    tk-multi-loader2: "@aftereffects.apps.tk-multi-loader2"
 
-    tk-multi-shotgunpanel: "@photoshopcc.apps.tk-multi-shotgunpanel"
+    tk-multi-shotgunpanel: "@aftereffects.apps.tk-multi-shotgunpanel"
 
   shelf_favorites: []
   debug_logging: true
-  location: "@common.engines.tk-photoshopcc.location"
+  location: "@common.engines.tk-aftereffects.location"
   automatic_context_switch: false

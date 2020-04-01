@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -10,18 +10,20 @@
 #
 
 # this configuration defines the behavior of the 3dsMax Integration when it
-# is running in its project level configuration
+# is running in its shot_step level configuration
 
 includes:
 - ../common/engines.yml
 - ../common/apps.yml
 - apps.yml
 
-3dsmaxplus.project:
+3dsmaxplus.shot_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
+    tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
 
     tk-multi-publish2: '@3dsmaxplus.apps.tk-multi-publish2'
 
@@ -33,14 +35,19 @@ includes:
   menu_favourites: []
   launch_builtin_plugins: [basic]
 
-3dsmax.project:
+
+3dsmax.shot_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
+
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
+    tk-multi-setframerange: '@3dsmax.apps.tk-multi-setframerange'
 
     tk-multi-publish2: '@3dsmax.apps.tk-multi-publish2'
 
     tk-multi-loader2: '@3dsmax.apps.tk-multi-loader2'
+
     tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
 
   location: "@common.engines.tk-3dsmax.location"

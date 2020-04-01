@@ -62,4 +62,3 @@ nuke.site:
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]
-

@@ -97,4 +97,5 @@ vred.apps.tk-multi-shotgunpanel:
     Version:
     - actions: [quicktime_clipboard, sequence_clipboard, add_to_playlist]
       filters: {}
+  enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"

@@ -17,7 +17,7 @@ includes:
 - ../common/apps.yml
 - apps.yml
 
-3dsmax.shot:
+3dsmaxplus.shot:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
@@ -25,16 +25,27 @@ includes:
 
     tk-multi-setframerange: '@common.apps.tk-multi-setframerange'
 
-    tk-multi-publish2: '@3dsmax.apps.tk-multi-publish2'
+    tk-multi-publish2: '@3dsmaxplus.apps.tk-multi-publish2'
 
-    tk-multi-loader2: '@3dsmax.apps.tk-multi-loader2'
+    tk-multi-loader2: '@3dsmaxplus.apps.tk-multi-loader2'
 
-    tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
+    tk-multi-shotgunpanel: '@3dsmaxplus.apps.tk-multi-shotgunpanel'
 
   location: "@common.engines.tk-3dsmaxplus.location"
   menu_favourites: []
   launch_builtin_plugins: [basic]
 
+3dsmax.shot:
+  apps:
+    tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
+    tk-multi-setframerange: '@3dsmax.apps.tk-multi-setframerange'
+    tk-multi-publish2: '@3dsmax.apps.tk-multi-publish2'
+    tk-multi-loader2: '@3dsmax.apps.tk-multi-loader2'
+    tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
 
+  location: "@common.engines.tk-3dsmax.location"
+  menu_favourites: []
+  launch_builtin_plugins: [basic]

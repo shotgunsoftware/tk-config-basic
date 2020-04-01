@@ -7,11 +7,19 @@
 # By accessing, using, copying or modifying this work you indicate your
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
+#
 
-# this configuration file defines which version of the toolkit
-# core API that should be used at runtime.
+# this configuration defines the behavior of the Flame Integration when it
+# is running in its asset_step level configuration
 
-location:
-  type: app_store
-  name: tk-core
-  version: v0.19.4
+includes:
+- ../common/engines.yml
+
+
+# the flame integration is built into flame
+# we only include the engine here so that we can launch flame
+# from shotgun desktop and shotgun.
+flame.asset_step:
+  apps:
+  location: "@common.engines.tk-flame.location"
+  use_builtin_plugin: true

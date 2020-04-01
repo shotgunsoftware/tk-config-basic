@@ -10,27 +10,28 @@
 #
 
 # this configuration defines the behavior of the Photoshop Integration when it
-# is running in its shot level configuration
+# is running in its asset_step level configuration
 
 includes:
 - ../common/engines.yml
 - ../common/apps.yml
 - apps.yml
 
-
-photoshopcc.shot:
+photoshopcc.asset_step:
   apps:
-    tk-multi-about: "@common.apps.tk-multi-about"
+    tk-multi-about: '@common.apps.tk-multi-about'
 
-    tk-multi-pythonconsole: "@common.apps.tk-multi-pythonconsole"
+    tk-multi-publish2: '@photoshopcc.apps.tk-multi-publish2'
 
-    tk-multi-publish2: "@photoshopcc.apps.tk-multi-publish2"
+    tk-multi-loader2: '@photoshopcc.apps.tk-multi-loader2'
 
-    tk-multi-loader2: "@photoshopcc.apps.tk-multi-loader2"
+    tk-multi-shotgunpanel: '@photoshopcc.apps.tk-multi-shotgunpanel'
 
-    tk-multi-shotgunpanel: "@photoshopcc.apps.tk-multi-shotgunpanel"
+    tk-multi-reviewsubmission: '@photoshopcc.apps.tk-multi-reviewsubmission'
 
-  shelf_favorites: []
-  debug_logging: true
   location: "@common.engines.tk-photoshopcc.location"
+  menu_favourites: []
+  run_at_startup:
+  - {app_instance: tk-multi-shotgunpanel, name: ''}
+  launch_builtin_plugins: [basic]
   automatic_context_switch: false

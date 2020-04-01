@@ -85,3 +85,8 @@ maya.apps.tk-multi-shotgunpanel:
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"
 
+maya.apps.tk-multi-reviewsubmission:
+  display_name: Playblast to Create
+  render_media_hook: '{self}/render_media.py:{self}/{engine_name}/render_media.py'
+  submitter_hook: '{self}/submitter_create.py'
+  location: "@common.apps.tk-multi-reviewsubmission.location"

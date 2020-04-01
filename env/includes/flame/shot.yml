@@ -10,7 +10,7 @@
 #
 
 # this configuration defines the behavior of the Flame Integration when it
-# is running in its project level configuration
+# is running in its shot level configuration
 
 includes:
 - ../common/engines.yml
@@ -23,4 +23,3 @@ flame.shot:
   apps:
   location: "@common.engines.tk-flame.location"
   use_builtin_plugin: true
-

@@ -1,0 +1,39 @@
+# Copyright (c) 2017 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+description: Toolkit configuration to be loaded whenever an association with a
+             asset_step has been established.
+
+includes:
+- includes/desktop2/all.yml
+- includes/houdini/asset_step.yml
+- includes/maya/asset_step.yml
+- includes/nuke/asset_step.yml
+- includes/flame/asset_step.yml
+- includes/shell/asset_step.yml
+- includes/photoshopcc/asset_step.yml
+- includes/aftereffects/asset_step.yml
+- includes/3dsmax/asset_step.yml
+- includes/shotgun/all.yml
+
+engines:
+  tk-desktop2: '@desktop2.all'
+  tk-houdini: '@houdini.asset_step'
+  tk-maya: '@maya.asset_step'
+  tk-nuke: '@nuke.asset_step'
+  tk-nukestudio: '@nukestudio.asset_step'
+  tk-flame: '@flame.asset_step'
+  tk-shell: '@shell.asset_step'
+  tk-photoshopcc: '@photoshopcc.asset_step'
+  tk-aftereffects: '@aftereffects.asset_step'
+  tk-3dsmaxplus: '@3dsmaxplus.asset_step'
+  tk-3dsmax: '@3dsmax.asset_step'
+  tk-shotgun: '@shotgun.all'

@@ -9,4 +9,3 @@ when an app is using a default hook, the value in the config is simply set to "d
 and the app will look for the hook in a hook folder inside of the app itself.
 
 For more information about hooks, see the Toolkit documentation.
-

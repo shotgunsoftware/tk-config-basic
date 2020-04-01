@@ -25,7 +25,6 @@ includes:
 - includes/3dsmax/site.yml
 - includes/alias/site.yml
 - includes/vred/site.yml
-- includes/sketchbook/site.yml
 - includes/shotgun/all.yml
 
 engines:
@@ -38,9 +37,8 @@ engines:
   tk-shell: '@shell.site'
   tk-photoshopcc: '@photoshopcc.site'
   tk-aftereffects: '@aftereffects.site'
-  tk-3dsmaxplus: '@3dsmax.site'
+  tk-3dsmaxplus: '@3dsmaxplus.site'
+  tk-3dsmax: '@3dsmax.site'
   tk-alias: '@alias.site'
   tk-vred: '@vred.site'
-  tk-sketchbook: '@sketchbook.site'
   tk-shotgun: '@shotgun.all'
-  
