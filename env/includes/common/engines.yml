@@ -12,10 +12,13 @@
 # locations for common engines
 # Added at top for testing, re-locate in this list later
 common.engines.tk-sketchbook.location:
-  type: git_branch
-  path: git@github.com:shotgunsoftware/tk-sketchbook.git
-  branch: master
-  version: 'fa3e51a01b98ba5dad08db0f654e7adc99731934'
+  # type: git_branch
+  # path: git@github.com:shotgunsoftware/tk-sketchbook.git
+  # branch: master
+  # version: 'fa3e51a01b98ba5dad08db0f654e7adc99731934'
+  type: dev
+  name: tk-sketchbook
+  path: C:\Users\agrant\tk-sketchbook
 
 # 3dsMax using the tk-3dsmaxplus engine
 common.engines.tk-3dsmaxplus.location:
