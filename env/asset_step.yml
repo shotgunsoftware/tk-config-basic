@@ -22,6 +22,8 @@ includes:
 - includes/photoshopcc/asset_step.yml
 - includes/aftereffects/asset_step.yml
 - includes/3dsmax/asset_step.yml
+- includes/alias/asset_step.yml
+- includes/vred/asset_step.yml
 - includes/shotgun/all.yml
 
 engines:
@@ -36,4 +38,6 @@ engines:
   tk-aftereffects: '@aftereffects.asset_step'
   tk-3dsmaxplus: '@3dsmaxplus.asset_step'
   tk-3dsmax: '@3dsmax.asset_step'
+  tk-alias: '@alias.asset_step'
+  tk-vred: '@vred.asset_step'
   tk-shotgun: '@shotgun.all'
