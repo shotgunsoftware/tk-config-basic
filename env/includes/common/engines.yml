@@ -81,7 +81,7 @@ common.engines.tk-desktop.location:
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
-  version: v1.3.1
+  version: v1.4.0
 
 # Shell
 common.engines.tk-shell.location:
