@@ -78,19 +78,19 @@ common.engines.tk-alias.location:
 common.engines.tk-vred.location:
   type: app_store
   name: tk-vred
-  version: v2.0.5
+  version: v2.0.6
 
 # Desktop
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
-  version: v2.5.0
+  version: v2.5.3
 
 # Desktop2
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
-  version: v1.3.1
+  version: v1.4.1
 
 # Shell
 common.engines.tk-shell.location:
