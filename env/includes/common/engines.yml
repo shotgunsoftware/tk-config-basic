@@ -10,7 +10,8 @@
 #
 
 # locations for common engines
-# Added at top for testing, re-locate in this list later
+# Added Sketchbook at top for testing, re-locate in this list later
+# Pre-release testing
 common.engines.tk-sketchbook.location:
   type: app_store
   name: tk-sketchbook
