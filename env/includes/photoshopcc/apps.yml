@@ -40,6 +40,9 @@ photoshopcc.apps.tk-multi-loader2:
     Rendered Image: [add_as_a_layer, open_file]
     Image: [add_as_a_layer, open_file]
     Texture: [add_as_a_layer, open_file]
+    Tif File: [add_as_a_layer, open_file]
+    Bmp File: [add_as_a_layer, open_file]
+    Gif File: [add_as_a_layer, open_file]
   actions_hook: "{self}/tk-photoshopcc_actions.py"
   entities:
   - caption: Current Project
@@ -75,6 +78,12 @@ photoshopcc.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Image}
     - actions: [add_as_a_layer, open_file]
       filters: {published_file_type: Texture}
+    - actions: [add_as_a_layer, open_file]
+      filters: {published_file_type: Tif File}
+    - actions: [add_as_a_layer, open_file]
+      filters: {published_file_type: Bmp File}
+    - actions: [add_as_a_layer, open_file]
+      filters: {published_file_type: Gif File}
     Task:
     - actions: [assign_task, task_to_ip]
       filters: {}
