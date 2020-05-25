@@ -18,7 +18,8 @@ common.engines.tk-sketchbook.location:
   # version: 'fa3e51a01b98ba5dad08db0f654e7adc99731934'
   type: dev
   name: tk-sketchbook
-  path: C:\Users\agrant\tk-sketchbook
+  mac_path: /Users/t_granad/Dev/tk-sketchbook
+  windows_path: C:\Users\agrant\tk-sketchbook
 
 # 3dsMax using the tk-3dsmaxplus engine
 common.engines.tk-3dsmaxplus.location:
