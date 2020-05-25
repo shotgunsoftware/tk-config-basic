@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2020 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -10,14 +10,14 @@
 #
 
 # this configuration defines the behavior of the Sketchbook Integration when it
-# is running in its project level configuration
+# is running in its asset_step level configuration
 
 includes:
 - ../common/engines.yml
 - ../common/apps.yml
 - apps.yml
 
-sketchbook.project:
+sketchbook.asset_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
@@ -27,7 +27,6 @@ sketchbook.project:
 
     tk-multi-shotgunpanel: '@sketchbook.apps.tk-multi-shotgunpanel'
 
-    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
   location: "@common.engines.tk-sketchbook.location"
   menu_favourites: []

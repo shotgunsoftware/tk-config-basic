@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2017 Shotgun Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
@@ -9,27 +9,26 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Sketchbook Integration when it
-# is running in its project level configuration
+# this configuration defines the behavior of the Vred Integration when it
+# is running in its asset_step level configuration
 
 includes:
 - ../common/engines.yml
 - ../common/apps.yml
 - apps.yml
 
-sketchbook.project:
+vred.asset_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
-    tk-multi-publish2: '@sketchbook.apps.tk-multi-publish2'
+    tk-multi-publish2: '@vred.apps.tk-multi-publish2'
 
-    tk-multi-loader2: '@sketchbook.apps.tk-multi-loader2'
+    tk-multi-loader2: '@vred.apps.tk-multi-loader2'
 
-    tk-multi-shotgunpanel: '@sketchbook.apps.tk-multi-shotgunpanel'
+    tk-multi-shotgunpanel: '@vred.apps.tk-multi-shotgunpanel'
 
-    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
-  location: "@common.engines.tk-sketchbook.location"
+  location: "@common.engines.tk-vred.location"
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}

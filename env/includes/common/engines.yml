@@ -10,16 +10,12 @@
 #
 
 # locations for common engines
-# Added at top for testing, re-locate in this list later
+# Added Sketchbook at top for testing, re-locate in this list later
+# Pre-release testing
 common.engines.tk-sketchbook.location:
-  # type: git_branch
-  # path: git@github.com:shotgunsoftware/tk-sketchbook.git
-  # branch: master
-  # version: 'fa3e51a01b98ba5dad08db0f654e7adc99731934'
-  type: dev
+  type: app_store
   name: tk-sketchbook
-  mac_path: /Users/t_granad/Dev/tk-sketchbook
-  windows_path: C:\Users\agrant\tk-sketchbook
+  version: v0.2.0
 
 # 3dsMax using the tk-3dsmaxplus engine
 common.engines.tk-3dsmaxplus.location:
@@ -37,13 +33,13 @@ common.engines.tk-3dsmax.location:
 common.engines.tk-houdini.location:
   type: app_store
   name: tk-houdini
-  version: v1.7.0
+  version: v1.7.1
 
 # Maya
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
-  version: v0.10.0
+  version: v0.10.1
 
 # Nuke
 common.engines.tk-nuke.location:
@@ -55,7 +51,7 @@ common.engines.tk-nuke.location:
 common.engines.tk-photoshopcc.location:
   type: app_store
   name: tk-photoshopcc
-  version: v1.8.0
+  version: v1.8.1
 
 # After Effects
 common.engines.tk-aftereffects.location:
@@ -67,37 +63,37 @@ common.engines.tk-aftereffects.location:
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
-  version: v1.15.5
+  version: v1.15.6
 
 # Alias
 common.engines.tk-alias.location:
   type: app_store
   name: tk-alias
-  version: v2.0.5
+  version: v2.0.6
 
 # VRED
 common.engines.tk-vred.location:
   type: app_store
   name: tk-vred
-  version: v2.0.4
+  version: v2.0.6
 
 # Desktop
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
-  version: v2.4.14
+  version: v2.5.3
 
 # Desktop2
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
-  version: v1.3.1
+  version: v1.4.1
 
 # Shell
 common.engines.tk-shell.location:
   type: app_store
   name: tk-shell
-  version: v0.8.0
+  version: v0.8.1
 
 # shotgun
 common.engines.tk-shotgun.location:
