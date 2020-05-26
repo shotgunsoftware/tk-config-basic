@@ -32,14 +32,14 @@ sketchbook.apps.tk-multi-publish2:
 
 sketchbook.apps.tk-multi-loader2:
   action_mappings:
-    Photoshop Image: [import_file, open_file]
-    Rendered Image: [import_file, open_file]
-    Image: [import_file, open_file]
-    Texture: [import_file, open_file]
-    Tif File: [import_file, open_file]
-    Bmp File: [import_file, open_file]
-    Gif File: [import_file, open_file]
-    Pxd File: [import_file, open_file]
+    Photoshop Image: [add_image, open_file]
+    Rendered Image: [add_image, open_file]
+    Image: [add_image, open_file]
+    Texture: [add_image, open_file]
+    Tif File: [add_image, open_file]
+    Bmp File: [add_image, open_file]
+    Gif File: [add_image, open_file]
+    Pxd File: [add_image, open_file]
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   entities:
   - caption: Current Project
@@ -66,21 +66,21 @@ sketchbook.apps.tk-multi-shotgunpanel:
     PublishedFile:
     - actions: [publish_clipboard]
       filters: {}
-    - actions: [import_file, open_file]
+    - actions: [add_image, open_file]
       filters: {published_file_type: Image}
-    - actions: [import_file, open_file]
+    - actions: [add_image, open_file]
       filters: {published_file_type: Photoshop Image}
-    - actions: [import_file, open_file]
+    - actions: [add_image, open_file]
       filters: {published_file_type: Rendered Image}
-    - actions: [import_file, open_file]
+    - actions: [add_image, open_file]
       filters: {published_file_type: Texture}
-    - actions: [import_file, open_file]
+    - actions: [add_image, open_file]
       filters: {published_file_type: Tif File}
-    - actions: [import_file, open_file]
+    - actions: [add_image, open_file]
       filters: {published_file_type: Bmp File}
-    - actions: [import_file, open_file]
+    - actions: [add_image, open_file]
       filters: {published_file_type: Gif File}
-    - actions: [import_file, open_file]
+    - actions: [add_image, open_file]
       filters: {published_file_type: Pxd File}
     Task:
     - actions: [assign_task, task_to_ip]
