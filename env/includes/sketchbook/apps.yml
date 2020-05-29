@@ -39,7 +39,6 @@ sketchbook.apps.tk-multi-loader2:
     Tif File: [add_image, open_file]
     Bmp File: [add_image, open_file]
     Gif File: [add_image, open_file]
-    Pxd File: [add_image, open_file]
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   entities:
   - caption: Current Project
@@ -80,8 +79,6 @@ sketchbook.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Bmp File}
     - actions: [add_image, open_file]
       filters: {published_file_type: Gif File}
-    - actions: [add_image, open_file]
-      filters: {published_file_type: Pxd File}
     Task:
     - actions: [assign_task, task_to_ip]
       filters: {}
