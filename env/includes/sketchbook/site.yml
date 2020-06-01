@@ -24,8 +24,13 @@ sketchbook.site:
 
     tk-multi-loader2:
       action_mappings:
-        Image: [import]
-        Photoshop Image: [import]
+        Image: [add_image]
+        Photoshop Image: [add_image]
+        Rendered Image: [add_image]
+        Texture: [add_image]
+        Tif File: [add_image]
+        Bmp File: [add_image]
+        Gif File: [add_image]
       actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
       entities:
       - caption: Project

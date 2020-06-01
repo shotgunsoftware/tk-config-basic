@@ -6,18 +6,18 @@
 # Source Code License included in this distribution package. See LICENSE.
 # By accessing, using, copying or modifying this work you indicate your
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
-# not expressly granted therein are reserved by Autodesk, Inc.
+# not expressly granted therein are reserved by Autodesk Inc.
 #
 
 # this configuration defines the behavior of the Sketchbook Integration when it
-# is running in its asset_step level configuration
+# is running in its shot_step level configuration
 
 includes:
 - ../common/engines.yml
 - ../common/apps.yml
 - apps.yml
 
-sketchbook.asset_step:
+sketchbook.shot_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
