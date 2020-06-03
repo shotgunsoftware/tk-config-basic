@@ -31,6 +31,7 @@ sketchbook.site:
         Tif File: [add_image]
         Bmp File: [add_image]
         Gif File: [add_image]
+        Skba File: [open_file]
       actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
       entities:
       - caption: Project
