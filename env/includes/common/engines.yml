@@ -15,7 +15,7 @@
 common.engines.tk-sketchbook.location:
   type: app_store
   name: tk-sketchbook
-  version: v0.2.2
+  version: v0.2.3
 
 # 3dsMax using the tk-3dsmaxplus engine
 common.engines.tk-3dsmaxplus.location:
