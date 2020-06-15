@@ -22,6 +22,7 @@ includes:
 - includes/photoshopcc/shot_step.yml
 - includes/aftereffects/shot_step.yml
 - includes/3dsmax/shot_step.yml
+- includes/sketchbook/shot_step.yml
 - includes/shotgun/all.yml
 
 engines:
@@ -36,4 +37,5 @@ engines:
   tk-aftereffects: '@aftereffects.shot_step'
   tk-3dsmaxplus: '@3dsmaxplus.shot_step'
   tk-3dsmax: '@3dsmax.shot_step'
+  tk-sketchbook: '@sketchbook.shot_step'
   tk-shotgun: '@shotgun.all'
