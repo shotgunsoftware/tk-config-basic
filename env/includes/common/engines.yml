@@ -39,7 +39,7 @@ common.engines.tk-maya.location:
 common.engines.tk-nuke.location:
   type: app_store
   name: tk-nuke
-  version: v0.12.6
+  version: v0.12.7
 
 # Photoshop
 common.engines.tk-photoshopcc.location:
