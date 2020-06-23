@@ -48,6 +48,10 @@ alias.apps.tk-multi-loader2:
     Fbx File: [import]
     Image: [texture_node]
     Photoshop Image: [texture_node]
+    Obj File: [import_subdiv]
+    Tsm File: [import_subdiv]
+    F3d File: [import_subdiv]
+    Sf3d File: [import_subdiv]
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   entities:
   - caption: Current Project
@@ -92,6 +96,14 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Image}
     - actions: [texture_node]
       filters: {published_file_type: Photoshop Image}
+    - actions: [import_subdiv]
+      filters: {published_file_type: Obj File}
+    - actions: [import_subdiv]
+      filters: {published_file_type: Tsm File}
+    - actions: [import_subdiv]
+      filters: {published_file_type: F3d File}
+    - actions: [import_subdiv]
+      filters: {published_file_type: Sf3d File}
     - actions: [publish_clipboard]
       filters: {}
     Task:

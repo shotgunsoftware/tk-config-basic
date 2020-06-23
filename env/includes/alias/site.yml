@@ -34,6 +34,10 @@ alias.site:
         Fbx File: [import, import_as_reference]
         Image: [texture_node]
         Photoshop Image: [texture_node]
+        Obj File: [import_subdiv]
+        Tsm File: [import_subdiv]
+        F3d File: [import_subdiv]
+        Sf3d File: [import_subdiv]
       actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
       entities:
       - caption: Project
