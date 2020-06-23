@@ -28,6 +28,12 @@ alias.apps.tk-multi-publish2:
   - name: Publish to Shotgun
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
+  - name: Publish Variants to Shotgun
+    hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_variants.py"
+    settings: {}
+  - name: Publish Annotations to Shotgun
+    hook: "{engine}/tk-multi-publish2/basic/publish_annotations.py"
+    settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
 alias.apps.tk-multi-loader2:
