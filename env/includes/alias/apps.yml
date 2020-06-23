@@ -76,19 +76,19 @@ alias.apps.tk-multi-shotgunpanel:
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
   action_mappings:
     PublishedFile:
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Alias File}
     - actions: [reference]
       filters: {published_file_type: Wref File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Igs File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Stp File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Stl File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Jt File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Catpart File}
     - actions: [import]
       filters: {published_file_type: Fbx File}
