@@ -29,6 +29,9 @@ sketchbook.apps.tk-multi-publish2:
   - name: Upload for review
     hook: "{engine}/tk-multi-publish2/basic/upload_version.py"
     settings: {}
+  - name: Unsaved File Click Me
+    hook: "{engine}/tk-multi-publish2/basic/unsaved_file.py"
+    settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
 sketchbook.apps.tk-multi-loader2:
