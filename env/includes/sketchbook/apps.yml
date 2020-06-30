@@ -18,19 +18,19 @@ includes:
 
 sketchbook.apps.tk-multi-publish2:
   help_url: "@common.apps.tk-multi-publish2.help_url"
-  collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
+  collector: "{self}/collector.py:{engine}/tk-multi-publish2/collector.py"
   publish_plugins:
   - name: Begin file versioning
-    hook: "{engine}/tk-multi-publish2/basic/start_version_control.py"
+    hook: "{engine}/tk-multi-publish2/start_version_control.py"
     settings: {}
   - name: Publish to Shotgun
-    hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
+    hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/publish_session.py"
     settings: {}
   - name: Upload for review
-    hook: "{engine}/tk-multi-publish2/basic/upload_version.py"
+    hook: "{engine}/tk-multi-publish2/upload_version.py"
     settings: {}
   - name: Unsaved File Click Me
-    hook: "{engine}/tk-multi-publish2/basic/unsaved_file.py"
+    hook: "{engine}/tk-multi-publish2/unsaved_file.py"
     settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
@@ -44,7 +44,7 @@ sketchbook.apps.tk-multi-loader2:
     Bmp File: [add_image]
     Gif File: [add_image]
     Skba File: [open_file]
-  actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
+  actions_hook: "{engine}/tk-multi-loader2/scene_actions.py"
   entities:
   - caption: Current Project
     type: Hierarchy
@@ -65,7 +65,7 @@ sketchbook.apps.tk-multi-loader2:
   location: "@common.apps.tk-multi-loader2.location"
 
 sketchbook.apps.tk-multi-shotgunpanel:
-  actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
+  actions_hook: "{engine}/tk-multi-shotgunpanel/scene_actions.py"
   action_mappings:
     PublishedFile:
     - actions: [publish_clipboard]
