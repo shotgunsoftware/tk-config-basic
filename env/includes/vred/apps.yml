@@ -53,6 +53,11 @@ vred.apps.tk-multi-loader2:
     type: Hierarchy
     root: "{context.project}"
     publish_filters: []
+  - caption: Linked Projects
+    entity_type: Asset
+    filters:
+      - [sg_linked_projects, is, "{context.project}"]
+    hierarchy: [project.Project.name, type, sg_asset_type, code]
   - caption: My Tasks
     type: Query
     entity_type: Task
