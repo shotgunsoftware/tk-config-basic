@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Autodesk, Inc.
 #
 
-# this configuration defines the behavior of the Sketchbook Integration when it
+# this configuration defines the behavior of the SketchBook Integration when it
 # is running in its asset_step level configuration
 
 includes:

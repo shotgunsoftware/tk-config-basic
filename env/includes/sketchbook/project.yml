@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 #
 
-# this configuration defines the behavior of the Sketchbook Integration when it
+# this configuration defines the behavior of the SketchBook Integration when it
 # is running in its project level configuration
 
 includes:
