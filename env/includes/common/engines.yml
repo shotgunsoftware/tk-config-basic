@@ -10,13 +10,6 @@
 #
 
 # locations for common engines
-# Added Sketchbook at top for testing, re-locate in this list later
-# Pre-release testing
-common.engines.tk-sketchbook.location:
-  type: dev
-  name: tk-sketchbook
-  mac_path: /Users/t_granad/Dev/tk-sketchbook
-  windows_path: C:\Users\agrant\tk-sketchbook
 
 # 3dsMax using the tk-3dsmaxplus engine
 common.engines.tk-3dsmaxplus.location:
@@ -78,11 +71,21 @@ common.engines.tk-vred.location:
   name: tk-vred
   version: v2.0.6
 
+# SketchBook
+common.engines.tk-sketchbook.location:
+  type: dev
+  name: tk-sketchbook
+  mac_path: /Users/t_granad/Dev/tk-sketchbook
+  windows_path: C:\Users\agrant\tk-sketchbook
+# type: app_store
+# name: tk-sketchbook
+# version: v0.3.1
+
 # Desktop
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
-  version: v2.5.3
+  version: v2.5.6
 
 # Desktop2
 common.engines.tk-desktop2.location:
