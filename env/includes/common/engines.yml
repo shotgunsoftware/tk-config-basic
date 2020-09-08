@@ -75,7 +75,7 @@ common.engines.tk-vred.location:
 common.engines.tk-sketchbook.location:
   type: app_store
   name: tk-sketchbook
-  version: v0.3.0
+  version: v0.3.3
 
 # Desktop
 common.engines.tk-desktop.location:
