@@ -57,3 +57,8 @@ frameworks:
       version: v0.1.1
       type: app_store
       name: tk-framework-aliastranslations
+  tk-framework-lmv_v0.x.x:
+    location:
+      version: v0.1.2
+      type: app_store
+      name: tk-framework-lmv
