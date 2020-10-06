@@ -24,16 +24,20 @@ alias.site:
 
     tk-multi-loader2:
       action_mappings:
-        Alias File: [import]
+        Alias File: [import, import_as_reference]
         Wref File: [reference]
-        Igs File: [import]
-        Stp File: [import]
-        Stl File: [import]
-        Jt File: [import]
-        Catpart File: [import]
-        Fbx File: [import]
+        Igs File: [import, import_as_reference]
+        Stp File: [import, import_as_reference]
+        Stl File: [import, import_as_reference]
+        Jt File: [import, import_as_reference]
+        Catpart File: [import, import_as_reference]
+        Fbx File: [import, import_as_reference]
         Image: [texture_node]
         Photoshop Image: [texture_node]
+        Obj File: [import_subdiv]
+        Tsm File: [import_subdiv]
+        F3d File: [import_subdiv]
+        Sf3d File: [import_subdiv]
       actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
       entities:
       - caption: Project
