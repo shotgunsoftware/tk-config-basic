@@ -42,4 +42,14 @@ shotgun.publishedfile:
     settings.tk-shotgun-launchfolder:
       location: "@common.apps.tk-shotgun-launchfolder.location"
 
+shotgun.version:
+  apps:
+
+    settings.tk-shotgun-launchvredreview:
+      deny_platforms: [ Mac, Linux ]
+      viewer_extensions: [ vpb ]
+      hook_verify_install: "{self}/verify_install.py"
+      hook_launch_publish: "{self}/shotgun_launch_vred.py"
+      location: "@common.apps.tk-shotgun-launchvredreview.location"
+
   location: "@common.engines.tk-shotgun.location"
