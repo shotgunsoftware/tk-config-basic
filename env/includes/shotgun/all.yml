@@ -42,6 +42,8 @@ shotgun.publishedfile:
     settings.tk-shotgun-launchfolder:
       location: "@common.apps.tk-shotgun-launchfolder.location"
 
+  location: "@common.engines.tk-shotgun.location"
+
 shotgun.version:
   apps:
 

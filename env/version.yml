@@ -14,6 +14,8 @@ description: Toolkit configuration to be loaded whenever an association with a
 
 includes:
 - includes/shotgun/all.yml
+- includes/vred/site.yml
 
 engines:
   tk-shotgun: '@shotgun.version'
+  tk-vred: '@vred.site'
