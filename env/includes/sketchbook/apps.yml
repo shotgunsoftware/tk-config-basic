@@ -32,6 +32,7 @@ sketchbook.apps.tk-multi-publish2:
   - name: Unsaved File Click Me
     hook: "{engine}/tk-multi-publish2/basic/unsaved_file.py"
     settings: {}
+  modal: true
   location: "@common.apps.tk-multi-publish2.location"
 
 sketchbook.apps.tk-multi-loader2:
