@@ -28,20 +28,36 @@ alias.apps.tk-multi-publish2:
   - name: Publish to Shotgun
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
+  - name: Create 3D Version for Review
+    hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_version.py"
+    settings:
+      3D Version: True
+  - name: Publish Variants to Shotgun
+    hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_variants.py"
+    settings: {}
+  - name: Publish Annotations to Shotgun
+    hook: "{engine}/tk-multi-publish2/basic/publish_annotations.py"
+    settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
 alias.apps.tk-multi-loader2:
   action_mappings:
-    Alias File: [import]
+    Alias File: [import, import_as_reference]
     Wref File: [reference]
-    Igs File: [import]
-    Stp File: [import]
-    Stl File: [import]
-    Jt File: [import]
-    Catpart File: [import]
+    Igs File: [import, import_as_reference]
+    Stp File: [import, import_as_reference]
+    Stl File: [import, import_as_reference]
+    Jt File: [import, import_as_reference]
+    Catpart File: [import, import_as_reference]
     Fbx File: [import]
     Image: [texture_node]
     Photoshop Image: [texture_node]
+    Tif File: [texture_node]
+    Bmp File: [texture_node]
+    Obj File: [import_subdiv]
+    Tsm File: [import_subdiv]
+    F3d File: [import_subdiv]
+    Sf3d File: [import_subdiv]
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   entities:
   - caption: Current Project
@@ -66,19 +82,19 @@ alias.apps.tk-multi-shotgunpanel:
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
   action_mappings:
     PublishedFile:
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Alias File}
     - actions: [reference]
       filters: {published_file_type: Wref File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Igs File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Stp File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Stl File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Jt File}
-    - actions: [import]
+    - actions: [import, import_as_reference]
       filters: {published_file_type: Catpart File}
     - actions: [import]
       filters: {published_file_type: Fbx File}
@@ -86,6 +102,18 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Image}
     - actions: [texture_node]
       filters: {published_file_type: Photoshop Image}
+    - actions: [texture_node]
+      filters: {published_file_type: Tif File}
+    - actions: [texture_node]
+      filters: {published_file_type: Bmp File}
+    - actions: [import_subdiv]
+      filters: {published_file_type: Obj File}
+    - actions: [import_subdiv]
+      filters: {published_file_type: Tsm File}
+    - actions: [import_subdiv]
+      filters: {published_file_type: F3d File}
+    - actions: [import_subdiv]
+      filters: {published_file_type: Sf3d File}
     - actions: [publish_clipboard]
       filters: {}
     Task:
