@@ -63,19 +63,19 @@ common.engines.tk-flame.location:
 common.engines.tk-alias.location:
   type: app_store
   name: tk-alias
-  version: v2.0.7
+  version: v2.0.8
 
 # VRED
 common.engines.tk-vred.location:
   type: app_store
   name: tk-vred
-  version: v2.0.7
+  version: v2.0.8
 
 # Desktop
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
-  version: v2.5.7
+  version: v2.5.9
 
 # Desktop2
 common.engines.tk-desktop2.location:
