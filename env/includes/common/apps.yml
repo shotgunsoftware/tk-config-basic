@@ -77,6 +77,11 @@ common.apps.tk-shotgun-launchfolder.location:
   name: tk-shotgun-launchfolder
   version: v0.2.1
 
+common.apps.tk-shotgun-launchvredreview.location:
+  type: app_store
+  name: tk-shotgun-launchvredreview
+  version: v1.0.0
+
 # help urls
 
 common.apps.tk-multi-publish2.help_url: https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-Integrations-User-Guide#The%20Publisher

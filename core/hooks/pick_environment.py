@@ -21,8 +21,11 @@ class PickEnvironment(Hook):
 
     def execute(self, context, **kwargs):
 
-        if context.source_entity and context.source_entity["type"] == "PublishedFile":
-            return "publishedfile"
+        if context.source_entity:
+            if context.source_entity["type"] == "Version":
+                return "version"
+            elif context.source_entity["type"] == "PublishedFile":
+                return "publishedfile"
 
         if context.entity and context.step is None:
             # We have an entity but no step.
