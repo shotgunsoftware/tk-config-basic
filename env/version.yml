@@ -1,0 +1,49 @@
+# Copyright (c) 2020 Autodesk, Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Autodesk, Inc.
+#
+
+# The Version environment was created to allow for Version specific actions.
+# To maintain functionality before this Version environment was introduced,
+# the Project environment has been replicated here, since that is the environment
+# that Versions used to have.
+description: Toolkit configuration to be loaded whenever an association with a
+             Version has been established.
+
+includes:
+- includes/houdini/project.yml
+- includes/maya/project.yml
+- includes/nuke/project.yml
+- includes/flame/project.yml
+- includes/desktop/project.yml
+- includes/desktop2/all.yml
+- includes/shell/project.yml
+- includes/photoshopcc/project.yml
+- includes/aftereffects/project.yml
+- includes/3dsmax/project.yml
+- includes/alias/project.yml
+- includes/shotgun/version.yml
+- includes/vred/project.yml
+
+engines:
+  tk-3dsmax: '@3dsmax.project'
+  tk-3dsmaxplus: '@3dsmaxplus.project'
+  tk-aftereffects: '@aftereffects.project'
+  tk-alias: '@alias.project'
+  tk-desktop: '@desktop.project'
+  tk-desktop2: '@desktop2.all'
+  tk-flame: '@flame.project'
+  tk-houdini: '@houdini.project'
+  tk-maya: '@maya.project'
+  tk-nuke: '@nuke.project'
+  tk-nukestudio: '@nukestudio.project'
+  tk-photoshopcc: '@photoshopcc.project'
+  tk-shell: '@shell.project'
+  tk-shotgun: '@shotgun.version'
+  tk-vred: '@vred.project'
