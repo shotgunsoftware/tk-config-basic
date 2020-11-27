@@ -71,6 +71,9 @@ aftereffects.apps.tk-multi-shotgunpanel:
   shotgun_fields_hook: "{self}/shotgun_fields.py"
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
   action_mappings:
+    Note:
+    - actions: [ note_to_ip, note_to_closed ]
+      filters: { }
     PublishedFile:
     - actions: [add_to_project, add_to_comp]
       filters: {published_file_type: After Effects Project}

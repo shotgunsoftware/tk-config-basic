@@ -47,10 +47,16 @@ common.apps.tk-multi-loader2.location:
   name: tk-multi-loader2
   version: v1.20.2
 
+#common.apps.tk-multi-shotgunpanel.location:
+#  type: app_store
+#  name: tk-multi-shotgunpanel
+#  version: v1.7.1
+
 common.apps.tk-multi-shotgunpanel.location:
-  type: app_store
-  name: tk-multi-shotgunpanel
-  version: v1.7.1
+  type: git_branch
+  branch: SHOT-3640
+  path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
+  version: ad14423f7c130957d1307d49d8d12efca440dbdb
 
 common.apps.tk-multi-launchapp.location:
   type: app_store

@@ -64,6 +64,9 @@ photoshopcc.apps.tk-multi-shotgunpanel:
   shotgun_fields_hook: "{self}/shotgun_fields.py"
   actions_hook: "{self}/general_actions.py"
   action_mappings:
+    Note:
+    - actions: [ note_to_ip, note_to_closed ]
+      filters: { }
     PublishedFile:
     - actions: [publish_clipboard]
       filters: {}
