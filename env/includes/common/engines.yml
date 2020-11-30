@@ -99,4 +99,4 @@ common.engines.tk-shotgun.location:
 common.engines.tk-sketchbook.location:
   type: app_store
   name: tk-sketchbook
-  version: v0.4.0
+  version: v0.4.1
