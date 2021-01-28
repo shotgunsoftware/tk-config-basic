@@ -28,6 +28,10 @@ alias.apps.tk-multi-publish2:
   - name: Publish to Shotgun
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
+  - name: Create 3D Version for Review
+    hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_version.py"
+    settings:
+      3D Version: True
   - name: Publish Variants to Shotgun
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_variants.py"
     settings: {}
@@ -48,6 +52,8 @@ alias.apps.tk-multi-loader2:
     Fbx File: [import]
     Image: [texture_node]
     Photoshop Image: [texture_node]
+    Tif File: [texture_node]
+    Bmp File: [texture_node]
     Obj File: [import_subdiv]
     Tsm File: [import_subdiv]
     F3d File: [import_subdiv]
@@ -101,6 +107,10 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Image}
     - actions: [texture_node]
       filters: {published_file_type: Photoshop Image}
+    - actions: [texture_node]
+      filters: {published_file_type: Tif File}
+    - actions: [texture_node]
+      filters: {published_file_type: Bmp File}
     - actions: [import_subdiv]
       filters: {published_file_type: Obj File}
     - actions: [import_subdiv]
