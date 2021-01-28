@@ -60,7 +60,7 @@ vred.apps.tk-multi-loader2:
   - caption: Linked Projects
     entity_type: Asset
     filters:
-      - [sg_linked_projects, is, "{context.project}"]
+      - [linked_projects, is, "{context.project}"]
     hierarchy: [project.Project.name, type, sg_asset_type, code]
   - caption: My Tasks
     type: Query
