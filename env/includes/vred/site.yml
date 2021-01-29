@@ -33,6 +33,8 @@ vred.site:
         Fbx File: [import]
         VRED Scene: [import]
         Osb File: [import]
+        Image: [import_sceneplate]
+        Rendered Image: [import_sceneplate]
       actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
       entities:
       - caption: Project

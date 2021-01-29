@@ -51,6 +51,8 @@ vred.apps.tk-multi-loader2:
     Fbx File: [import]
     VRED Scene: [import]
     Osb File: [import]
+    Image: [ import_sceneplate ]
+    Rendered Image: [ import_sceneplate ]
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   entities:
   - caption: Current Project
@@ -93,6 +95,10 @@ vred.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: VRED Scene}
     - actions: [import]
       filters: {published_file_type: Osb File}
+    - actions: [import_sceneplate]
+      filters: {published_file_type: Image}
+    - actions: [import_sceneplate]
+      filters: {published_file_type: Rendered Image}
     - actions: [publish_clipboard]
       filters: {}
     Task:
