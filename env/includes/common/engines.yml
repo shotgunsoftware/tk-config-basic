@@ -63,7 +63,7 @@ common.engines.tk-flame.location:
 common.engines.tk-alias.location:
   type: app_store
   name: tk-alias
-  version: v2.0.9
+  version: v2.0.10
 
 # VRED
 common.engines.tk-vred.location:
