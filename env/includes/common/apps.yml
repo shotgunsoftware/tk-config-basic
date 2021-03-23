@@ -70,7 +70,7 @@ common.apps.tk-multi-setframerange.location:
 common.apps.tk-nuke-quickreview.location:
   type: app_store
   name: tk-nuke-quickreview
-  version: v1.0.3
+  version: v1.1.0
 
 common.apps.tk-shotgun-launchfolder.location:
   type: app_store
