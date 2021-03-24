@@ -45,7 +45,7 @@ common.apps.tk-multi-publish2.location:
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
-  version: v1.20.2
+  version: v1.20.3
 
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
@@ -70,7 +70,7 @@ common.apps.tk-multi-setframerange.location:
 common.apps.tk-nuke-quickreview.location:
   type: app_store
   name: tk-nuke-quickreview
-  version: v1.0.3
+  version: v1.1.0
 
 common.apps.tk-shotgun-launchfolder.location:
   type: app_store
