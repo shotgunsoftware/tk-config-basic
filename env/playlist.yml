@@ -1,0 +1,22 @@
+# Copyright (c) 2020 Autodesk, Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Autodesk, Inc.
+#
+
+description: Toolkit configuration to be loaded whenever an association with a
+             Playlist has been established.
+
+includes:
+- includes/shotgun/playlist.yml
+- includes/vred/project.yml
+
+
+engines:
+  tk-shotgun: '@shotgun.playlist'
+  tk-vred: '@vred.project'

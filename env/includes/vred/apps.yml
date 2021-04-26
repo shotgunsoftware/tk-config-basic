@@ -80,6 +80,8 @@ vred.apps.tk-multi-loader2:
 
 vred.apps.tk-multi-shotgunpanel:
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
+  shotgun_fields_hook: "{self}/shotgun_fields.py:{engine}/tk-multi-shotgunpanel/basic/shotgun_fields.py"
+  shotgun_filters_hook: "{engine}/tk-multi-shotgunpanel/basic/shotgun_filters.py"
   action_mappings:
     PublishedFile:
     - actions: [import]
@@ -110,7 +112,7 @@ vred.apps.tk-multi-shotgunpanel:
     - actions: [assign_task, task_to_ip]
       filters: {}
     Version:
-    - actions: [quicktime_clipboard, sequence_clipboard, add_to_playlist]
+    - actions: [quicktime_clipboard, sequence_clipboard, add_to_playlist, load_for_review]
       filters: {}
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"
