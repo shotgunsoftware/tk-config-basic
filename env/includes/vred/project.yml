@@ -32,5 +32,6 @@ vred.project:
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
+  accepted_published_file_types: [ VRED Scene, Alias File, Catpart File, Jt File, Igs File ]
   launch_builtin_plugins: [basic]
   automatic_context_switch: false
