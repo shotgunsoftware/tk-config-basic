@@ -80,7 +80,7 @@ common.apps.tk-shotgun-launchfolder.location:
 common.apps.tk-shotgun-launchvredreview.location:
   type: app_store
   name: tk-shotgun-launchvredreview
-  version: v1.0.0
+  version: v1.0.1
 
 # help urls
 
