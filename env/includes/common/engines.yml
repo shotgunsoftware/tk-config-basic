@@ -16,80 +16,54 @@ common.engines.tk-3dsmaxplus.location:
   type: app_store
   name: tk-3dsmaxplus
   version: v0.5.11
-
-# 3dsMax using the tk-3dsmax engine
 common.engines.tk-3dsmax.location:
   type: app_store
   name: tk-3dsmax
   version: v1.1.6
-
-# Houdini
 common.engines.tk-houdini.location:
   type: app_store
   name: tk-houdini
   version: v1.7.2
-
-# Maya
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
   version: v0.11.0
-
-# Nuke
 common.engines.tk-nuke.location:
   type: app_store
   name: tk-nuke
   version: v0.14.0
-
-# Photoshop
 common.engines.tk-photoshopcc.location:
   type: app_store
   name: tk-photoshopcc
   version: v1.8.2
-
-# After Effects
 common.engines.tk-aftereffects.location:
   type: app_store
   name: tk-aftereffects
   version: v0.2.1
-
-# Flame
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
   version: v1.15.6
-
-# Alias
 common.engines.tk-alias.location:
   type: app_store
   name: tk-alias
   version: v2.0.11
-
-# VRED
 common.engines.tk-vred.location:
   type: app_store
   name: tk-vred
   version: v2.0.10
-
-# Desktop
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
   version: v2.6.0
-
-# Desktop2
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
-  version: v1.4.3
-
-# Shell
+  version: v1.5.0
 common.engines.tk-shell.location:
   type: app_store
   name: tk-shell
   version: v0.8.1
-
-# shotgun
 common.engines.tk-shotgun.location:
   type: app_store
   name: tk-shotgun
