@@ -9,7 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 common.settings.tk-multi-publish2.publish_file:
-  name: Publish to Shotgun
+  name: Publish to ShotGrid
   hook: "{self}/publish_file.py"
   settings: {}
 
