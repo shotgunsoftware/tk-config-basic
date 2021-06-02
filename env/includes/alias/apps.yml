@@ -25,17 +25,17 @@ alias.apps.tk-multi-publish2:
   - name: Begin file versioning
     hook: "{engine}/tk-multi-publish2/basic/start_version_control.py"
     settings: {}
-  - name: Publish to Shotgun
+  - name: Publish to ShotGrid
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
   - name: Create 3D Version for Review
     hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_version.py"
     settings:
       3D Version: True
-  - name: Publish Variants to Shotgun
+  - name: Publish Variants to ShotGrid
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_variants.py"
     settings: {}
-  - name: Publish Annotations to Shotgun
+  - name: Publish Annotations to ShotGrid
     hook: "{engine}/tk-multi-publish2/basic/publish_annotations.py"
     settings: {}
   location: "@common.apps.tk-multi-publish2.location"
