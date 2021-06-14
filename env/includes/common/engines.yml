@@ -43,7 +43,7 @@ common.engines.tk-aftereffects.location:
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
-  version: v1.15.6
+  version: v1.16.3
 common.engines.tk-alias.location:
   type: app_store
   name: tk-alias
