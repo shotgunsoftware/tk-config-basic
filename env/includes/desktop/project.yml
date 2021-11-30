@@ -52,7 +52,6 @@ desktop.project:
     - '*After*'
     - '*Effects*'
     - 'CC*'
-    - '*Softimage*'
     name: Creative Tools
   - matches:
     - '*Hiero*'
