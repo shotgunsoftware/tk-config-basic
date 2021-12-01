@@ -15,7 +15,7 @@
 common.engines.tk-3dsmaxplus.location:
   type: app_store
   name: tk-3dsmaxplus
-  version: v0.6.0
+  version: v0.6.1
 common.engines.tk-3dsmax.location:
   type: app_store
   name: tk-3dsmax
@@ -43,7 +43,7 @@ common.engines.tk-aftereffects.location:
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
-  version: v1.17.0
+  version: v1.17.1
 common.engines.tk-alias.location:
   type: app_store
   name: tk-alias
