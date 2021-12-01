@@ -24,7 +24,7 @@ common.apps.tk-multi-about:
     name: tk-multi-about
 common.apps.tk-multi-pythonconsole:
   location:
-    version: v1.3.0
+    version: v1.3.1
     type: app_store
     name: tk-multi-pythonconsole
 common.apps.tk-multi-setframerange:
