@@ -28,10 +28,10 @@ alias.apps.tk-multi-publish2:
   - name: Publish to ShotGrid
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
-  - name: Create 3D Version for Review
+  - name: Create Version for Review
     hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_version.py"
     settings:
-      3D Version: False
+      Version Type: 2D Version
   - name: Publish Variants to ShotGrid
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_variants.py"
     settings: {}
