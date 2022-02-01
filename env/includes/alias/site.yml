@@ -22,6 +22,8 @@ alias.site:
 
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-loader2:
       action_mappings:
         Alias File: [import, import_as_reference]

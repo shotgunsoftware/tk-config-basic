@@ -22,6 +22,8 @@ vred.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-publish2: '@vred.apps.tk-multi-publish2'
 
     tk-multi-loader2: '@vred.apps.tk-multi-loader2'
