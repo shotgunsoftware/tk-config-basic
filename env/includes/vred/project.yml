@@ -22,6 +22,8 @@ vred.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-publish2: '@vred.apps.tk-multi-publish2'
 
     tk-multi-loader2: '@vred.apps.tk-multi-loader2'
@@ -32,6 +34,14 @@ vred.project:
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
+  - {app_instance: tk-multi-pythonconsole, name: 'ShotGrid Python Console...'}
+  docked_apps:
+    tk-multi-shotgunpanel:
+        pos: right
+        tabbed: True
+    tk-multi-pythonconsole:
+        pos: right
+        tabbed: True
   accepted_published_file_types: [ VRED Scene, Alias File, Catpart File, Jt File, Igs File ]
   launch_builtin_plugins: [basic]
   automatic_context_switch: false
