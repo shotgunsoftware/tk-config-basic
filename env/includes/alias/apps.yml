@@ -49,6 +49,7 @@ alias.apps.tk-multi-loader2:
     Stl File: [import, import_as_reference]
     Jt File: [import, import_as_reference]
     Catpart File: [import, import_as_reference]
+    Catproduct File: [import, import_as_reference]
     Fbx File: [import]
     Image: [texture_node]
     Photoshop Image: [texture_node]
