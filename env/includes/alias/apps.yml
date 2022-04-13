@@ -102,6 +102,8 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Jt File}
     - actions: [import, import_as_reference]
       filters: {published_file_type: Catpart File}
+    - actions: [import, import_as_reference]
+      filters: {published_file_type: Catproduct File}
     - actions: [import]
       filters: {published_file_type: Fbx File}
     - actions: [texture_node]
