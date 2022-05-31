@@ -51,7 +51,7 @@ alias.apps.tk-multi-loader2:
     Catpart File: [import, import_as_reference]
     Catproduct File: [import, import_as_reference]
     Fbx File: [import]
-    motion Builder FBX: [import]
+    Motion Builder FBX: [import]
     Image: [texture_node]
     Photoshop Image: [texture_node]
     Tif File: [texture_node]
