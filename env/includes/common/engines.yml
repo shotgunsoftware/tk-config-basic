@@ -23,7 +23,7 @@ common.engines.tk-3dsmax.location:
 common.engines.tk-houdini.location:
   type: app_store
   name: tk-houdini
-  version: v1.8.3
+  version: v1.8.4
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
@@ -43,11 +43,11 @@ common.engines.tk-aftereffects.location:
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
-  version: v1.17.3
+  version: v1.17.5
 common.engines.tk-alias.location:
   type: app_store
   name: tk-alias
-  version: v2.1.4
+  version: v2.1.6
 common.engines.tk-vred.location:
   type: app_store
   name: tk-vred
@@ -55,7 +55,7 @@ common.engines.tk-vred.location:
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
-  version: v2.6.3
+  version: v2.6.4
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
