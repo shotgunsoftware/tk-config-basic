@@ -49,7 +49,9 @@ alias.apps.tk-multi-loader2:
     Stl File: [import, import_as_reference]
     Jt File: [import, import_as_reference]
     Catpart File: [import, import_as_reference]
+    Catproduct File: [import, import_as_reference]
     Fbx File: [import]
+    Motion Builder FBX: [import]
     Image: [texture_node]
     Photoshop Image: [texture_node]
     Tif File: [texture_node]
@@ -101,8 +103,12 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Jt File}
     - actions: [import, import_as_reference]
       filters: {published_file_type: Catpart File}
+    - actions: [import, import_as_reference]
+      filters: {published_file_type: Catproduct File}
     - actions: [import]
       filters: {published_file_type: Fbx File}
+    - actions: [import]
+      filters: {published_file_type: Motion Builder FBX}
     - actions: [texture_node]
       filters: {published_file_type: Image}
     - actions: [texture_node]
