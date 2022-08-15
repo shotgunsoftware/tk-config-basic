@@ -45,13 +45,25 @@ common.engines.tk-flame.location:
   name: tk-flame
   version: v1.17.5
 common.engines.tk-alias.location:
-  type: app_store
+  type: dev
   name: tk-alias
+<<<<<<< Updated upstream
   version: v2.1.7
+=======
+  version: v2.1.2
+  windows_path: Z:\shotgun\venvs/current/tk/tk-alias
+  mac_path: /opt/shotgun/venvs/current/tk/tk-alias
+>>>>>>> Stashed changes
 common.engines.tk-vred.location:
-  type: app_store
+  type: dev
   name: tk-vred
+<<<<<<< Updated upstream
   version: v2.1.4
+=======
+  version: v2.1.2
+  windows_path: Z:\shotgun\venvs/current/tk/tk-vred
+  mac_path: /opt/shotgun/venvs/current/tk/tk-vred
+>>>>>>> Stashed changes
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
