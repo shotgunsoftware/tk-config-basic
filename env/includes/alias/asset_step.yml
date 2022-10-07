@@ -21,12 +21,13 @@ alias.asset_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-publish2: '@alias.apps.tk-multi-publish2'
 
     tk-multi-loader2: '@alias.apps.tk-multi-loader2'
 
     tk-multi-shotgunpanel: '@alias.apps.tk-multi-shotgunpanel'
-
 
   location: "@common.engines.tk-alias.location"
   menu_favourites: []

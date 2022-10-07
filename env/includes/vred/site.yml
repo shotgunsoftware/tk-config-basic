@@ -22,17 +22,22 @@ vred.site:
 
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-loader2:
       action_mappings:
-        Alias File: [import]
-        Igs File: [import]
-        Stp File: [import]
-        Stl File: [import]
-        Jt File: [import]
-        Catpart File: [import]
-        Fbx File: [import]
-        VRED Scene: [import]
-        Osb File: [import]
+        Alias File: [import, import_with_options, smart_reference]
+        Igs File: [import, import_with_options, smart_reference]
+        Stp File: [import, import_with_options, smart_reference]
+        Stl File: [import, import_with_options, smart_reference]
+        Jt File: [import, import_with_options, smart_reference]
+        Catpart File: [import, import_with_options, smart_reference]
+        Fbx File: [import, import_with_options, smart_reference]
+        Motion Builder FBX: [import, import_with_options, smart_reference]
+        VRED Scene: [import, import_with_options, smart_reference]
+        Osb File: [import, import_with_options, smart_reference]
+        Image: [import_sceneplate]
+        Rendered Image: [import_sceneplate]
       actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
       entities:
       - caption: Project
@@ -58,5 +63,13 @@ vred.site:
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
+  - {app_instance: tk-multi-pythonconsole, name: 'ShotGrid Python Console...'}
+  docked_apps:
+    tk-multi-shotgunpanel:
+        pos: right
+        tabbed: True
+    tk-multi-pythonconsole:
+        pos: right
+        tabbed: True
   launch_builtin_plugins: [basic]
   automatic_context_switch: false

@@ -22,6 +22,8 @@ alias.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-publish2: '@alias.apps.tk-multi-publish2'
 
     tk-multi-loader2: '@alias.apps.tk-multi-loader2'

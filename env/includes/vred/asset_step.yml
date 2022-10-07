@@ -21,6 +21,8 @@ vred.asset_step:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-publish2: '@vred.apps.tk-multi-publish2'
 
     tk-multi-loader2: '@vred.apps.tk-multi-loader2'
@@ -32,5 +34,13 @@ vred.asset_step:
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
+  - {app_instance: tk-multi-pythonconsole, name: 'ShotGrid Python Console...'}
+  docked_apps:
+    tk-multi-shotgunpanel:
+        pos: right
+        tabbed: True
+    tk-multi-pythonconsole:
+        pos: right
+        tabbed: True
   launch_builtin_plugins: [basic]
   automatic_context_switch: false

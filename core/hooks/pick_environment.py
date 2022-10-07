@@ -26,6 +26,8 @@ class PickEnvironment(Hook):
                 return "version"
             elif context.source_entity["type"] == "PublishedFile":
                 return "publishedfile"
+            elif context.source_entity["type"] == "Playlist":
+                return "playlist"
 
         if context.entity and context.step is None:
             # We have an entity but no step.

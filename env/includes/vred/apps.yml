@@ -25,14 +25,14 @@ vred.apps.tk-multi-publish2:
   - name: Begin file versioning
     hook: "{engine}/tk-multi-publish2/basic/start_version_control.py"
     settings: {}
-  - name: Publish to Shotgun
+  - name: Publish to ShotGrid
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
-  - name: Create 2D Version for Review
+  - name: Create Version for Review
     hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_session_version.py"
     settings:
-      3D Version: False
-  - name: Publish Rendering to Shotgun
+      Version Type: 2D Version
+  - name: Publish Rendering to ShotGrid
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_rendering.py"
     settings: {}
   - name: Upload for review
@@ -42,21 +42,29 @@ vred.apps.tk-multi-publish2:
 
 vred.apps.tk-multi-loader2:
   action_mappings:
-    Alias File: [import]
-    Igs File: [import]
-    Stp File: [import]
-    Stl File: [import]
-    Jt File: [import]
-    Catpart File: [import]
-    Fbx File: [import]
-    VRED Scene: [import]
-    Osb File: [import]
+    Alias File: [import, import_with_options, smart_reference]
+    Igs File: [import, import_with_options, smart_reference]
+    Stp File: [import, import_with_options, smart_reference]
+    Stl File: [import, import_with_options, smart_reference]
+    Jt File: [import, import_with_options, smart_reference]
+    Catpart File: [import, import_with_options, smart_reference]
+    Fbx File: [import, import_with_options, smart_reference]
+    Motion Builder FBX: [import, import_with_options, smart_reference]
+    VRED Scene: [import, import_with_options, smart_reference]
+    Osb File: [import, import_with_options, smart_reference]
+    Image: [ import_sceneplate ]
+    Rendered Image: [ import_sceneplate ]
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   entities:
   - caption: Current Project
     type: Hierarchy
     root: "{context.project}"
     publish_filters: []
+  - caption: Linked Projects
+    entity_type: Asset
+    filters:
+      - [linked_projects, is, "{context.project}"]
+    hierarchy: [project.Project.name, type, sg_asset_type, code]
   - caption: My Tasks
     type: Query
     entity_type: Task
@@ -73,36 +81,44 @@ vred.apps.tk-multi-loader2:
 
 vred.apps.tk-multi-shotgunpanel:
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
+  shotgun_fields_hook: "{self}/shotgun_fields.py:{engine}/tk-multi-shotgunpanel/basic/shotgun_fields.py"
+  shotgun_filters_hook: "{engine}/tk-multi-shotgunpanel/basic/shotgun_filters.py"
   action_mappings:
     Note:
     - actions: [ note_to_ip, note_to_closed ]
       filters: { }
     PublishedFile:
-    - actions: [import]
+    - actions: [import, import_with_options, smart_reference]
       filters: {published_file_type: Alias File}
-    - actions: [import]
+    - actions: [import, import_with_options, smart_reference]
       filters: {published_file_type: Igs File}
-    - actions: [import]
+    - actions: [import, import_with_options, smart_reference]
       filters: {published_file_type: Stp File}
-    - actions: [import]
+    - actions: [import, import_with_options, smart_reference]
       filters: {published_file_type: Stl File}
-    - actions: [import]
+    - actions: [import, import_with_options, smart_reference]
       filters: {published_file_type: Jt File}
-    - actions: [import]
+    - actions: [import, import_with_options, smart_reference]
       filters: {published_file_type: Catpart File}
-    - actions: [import]
+    - actions: [import, import_with_options, smart_reference]
       filters: {published_file_type: Fbx File}
-    - actions: [import]
+    - actions: [import, import_with_options, smart_reference]
+      filters: {published_file_type: Motion Builder FBX}
+    - actions: [import, import_with_options, smart_reference]
       filters: {published_file_type: VRED Scene}
-    - actions: [import]
+    - actions: [import, import_with_options, smart_reference]
       filters: {published_file_type: Osb File}
+    - actions: [import_sceneplate]
+      filters: {published_file_type: Image}
+    - actions: [import_sceneplate]
+      filters: {published_file_type: Rendered Image}
     - actions: [publish_clipboard]
       filters: {}
     Task:
     - actions: [assign_task, task_to_ip]
       filters: {}
     Version:
-    - actions: [quicktime_clipboard, sequence_clipboard, add_to_playlist]
+    - actions: [quicktime_clipboard, sequence_clipboard, add_to_playlist, load_for_review]
       filters: {}
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"

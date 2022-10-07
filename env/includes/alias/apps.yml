@@ -25,17 +25,17 @@ alias.apps.tk-multi-publish2:
   - name: Begin file versioning
     hook: "{engine}/tk-multi-publish2/basic/start_version_control.py"
     settings: {}
-  - name: Publish to Shotgun
+  - name: Publish to ShotGrid
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
-  - name: Create 3D Version for Review
+  - name: Create Version for Review
     hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_version.py"
     settings:
-      3D Version: True
-  - name: Publish Variants to Shotgun
+      Version Type: 2D Version
+  - name: Publish Variants to ShotGrid
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_variants.py"
     settings: {}
-  - name: Publish Annotations to Shotgun
+  - name: Publish Annotations to ShotGrid
     hook: "{engine}/tk-multi-publish2/basic/publish_annotations.py"
     settings: {}
   location: "@common.apps.tk-multi-publish2.location"
@@ -49,7 +49,9 @@ alias.apps.tk-multi-loader2:
     Stl File: [import, import_as_reference]
     Jt File: [import, import_as_reference]
     Catpart File: [import, import_as_reference]
+    Catproduct File: [import, import_as_reference]
     Fbx File: [import]
+    Motion Builder FBX: [import]
     Image: [texture_node]
     Photoshop Image: [texture_node]
     Tif File: [texture_node]
@@ -64,6 +66,11 @@ alias.apps.tk-multi-loader2:
     type: Hierarchy
     root: "{context.project}"
     publish_filters: []
+  - caption: Linked Projects
+    entity_type: Asset
+    filters:
+      - [linked_projects, is, "{context.project}"]
+    hierarchy: [project.Project.name, type, sg_asset_type, code]
   - caption: My Tasks
     type: Query
     entity_type: Task
@@ -99,8 +106,12 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Jt File}
     - actions: [import, import_as_reference]
       filters: {published_file_type: Catpart File}
+    - actions: [import, import_as_reference]
+      filters: {published_file_type: Catproduct File}
     - actions: [import]
       filters: {published_file_type: Fbx File}
+    - actions: [import]
+      filters: {published_file_type: Motion Builder FBX}
     - actions: [texture_node]
       filters: {published_file_type: Image}
     - actions: [texture_node]

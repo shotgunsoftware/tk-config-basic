@@ -22,6 +22,8 @@ alias.site:
 
     tk-multi-about: '@common.apps.tk-multi-about'
 
+    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
+
     tk-multi-loader2:
       action_mappings:
         Alias File: [import, import_as_reference]
@@ -31,7 +33,9 @@ alias.site:
         Stl File: [import, import_as_reference]
         Jt File: [import, import_as_reference]
         Catpart File: [import, import_as_reference]
-        Fbx File: [import, import_as_reference]
+        Catproduct File: [import, import_as_reference]
+        Fbx File: [import]
+        Motion Builder FBX: [import]
         Image: [texture_node]
         Photoshop Image: [texture_node]
         Obj File: [import_subdiv]

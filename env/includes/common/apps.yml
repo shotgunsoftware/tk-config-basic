@@ -19,75 +19,53 @@ includes:
 
 common.apps.tk-multi-about:
   location:
-    version: v0.3.2
+    version: v0.4.2
     type: app_store
     name: tk-multi-about
-
 common.apps.tk-multi-pythonconsole:
   location:
-    version: v1.2.5
+    version: v1.3.1
     type: app_store
     name: tk-multi-pythonconsole
-
 common.apps.tk-multi-setframerange:
   location:
-    version: v0.4.1
+    version: v0.5.1
     type: app_store
     name: tk-multi-setframerange
-
-# locations for common apps
-
 common.apps.tk-multi-publish2.location:
   type: app_store
   name: tk-multi-publish2
-  version: v2.5.5
-
+  version: v2.6.3
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
-  version: v1.20.2
-
-#common.apps.tk-multi-shotgunpanel.location:
-#  type: app_store
-#  name: tk-multi-shotgunpanel
-#  version: v1.7.1
-
+  version: v1.22.0
 common.apps.tk-multi-shotgunpanel.location:
-  type: git_branch
-  branch: SHOT-3640
-  path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
-  version: ad14423f7c130957d1307d49d8d12efca440dbdb
-
+  type: app_store
+  name: tk-multi-shotgunpanel
+  version: v1.8.3
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
-  version: v0.11.2
-
+  version: v0.12.2
 common.apps.tk-multi-reviewsubmission.location:
   type: app_store
   name: tk-multi-reviewsubmission
-  version: v1.1.1
-
+  version: v1.2.1
 common.apps.tk-multi-setframerange.location:
-  version: v0.4.1
+  version: v0.5.1
   type: app_store
   name: tk-multi-setframerange
-
 common.apps.tk-nuke-quickreview.location:
   type: app_store
   name: tk-nuke-quickreview
-  version: v1.0.3
-
+  version: v1.2.1
 common.apps.tk-shotgun-launchfolder.location:
   type: app_store
   name: tk-shotgun-launchfolder
-  version: v0.2.1
-
+  version: v0.3.1
 common.apps.tk-shotgun-launchvredreview.location:
   type: app_store
   name: tk-shotgun-launchvredreview
-  version: v1.0.0
-
-# help urls
-
-common.apps.tk-multi-publish2.help_url: https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-Integrations-User-Guide#The%20Publisher
+  version: v1.1.3
+common.apps.tk-multi-publish2.help_url: https://help.autodesk.com/view/SGSUB/ENU/?guid=SG_Supervisor_Artist_sa_integrations_sa_integrations_user_guide_html#the-publisher
