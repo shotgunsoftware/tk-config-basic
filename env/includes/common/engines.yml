@@ -35,7 +35,7 @@ common.engines.tk-nuke.location:
 common.engines.tk-photoshopcc.location:
   type: app_store
   name: tk-photoshopcc
-  version: v1.9.3
+  version: v1.9.4
 common.engines.tk-aftereffects.location:
   type: app_store
   name: tk-aftereffects
