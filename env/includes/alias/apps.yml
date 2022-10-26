@@ -50,13 +50,13 @@ alias.apps.tk-multi-loader2:
     Jt File: [import, import_as_reference]
     Catpart File: [import, import_as_reference]
     Catproduct File: [import, import_as_reference]
-    Fbx File: [import]
-    Motion Builder FBX: [import]
+    Fbx File: [import, import_subdiv, import_as_reference]
+    Motion Builder FBX: [import, import_subdiv, import_as_reference]
     Image: [texture_node]
     Photoshop Image: [texture_node]
     Tif File: [texture_node]
     Bmp File: [texture_node]
-    Obj File: [import_subdiv]
+    Obj File: [import_subdiv, import_as_reference]
     Tsm File: [import_subdiv]
     F3d File: [import_subdiv]
     Sf3d File: [import_subdiv]
@@ -108,9 +108,9 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Catpart File}
     - actions: [import, import_as_reference]
       filters: {published_file_type: Catproduct File}
-    - actions: [import]
+    - actions: [import, import_subdiv, import_as_reference]
       filters: {published_file_type: Fbx File}
-    - actions: [import]
+    - actions: [import, import_subdiv, import_as_reference]
       filters: {published_file_type: Motion Builder FBX}
     - actions: [texture_node]
       filters: {published_file_type: Image}
@@ -120,7 +120,7 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {published_file_type: Tif File}
     - actions: [texture_node]
       filters: {published_file_type: Bmp File}
-    - actions: [import_subdiv]
+    - actions: [import_subdiv, import_as_reference]
       filters: {published_file_type: Obj File}
     - actions: [import_subdiv]
       filters: {published_file_type: Tsm File}
