@@ -88,6 +88,9 @@ alias.apps.tk-multi-loader2:
 alias.apps.tk-multi-shotgunpanel:
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
   action_mappings:
+    Note:
+    - actions: [ note_to_ip, note_to_closed ]
+      filters: { }
     PublishedFile:
     - actions: [import, import_as_reference]
       filters: {published_file_type: Alias File}

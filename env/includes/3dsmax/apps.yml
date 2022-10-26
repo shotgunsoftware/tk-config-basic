@@ -64,6 +64,9 @@ includes:
   shotgun_fields_hook: '{self}/shotgun_fields.py'
   actions_hook: '{self}/general_actions.py:{self}/tk-3dsmaxplus_actions.py'
   action_mappings:
+    Note:
+    - actions: [ note_to_ip, note_to_closed ]
+      filters: { }
     PublishedFile:
     - actions: [import]
       filters: {published_file_type: Alembic Cache}

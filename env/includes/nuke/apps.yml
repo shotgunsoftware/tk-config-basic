@@ -106,6 +106,9 @@ nukestudio.apps.tk-multi-loader2:
 
 nuke.apps.tk-multi-shotgunpanel:
   action_mappings:
+    Note:
+    - actions: [ note_to_ip, note_to_closed ]
+      filters: { }
     PublishedFile:
     - actions: [read_node]
       filters: {published_file_type: Alembic Cache}

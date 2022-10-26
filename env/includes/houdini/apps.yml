@@ -62,6 +62,9 @@ houdini.apps.tk-multi-loader2:
 houdini.apps.tk-multi-shotgunpanel:
     actions_hook: '{self}/general_actions.py:{self}/tk-houdini_actions.py'
     action_mappings:
+      Note:
+      - actions: [ note_to_ip, note_to_closed ]
+        filters: { }
       PublishedFile:
       - actions: [import]
         filters: {published_file_type: Alembic Cache}
