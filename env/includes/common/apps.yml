@@ -43,7 +43,7 @@ common.apps.tk-multi-loader2.location:
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
-  version: v1.8.3
+  version: v1.8.4
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
