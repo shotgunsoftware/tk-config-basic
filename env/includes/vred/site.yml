@@ -59,6 +59,8 @@ vred.site:
 
     tk-multi-shotgunpanel: '@vred.apps.tk-multi-shotgunpanel'
 
+    tk-multi-data-validation: '@vred.apps.tk-multi-data-validation'
+
   location: "@common.engines.tk-vred.location"
   menu_favourites: []
   run_at_startup:

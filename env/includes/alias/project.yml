@@ -17,7 +17,6 @@ includes:
 - ../common/apps.yml
 - apps.yml
 
-
 alias.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
@@ -29,6 +28,8 @@ alias.project:
     tk-multi-loader2: '@alias.apps.tk-multi-loader2'
 
     tk-multi-shotgunpanel: '@alias.apps.tk-multi-shotgunpanel'
+
+    tk-multi-data-validation: '@alias.apps.tk-multi-data-validation'
 
   location: "@common.engines.tk-alias.location"
   menu_favourites: []

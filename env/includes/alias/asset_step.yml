@@ -29,6 +29,8 @@ alias.asset_step:
 
     tk-multi-shotgunpanel: '@alias.apps.tk-multi-shotgunpanel'
 
+    tk-multi-data-validation: '@alias.apps.tk-multi-data-validation'
+
   location: "@common.engines.tk-alias.location"
   menu_favourites: []
   run_at_startup:

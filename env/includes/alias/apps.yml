@@ -138,3 +138,45 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {}
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"
+
+alias.apps.tk-multi-data-validation:
+  hook_data_validation: "{engine}/tk-multi-data-validation/basic/data_validation.py"
+  rules:
+    - id: layer_is_empty
+      data_type: Layers
+    - id: layer_symmetry
+      data_type: Layers
+    - id: shader_unused
+      data_type: Shaders
+    - id: shader_is_vred_compatible
+      data_type: Shaders
+    - id: node_instances
+      data_type: Model
+    - id: node_pivots_at_origin
+      data_type: Model
+    - id: node_has_zero_transform
+      data_type: Model
+    - id: node_templates
+      data_type: Model
+    - id: node_is_null
+      data_type: Model
+    - id: node_has_construction_history
+      data_type: Model
+    - id: set_empty
+      data_type: Model
+    - id: curves
+      data_type: Model
+    - id: cos_unused
+      data_type: Model
+    - id: cos_construction_history
+      data_type: Model
+    - id: references_exist
+      data_type: Model
+    - id: locators
+      data_type: Model
+    # Below here is the example we provide for you in the config
+    # To enable them in your config, please uncomment the lines.
+    # You MUST have the hook un-commented as well to see the example work
+#    - id: my_custom_rule
+#      data_type: Miscellaneous
+  location: "@common.apps.tk-multi-data-validation.location"
