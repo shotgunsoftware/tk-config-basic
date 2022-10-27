@@ -122,3 +122,23 @@ vred.apps.tk-multi-shotgunpanel:
       filters: {}
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"
+
+vred.apps.tk-multi-data-validation:
+  hook_data_validation: "{engine}/tk-multi-data-validation/basic/data_validation.py"
+  hook_ui_config: "{engine}/tk-multi-data-validation/basic/ui_config.py"
+  rules:
+    - id: scene_graph_hidden_nodes
+      data_type: Scene Graph
+    - id: scene_graph_ref_unload
+      data_type: Scene Graph
+    - id: material_unused
+      data_type: Materials
+    - id: material_clearcoat_orangepeel
+      data_type: Materials
+    - id: material_bump_normal_map
+      data_type: Materials
+    - id: animation_block_uncheck
+      data_type: Animation
+    - id: animation_clip_empty
+      data_type: Animation
+  location: "@common.apps.tk-multi-data-validation.location"

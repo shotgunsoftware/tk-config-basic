@@ -17,7 +17,6 @@ includes:
 - ../common/apps.yml
 - apps.yml
 
-
 vred.project:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
@@ -29,6 +28,8 @@ vred.project:
     tk-multi-loader2: '@vred.apps.tk-multi-loader2'
 
     tk-multi-shotgunpanel: '@vred.apps.tk-multi-shotgunpanel'
+
+    tk-multi-data-validation: '@vred.apps.tk-multi-data-validation'
 
   location: "@common.engines.tk-vred.location"
   menu_favourites: []

@@ -29,6 +29,7 @@ vred.asset_step:
 
     tk-multi-shotgunpanel: '@vred.apps.tk-multi-shotgunpanel'
 
+    tk-multi-data-validation: '@vred.apps.tk-multi-data-validation'
 
   location: "@common.engines.tk-vred.location"
   menu_favourites: []
