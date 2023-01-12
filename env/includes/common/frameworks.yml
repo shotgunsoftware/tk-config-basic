@@ -44,9 +44,10 @@ frameworks:
       name: tk-framework-widget
   tk-framework-desktopserver_v1.x.x:
     location:
-      version: v1.5.3
-      type: app_store
-      name: tk-framework-desktopserver
+      version: a19bc64
+      type: git_branch
+      path: https://github.com/shotgunsoftware/tk-framework-desktopserver.git
+      branch: SG-29495_remove_python_2_from_tk_framework_desktopserver
   tk-framework-desktopclient_v0.x.x:
     location:
       version: v0.3.2
