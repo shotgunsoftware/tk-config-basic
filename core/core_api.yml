@@ -12,6 +12,7 @@
 # core API that should be used at runtime.
 
 location:
-  type: app_store
-  name: tk-core
-  version: v0.20.15
+  version: d6b6bd4
+  type: git_branch
+  path: https://github.com/shotgunsoftware/tk-core.git
+  branch: SG-27385_Add_a_check_to_stop_autoupdating_tk-config-basic_in_tk-framework-desktopstartup-remove-envvar
