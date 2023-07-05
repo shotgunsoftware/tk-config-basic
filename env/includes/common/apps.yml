@@ -71,6 +71,6 @@ common.apps.tk-shotgun-launchfolder.location:
 common.apps.tk-shotgun-launchvredreview.location:
   type: app_store
   name: tk-shotgun-launchvredreview
-  version: v1.1.3
 common.apps.tk-multi-publish2.help_url:
+  version: v1.1.4
   https://help.autodesk.com/view/SGSUB/ENU/?guid=SG_Supervisor_Artist_sa_integrations_sa_integrations_user_guide_html#the-publisher
