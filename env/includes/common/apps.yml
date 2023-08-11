@@ -42,6 +42,8 @@ common.apps.tk-multi-loader2.location:
   version: v1.24.0
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
+  #type: dev
+  #path: ~/git/sgtk/tk-multi-shotgunpanel
   name: tk-multi-shotgunpanel
   version: v1.9.0
 common.apps.tk-multi-launchapp.location:
