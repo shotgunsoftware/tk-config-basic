@@ -12,6 +12,8 @@
 # core API that should be used at runtime.
 
 location:
+  # type: dev
+  # path: ~/git/sgtk/tk-core
   type: app_store
   name: tk-core
   version: v0.21.0
