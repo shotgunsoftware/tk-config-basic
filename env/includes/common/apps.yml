@@ -43,7 +43,7 @@ common.apps.tk-multi-loader2.location:
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
-  version: v1.8.7
+  version: v1.8.8
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
@@ -72,5 +72,5 @@ common.apps.tk-shotgun-launchvredreview.location:
   type: app_store
   name: tk-shotgun-launchvredreview
   version: v1.1.4
-common.apps.tk-multi-publish2.help_url:
+common.apps.tk-multi-publish2.help_url: 
   https://help.autodesk.com/view/SGSUB/ENU/?guid=SG_Supervisor_Artist_sa_integrations_sa_integrations_user_guide_html#the-publisher
