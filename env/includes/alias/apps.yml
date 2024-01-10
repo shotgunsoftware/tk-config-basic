@@ -136,6 +136,9 @@ alias.apps.tk-multi-shotgunpanel:
     Version:
     - actions: [quicktime_clipboard, sequence_clipboard, add_to_playlist]
       filters: {}
+    Note:
+    - actions: [import_note_attachments]
+      filters: {}
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"
 
