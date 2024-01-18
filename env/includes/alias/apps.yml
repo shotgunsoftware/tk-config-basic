@@ -89,7 +89,7 @@ alias.apps.tk-multi-shotgunpanel:
   actions_hook: "{engine}/tk-multi-shotgunpanel/basic/scene_actions.py"
   action_mappings:
     Note:
-    - actions: [ note_to_ip, note_to_closed ]
+    - actions: [ note_to_ip, note_to_closed, import_note_attachments ]
       filters: { }
     PublishedFile:
     - actions: [import, import_as_reference]
@@ -135,9 +135,6 @@ alias.apps.tk-multi-shotgunpanel:
       filters: {}
     Version:
     - actions: [quicktime_clipboard, sequence_clipboard, add_to_playlist]
-      filters: {}
-    Note:
-    - actions: [import_note_attachments]
       filters: {}
   enable_context_switch: true
   location: "@common.apps.tk-multi-shotgunpanel.location"
