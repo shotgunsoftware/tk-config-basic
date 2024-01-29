@@ -29,7 +29,7 @@ common.apps.tk-multi-pythonconsole:
     name: tk-multi-pythonconsole
 common.apps.tk-multi-setframerange:
   location:
-    version: v0.5.1
+    version: v0.5.2
     type: app_store
     name: tk-multi-setframerange
 common.apps.tk-multi-publish2.location:
@@ -53,7 +53,7 @@ common.apps.tk-multi-reviewsubmission.location:
   name: tk-multi-reviewsubmission
   version: v1.2.1
 common.apps.tk-multi-setframerange.location:
-  version: v0.5.1
+  version: v0.5.2
   type: app_store
   name: tk-multi-setframerange
 common.apps.tk-multi-data-validation.location:
@@ -72,5 +72,4 @@ common.apps.tk-shotgun-launchvredreview.location:
   type: app_store
   name: tk-shotgun-launchvredreview
   version: v1.1.4
-common.apps.tk-multi-publish2.help_url:
-  https://help.autodesk.com/view/SGSUB/ENU/?guid=SG_Supervisor_Artist_sa_integrations_sa_integrations_user_guide_html#the-publisher
+common.apps.tk-multi-publish2.help_url: https://help.autodesk.com/view/SGSUB/ENU/?guid=SG_Supervisor_Artist_sa_integrations_sa_integrations_user_guide_html#the-publisher
