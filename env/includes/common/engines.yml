@@ -59,7 +59,7 @@ common.engines.tk-desktop.location:
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
-  version: v1.5.1
+  version: v1.5.2
 common.engines.tk-shell.location:
   type: app_store
   name: tk-shell
