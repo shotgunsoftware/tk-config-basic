@@ -27,6 +27,8 @@ common.apps.tk-multi-pythonconsole:
     version: v1.4.0
     type: app_store
     name: tk-multi-pythonconsole
+    # type: dev
+    # path: ~/git/sgtk/tk-multi-pythonconsole
 common.apps.tk-multi-setframerange:
   location:
     version: v0.6.0
