@@ -12,6 +12,7 @@
 # core API that should be used at runtime.
 
 location:
-  type: app_store
-  name: tk-core
-  version: v0.20.32
+  type: git_branch
+  branch: ticket/SG-34066-rebranding
+  path: https://github.com/shotgunsoftware/tk-core.git
+  version: 9138254
