@@ -14,9 +14,9 @@
 frameworks:
   tk-framework-adobe_v1.x.x:
     location:
-      type: app_store
+      type: dev
       name: tk-framework-adobe
-      version: v1.1.10
+      path: ~/git/sgtk/tk-framework-adobe
   tk-framework-qtwidgets_v2.x.x:
     location:
       type: dev
