@@ -12,7 +12,7 @@
 
 # More verbose description of this item
 display_name: "Toolkit Basic Configuration"
-description: "Zero configuration ShotGrid Toolkit workflow."
+description: "Zero configuration Flow Production Tracking Toolkit workflow."
 
 # Required minimum versions for this item to run
 requires_shotgun_version: "v7.2.0"
