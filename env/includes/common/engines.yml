@@ -16,7 +16,7 @@ common.engines.tk-3dsmaxplus.location:
   type: git_branch
   path: https://github.com/shotgunsoftware/tk-3dsmaxplus.git
   branch: ticket/SG-SG-34142-rebranding
-  version: 2151116bb6e871b2cb07faa76adfb9b3eabf0741
+  version: 9497c2f063f77930fda06ea9f579d44e256d6122
 common.engines.tk-3dsmax.location:
   type: git_branch
   path: https://github.com/shotgunsoftware/tk-3dsmax.git
@@ -26,7 +26,7 @@ common.engines.tk-houdini.location:
   type: git_branch
   path: https://github.com/shotgunsoftware/tk-houdini.git
   branch: ticket/SG-34307-rebranding
-  version: 7ad04efdc7aeac794495eacfae55fa7799643a67
+  version: 6310a2aa5db7c71b55b35fab58fa432f195f2f1a
 common.engines.tk-maya.location:
   name: tk-maya
   type: git_branch
@@ -51,9 +51,11 @@ common.engines.tk-aftereffects.location:
   branch: ticket/SG-34305-rebranding
   version: 41109c80f7d668c7df9b0c09daa7d1627c5ba450
 common.engines.tk-flame.location:
-  type: app_store
-  name: tk-flame
-  version: v.18.0
+  name: tk-aftereffects
+  type: git_branch
+  path: https://github.com/shotgunsoftware/tk-flame.git
+  branch: ticket/SG-34295-rebranding
+  version: d406d75694903ee1a5f114a58faf8369a083a022
 common.engines.tk-alias.location:
   type: git_branch
   path: https://github.com/shotgunsoftware/tk-alias.git
@@ -70,9 +72,10 @@ common.engines.tk-desktop.location:
   branch: ticket/SG-34066-rebranding
   version: b7ed21f51c1bf991934d788abc3792da83f00dfd
 common.engines.tk-desktop2.location:
-  type: app_store
-  name: tk-desktop2
-  version: v1.5.2
+  type: git_branch
+  path: https://github.com/shotgunsoftware/tk-desktop2.git
+  branch: ticket/SG-34675-rebranding
+  version: db387d510f45347aafa359db158d7b626df8911e
 common.engines.tk-shell.location:
   type: git_branch
   path: https://github.com/shotgunsoftware/tk-shell.git

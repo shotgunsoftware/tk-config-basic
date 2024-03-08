@@ -28,7 +28,7 @@ common.apps.tk-multi-pythonconsole:
     type: git_branch
     path: https://github.com/shotgunsoftware/tk-multi-pythonconsole.git
     branch: ticket/SG-34329-rebranding
-    version: 0dfcf010f083d7caff688e0b9051d34af762a565
+    version: dc3654134436d28b5be84fbfe8b3fc633c77be0d
 common.apps.tk-multi-setframerange:
   location:
     type: git_branch
@@ -49,7 +49,7 @@ common.apps.tk-multi-shotgunpanel.location:
   type: git_branch
   path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
   branch: ticket/SG-34335-rebranding
-  version: 236fe904048733b70be16fe67f48b2539f347b22
+  version: 684d724d52e5ee9bb3b30bb351f13a598f6a8cec
 common.apps.tk-multi-launchapp.location:
   type: git_branch
   path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
