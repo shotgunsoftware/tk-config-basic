@@ -69,7 +69,7 @@ common.apps.tk-multi-data-validation.location:
   type: git_branch
   path: https://github.com/shotgunsoftware/tk-multi-data-validation.git
   branch: ticket/SG-34321-rebranding
-  version: d4054ab77b78a3c993124fb6abdb4f9e073e0c93
+  version: 0e967f498ba93eff4b8bf9d59b6f80e25ddc311f
 common.apps.tk-nuke-quickreview.location:
   type: git_branch
   path: https://github.com/shotgunsoftware/tk-nuke-quickreview.git
