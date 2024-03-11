@@ -57,7 +57,7 @@ common.apps.tk-multi-setframerange.location:
   type: app_store
   name: tk-multi-setframerange
 common.apps.tk-multi-data-validation.location:
-  version: v0.1.5
+  version: v0.1.6
   type: app_store
   name: tk-multi-data-validation
 common.apps.tk-nuke-quickreview.location:
