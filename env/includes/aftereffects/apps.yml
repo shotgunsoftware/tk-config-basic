@@ -26,10 +26,10 @@ aftereffects.apps.tk-multi-publish2:
     - name: Begin file versioning
       hook: "{engine}/tk-multi-publish2/basic/start_version_control.py"
       settings: {}
-    - name: Publish Renderings to ShotGrid
+    - name: Publish Renderings to Flow Production Tracking
       hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_rendering.py"
       settings: {}
-    - name: Publish to ShotGrid
+    - name: Publish to Flow Production Tracking
       hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_document.py"
       settings: {}
     - name: Upload for review

@@ -10,8 +10,9 @@
 #
 
 description: Configuration to load when when we are running in a site
-             specific context and no project or other ShotGrid entity
-             has yet been established as the current context.
+             specific context and no project or other Flow Production
+             Tracking entity has yet been established as the current
+             context.
 
 includes:
 - includes/houdini/site.yml
