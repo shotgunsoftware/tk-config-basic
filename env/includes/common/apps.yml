@@ -63,7 +63,7 @@ common.apps.tk-multi-data-validation.location:
 common.apps.tk-nuke-quickreview.location:
   type: app_store
   name: tk-nuke-quickreview
-  version: v1.2.1
+  version: v1.3.0
 common.apps.tk-shotgun-launchfolder.location:
   type: app_store
   name: tk-shotgun-launchfolder
