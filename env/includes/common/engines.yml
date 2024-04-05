@@ -27,6 +27,8 @@ common.engines.tk-houdini.location:
   name: tk-houdini
   version: v1.9.0
 common.engines.tk-maya.location:
+  # type: dev
+  # path: ~/git/sgtk/tk-maya
   type: app_store
   name: tk-maya
   version: v0.12.0
