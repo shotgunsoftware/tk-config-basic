@@ -33,7 +33,6 @@ includes:
 
 engines:
   tk-3dsmax: '@3dsmax.project'
-  tk-3dsmaxplus: '@3dsmaxplus.project'
   tk-aftereffects: '@aftereffects.project'
   tk-alias: '@alias.project'
   tk-desktop: '@desktop.project'

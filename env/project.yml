@@ -37,7 +37,6 @@ engines:
   tk-shell: '@shell.project'
   tk-photoshopcc: '@photoshopcc.project'
   tk-aftereffects: '@aftereffects.project'
-  tk-3dsmaxplus: '@3dsmaxplus.project'
   tk-3dsmax: '@3dsmax.project'
   tk-shotgun: '@shotgun.all'
   tk-flame: '@flame.project'
