@@ -33,6 +33,8 @@ common.engines.tk-maya.location:
   name: tk-maya
   version: v0.12.0
 common.engines.tk-nuke.location:
+  # type: dev
+  # path: ~/git/sgtk/tk-nuke
   type: app_store
   name: tk-nuke
   version: v0.15.0
