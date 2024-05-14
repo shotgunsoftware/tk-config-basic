@@ -34,6 +34,5 @@ engines:
   tk-shell: '@shell.shot'
   tk-photoshopcc: '@photoshopcc.shot'
   tk-aftereffects: '@aftereffects.shot'
-  tk-3dsmaxplus: '@3dsmaxplus.shot'
   tk-3dsmax: '@3dsmax.shot'
   tk-shotgun: '@shotgun.all'

@@ -18,20 +18,20 @@ includes:
 - apps.yml
 
 
-3dsmaxplus.site:
+3dsmax.site:
   apps:
     tk-multi-about: '@common.apps.tk-multi-about'
 
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
-    tk-multi-loader2: &3dsmaxplus_site_tk-multi-loader2
+    tk-multi-loader2:
       action_mappings:
         3dsmax Scene: [import, reference]
         Alembic Cache: [import]
         Image: [texture_node]
         Rendered Image: [texture_node]
         Texture: [texture_node]
-      actions_hook: '{self}/tk-3dsmaxplus_actions.py'
+      actions_hook: '{engine}/tk-multi-loader2/basic/scene_actions.py'
       entities:
       - caption: Project
         type: Hierarchy
@@ -49,22 +49,6 @@ includes:
       # this filter means only the latest publish will be displayed.
       publish_filters: [["sg_status_list", "is_not", null]]
       location: "@common.apps.tk-multi-loader2.location"
-
-    tk-multi-shotgunpanel: '@3dsmaxplus.apps.tk-multi-shotgunpanel'
-
-  location: "@common.engines.tk-3dsmaxplus.location"
-  menu_favourites: []
-  launch_builtin_plugins: [basic]
-
-3dsmax.site:
-  apps:
-    tk-multi-about: '@common.apps.tk-multi-about'
-
-    tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
-
-    tk-multi-loader2:
-      <<: *3dsmaxplus_site_tk-multi-loader2
-      actions_hook: '{engine}/tk-multi-loader2/basic/scene_actions.py'
 
     tk-multi-shotgunpanel: '@3dsmax.apps.tk-multi-shotgunpanel'
 
