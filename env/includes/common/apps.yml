@@ -35,6 +35,8 @@ common.apps.tk-multi-setframerange:
     type: app_store
     name: tk-multi-setframerange
 common.apps.tk-multi-publish2.location:
+  # type: dev
+  # path: ~/git/sgtk/tk-multi-publish2
   type: app_store
   name: tk-multi-publish2
   version: v2.8.0
