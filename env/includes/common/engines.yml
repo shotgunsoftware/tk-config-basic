@@ -17,17 +17,21 @@ common.engines.tk-3dsmaxplus.location:
   name: tk-3dsmaxplus
   version: v0.6.2
 common.engines.tk-3dsmax.location:
-  type: app_store
-  name: tk-3dsmax
-  version: v1.3.0
+  # type: app_store
+  # name: tk-3dsmax
+  # version: v1.3.0
+  type: dev
+  path: C:\Users\chaucae\Documents\projects\tk-3dsmax
 common.engines.tk-houdini.location:
   type: app_store
   name: tk-houdini
   version: v1.9.0
 common.engines.tk-maya.location:
-  type: app_store
-  name: tk-maya
-  version: v0.12.1
+  # type: app_store
+  # name: tk-maya
+  # version: v0.12.1
+  type: dev
+  path: C:\Users\chaucae\Documents\projects\tk-maya
 common.engines.tk-nuke.location:
   type: app_store
   name: tk-nuke
@@ -49,13 +53,16 @@ common.engines.tk-alias.location:
   name: tk-alias
   version: v3.2.0
 common.engines.tk-vred.location:
-  type: app_store
-  name: tk-vred
-  version: v3.2.0
+  # type: app_store
+  # name: tk-vred
+  # version: v3.2.0
+  type: dev
+  path: C:\Users\chaucae\Documents\projects\tk-vred
 common.engines.tk-desktop.location:
-  type: app_store
-  name: tk-desktop
-  version: v2.7.1
+  type: git_branch
+  branch: ticket/SG-30560-code-cleanup-qt4
+  path: git@github.com:shotgunsoftware/tk-desktop.git
+  version: 71b2c609ca8c4ab6c7552fe77417988e498968c5
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
