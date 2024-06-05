@@ -17,33 +17,32 @@ common.engines.tk-3dsmaxplus.location:
   name: tk-3dsmaxplus
   version: v0.6.2
 common.engines.tk-3dsmax.location:
-  # type: app_store
-  # name: tk-3dsmax
-  # version: v1.3.0
-  type: dev
-  path: C:\Users\chaucae\Documents\projects\tk-3dsmax
+  type: app_store
+  name: tk-3dsmax
+  version: v1.3.0
 common.engines.tk-houdini.location:
   type: app_store
   name: tk-houdini
   version: v1.9.0
 common.engines.tk-maya.location:
-  # type: app_store
-  # name: tk-maya
-  # version: v0.12.1
-  type: dev
-  path: C:\Users\chaucae\Documents\projects\tk-maya
+  type: git_branch
+  branch: ticket/SG-30560-code-cleanup-qt4-and-pyside
+  path: git@github.com:shotgunsoftware/tk-maya.git
+  version: fcfda41b5904fa3a7a084ee53bdd1d8d11b5041b
 common.engines.tk-nuke.location:
   type: app_store
   name: tk-nuke
   version: v0.15.0
 common.engines.tk-photoshopcc.location:
-  type: app_store
-  name: tk-photoshopcc
-  version: v1.10.0
+  type: git_branch
+  branch: ticket/SG-30560-code-cleanup-qt4
+  path: git@github.com:shotgunsoftware/tk-photoshopcc.git
+  version: 4a92f55063e37e80674aefdc492cb27c92ccc37b
 common.engines.tk-aftereffects.location:
-  type: app_store
-  name: tk-aftereffects
-  version: v0.4.0
+  type: git_branch
+  branch: ticket/SG-30560-code-cleanup-qt4
+  path: git@github.com:shotgunsoftware/tk-aftereffects.git
+  version: ca08458227eac54353cb0e039417ebdcc0202ea1
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
@@ -53,24 +52,24 @@ common.engines.tk-alias.location:
   name: tk-alias
   version: v3.2.0
 common.engines.tk-vred.location:
-  # type: app_store
-  # name: tk-vred
-  # version: v3.2.0
-  type: dev
-  path: C:\Users\chaucae\Documents\projects\tk-vred
+  type: git_branch
+  branch: ticket/SG-30560-code-cleanup-qt4
+  path: git@github.com:shotgunsoftware/tk-vred.git
+  version: b3ba0d1255eff7a91e313f7bad94597436416c3b
 common.engines.tk-desktop.location:
   type: git_branch
   branch: ticket/SG-30560-code-cleanup-qt4
   path: git@github.com:shotgunsoftware/tk-desktop.git
-  version: 71b2c609ca8c4ab6c7552fe77417988e498968c5
+  version: 48e740c6395b0c710431acce4e5093b259fb0ee9
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
   version: v1.6.0
 common.engines.tk-shell.location:
-  type: app_store
-  name: tk-shell
-  version: v0.10.0
+  type: git_branch
+  branch: ticket/SG-30560-code-cleanup-qt4
+  path: git@github.com:shotgunsoftware/tk-shell.git
+  version: 3db9b0e8bee293e5c7f36593c147e0b96bccd638
 common.engines.tk-shotgun.location:
   type: app_store
   name: tk-shotgun

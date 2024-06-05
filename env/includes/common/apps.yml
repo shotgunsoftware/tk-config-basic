@@ -27,7 +27,7 @@ common.apps.tk-multi-pythonconsole:
     type: git_branch
     branch: ticket/SG-30560-code-cleanup-qt4
     path: git@github.com:shotgunsoftware/tk-multi-pythonconsole.git
-    version: 430236e0be77c186393a6c82d7b2c4788d62d926
+    version: 6b63dea1ce75db8cdbe51daef6d53ff1118644c5
 common.apps.tk-multi-setframerange:
   location:
     version: v0.6.0
@@ -35,9 +35,9 @@ common.apps.tk-multi-setframerange:
     name: tk-multi-setframerange
 common.apps.tk-multi-publish2.location:
   type: git_branch
-    branch: ticket/SG-30560-code-cleanup-qt4
-    path: git@github.com:shotgunsoftware/tk-multi-publish2.git
-    version: d3832772fca3bd2375bccbbcf6e223a310be1b69
+  branch: ticket/SG-30560-code-cleanup-qt4
+  path: git@github.com:shotgunsoftware/tk-multi-publish2.git
+  version: 44bfa42c713ccd73a5584938866382c796f11c9c
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
