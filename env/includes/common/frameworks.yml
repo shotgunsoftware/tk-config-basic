@@ -21,19 +21,19 @@ frameworks:
     location:
       type: git_branch
       branch: ticket/SG-30560-code-cleanup-qt4
-      path: git@github.com:shotgunsoftware/tk-framework-qtwidgets.git
+      path: https://github.com/shotgunsoftware/tk-framework-qtwidgets.git
       version: 3d86aa11058514ce3edf0e22a3ec6f8c069700f4
   tk-framework-shotgunutils_v4.x.x:
     location:
       type: git_branch
       branch: ticket/SG-30560-code-cleanup-qt4
-      path: git@github.com:shotgunsoftware/tk-framework-shotgunutils.git
+      path: https://github.com/shotgunsoftware/tk-framework-shotgunutils.git
       version: a8d5ce75684eb888f177683eba6941ff1cdd9c8a
   tk-framework-shotgunutils_v5.x.x:
     location:
       type: git_branch
       branch: ticket/SG-30560-code-cleanup-qt4
-      path: git@github.com:shotgunsoftware/tk-framework-shotgunutils.git
+      path: https://github.com/shotgunsoftware/tk-framework-shotgunutils.git
       version: a8d5ce75684eb888f177683eba6941ff1cdd9c8a
   tk-framework-adminui_v0.x.x:
     location:

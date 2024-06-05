@@ -27,7 +27,7 @@ common.engines.tk-houdini.location:
 common.engines.tk-maya.location:
   type: git_branch
   branch: ticket/SG-30560-code-cleanup-qt4-and-pyside
-  path: git@github.com:shotgunsoftware/tk-maya.git
+  path: https://github.com/shotgunsoftware/tk-maya.git
   version: fcfda41b5904fa3a7a084ee53bdd1d8d11b5041b
 common.engines.tk-nuke.location:
   type: app_store
@@ -36,12 +36,12 @@ common.engines.tk-nuke.location:
 common.engines.tk-photoshopcc.location:
   type: git_branch
   branch: ticket/SG-30560-code-cleanup-qt4
-  path: git@github.com:shotgunsoftware/tk-photoshopcc.git
+  path: https://github.com/shotgunsoftware/tk-photoshopcc.git
   version: 4a92f55063e37e80674aefdc492cb27c92ccc37b
 common.engines.tk-aftereffects.location:
   type: git_branch
   branch: ticket/SG-30560-code-cleanup-qt4
-  path: git@github.com:shotgunsoftware/tk-aftereffects.git
+  path: https://github.com/shotgunsoftware/tk-aftereffects.git
   version: ca08458227eac54353cb0e039417ebdcc0202ea1
 common.engines.tk-flame.location:
   type: app_store
@@ -54,12 +54,12 @@ common.engines.tk-alias.location:
 common.engines.tk-vred.location:
   type: git_branch
   branch: ticket/SG-30560-code-cleanup-qt4
-  path: git@github.com:shotgunsoftware/tk-vred.git
+  path: https://github.com/shotgunsoftware/tk-vred.git
   version: b3ba0d1255eff7a91e313f7bad94597436416c3b
 common.engines.tk-desktop.location:
   type: git_branch
   branch: ticket/SG-30560-code-cleanup-qt4
-  path: git@github.com:shotgunsoftware/tk-desktop.git
+  path: https://github.com/shotgunsoftware/tk-desktop.git
   version: 48e740c6395b0c710431acce4e5093b259fb0ee9
 common.engines.tk-desktop2.location:
   type: app_store
@@ -68,7 +68,7 @@ common.engines.tk-desktop2.location:
 common.engines.tk-shell.location:
   type: git_branch
   branch: ticket/SG-30560-code-cleanup-qt4
-  path: git@github.com:shotgunsoftware/tk-shell.git
+  path: https://github.com/shotgunsoftware/tk-shell.git
   version: 3db9b0e8bee293e5c7f36593c147e0b96bccd638
 common.engines.tk-shotgun.location:
   type: app_store
