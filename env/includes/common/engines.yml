@@ -53,9 +53,11 @@ common.engines.tk-vred.location:
   name: tk-vred
   version: v3.1.1
 common.engines.tk-desktop.location:
-  type: app_store
-  name: tk-desktop
-  version: v2.7.0
+  type: dev
+  path: /home/julien/git/sgtk/tk-desktop
+  # type: app_store
+  # name: tk-desktop
+  # version: v2.7.0
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
