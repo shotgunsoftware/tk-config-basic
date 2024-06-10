@@ -41,9 +41,10 @@ common.apps.tk-multi-loader2.location:
   name: tk-multi-loader2
   version: v1.25.1
 common.apps.tk-multi-shotgunpanel.location:
-  type: app_store
-  name: tk-multi-shotgunpanel
-  version: v1.9.0
+  type: dev
+  linux_path: "~/git/sgtk/tk-multi-shotgunpanel"
+  mac_path: "~/git/sgtk/tk-multi-shotgunpanel"
+  windows_path: "%USERPROFILE%/git/sgtk/tk-multi-shotgunpanel"
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp

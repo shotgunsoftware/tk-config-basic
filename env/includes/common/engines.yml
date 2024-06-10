@@ -48,6 +48,10 @@ common.engines.tk-vred.location:
   name: tk-vred
   version: v3.4.0
 common.engines.tk-desktop.location:
+  # type: dev
+  # linux_path: "~/git/sgtk/tk-desktop"
+  # mac_path: "~/git/sgtk/tk-desktop"
+  # windows_path: "%USERPROFILE%/git/sgtk/tk-desktop"
   type: app_store
   name: tk-desktop
   version: v2.7.3

@@ -19,9 +19,10 @@ frameworks:
       version: v1.2.2
   tk-framework-qtwidgets_v2.x.x:
     location:
-      version: v2.12.2
-      type: app_store
-      name: tk-framework-qtwidgets
+      type: dev
+      linux_path: "~/git/sgtk/tk-framework-qtwidgets"
+      mac_path: "~/git/sgtk/tk-framework-qtwidgets"
+      windows_path: "%USERPROFILE%/git/sgtk/tk-framework-qtwidgets"
   tk-framework-shotgunutils_v4.x.x:
     location:
       version: v4.4.15
