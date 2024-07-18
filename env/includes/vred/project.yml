@@ -35,7 +35,7 @@ vred.project:
   menu_favourites: []
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
-  - {app_instance: tk-multi-pythonconsole, name: 'Flow Production Tracking Python Console...'}
+  - {app_instance: tk-multi-pythonconsole, name: 'PTR Python Console...'}
   docked_apps:
     tk-multi-shotgunpanel:
         pos: right
