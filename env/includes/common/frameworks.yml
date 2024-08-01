@@ -19,9 +19,13 @@ frameworks:
       version: v1.2.2
   tk-framework-qtwidgets_v2.x.x:
     location:
-      version: v2.12.2
-      type: app_store
-      name: tk-framework-qtwidgets
+      # version: v2.12.2
+      # type: app_store
+      # name: tk-framework-qtwidgets
+      type: git_branch
+      branch: ticket/SG-29997-first-phase-python2-dropping
+      path: https://github.com/shotgunsoftware/tk-framework-qtwidgets.git
+      version: 6f272a2407974a347102f81ff3c7a4b52becc83b
   tk-framework-shotgunutils_v4.x.x:
     location:
       version: v4.4.15

@@ -37,13 +37,21 @@ common.apps.tk-multi-publish2.location:
   name: tk-multi-publish2
   version: v2.9.0
 common.apps.tk-multi-loader2.location:
-  type: app_store
-  name: tk-multi-loader2
-  version: v1.25.1
+  # type: app_store
+  # name: tk-multi-loader2
+  # version: v1.25.1
+  type: git_branch
+  branch: ticket/SG-35762-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+  version: f03850ce5fbf26f82880871cfc62fd84c6508f4e
 common.apps.tk-multi-shotgunpanel.location:
-  type: app_store
-  name: tk-multi-shotgunpanel
-  version: v1.9.0
+  # type: app_store
+  # name: tk-multi-shotgunpanel
+  # version: v1.9.0
+  type: git_branch
+  branch: ticket/SG-35769-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
+  version: 5238a7afd3826e9c960c0d6b5b5289623a566261
 common.apps.tk-multi-launchapp.location:
   type: app_store
   name: tk-multi-launchapp
