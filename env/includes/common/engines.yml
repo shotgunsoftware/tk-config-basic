@@ -18,11 +18,15 @@ common.engines.tk-3dsmax.location:
   type: git_branch
   branch: ticket/SG-35870-first-phase-python2-removing
   path: https://github.com/shotgunsoftware/tk-3dsmax.git
-  version: 73bba805d1c17b7772a4e270362294419db014d8
+  version: ddede0259a30052f3c9b22e3bbf42964056782b4
 common.engines.tk-houdini.location:
-  type: app_store
-  name: tk-houdini
-  version: v1.9.1
+  # type: app_store
+  # name: tk-houdini
+  # version: v1.9.1
+  type: git_branch
+  branch: ticket/SG-35870-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-houdini.git
+  version: af5bc240435942d1b65a8e324fc0fc93f1cb22cd
 common.engines.tk-maya.location:
   # type: app_store
   # name: tk-maya
@@ -32,37 +36,62 @@ common.engines.tk-maya.location:
   path: https://github.com/shotgunsoftware/tk-maya.git
   version: 2c856ed43a8cb2225d8e74c389c54df9192bc706
 common.engines.tk-nuke.location:
-  type: app_store
-  name: tk-nuke
-  version: v0.15.1
+  type: git_branch
+  branch: ticket/SG-35763-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-nuke.git
+  version: fc60abe8f9777988013566c9437008bbec23cdf3
 common.engines.tk-photoshopcc.location:
-  type: app_store
-  name: tk-photoshopcc
-  version: v1.11.0
+  # type: app_store
+  # name: tk-photoshopcc
+  # version: v1.11.0
+  type: git_branch
+  branch: ticket/SG-35763-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-photoshopcc.git
+  version: fe3a016b4544ae8678d518559b727cc7169ed612
 common.engines.tk-aftereffects.location:
-  type: app_store
-  name: tk-aftereffects
-  version: v0.4.1
+  # type: app_store
+  # name: tk-aftereffects
+  # version: v0.4.1
+  type: git_branch
+  branch: ticket/SG-35870-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-aftereffects.git
+  version: b8bdc2703fa4fd19686961d853bfe42d55333a22
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
   version: v1.19.0
 common.engines.tk-alias.location:
-  type: app_store
-  name: tk-alias
-  version: v3.3.1
+  # type: app_store
+  # name: tk-alias
+  # version: v3.3.1
+  type: git_branch
+  branch: ticket/SG-35870-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-alias.git
+  version: bd24717cd063eb65d3d693a1d32c91a83327c53f
 common.engines.tk-vred.location:
-  type: app_store
-  name: tk-vred
-  version: v3.4.0
+  # type: app_store
+  # name: tk-vred
+  # version: v3.4.0
+  type: git_branch
+  branch: ticket/SG-35763-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-vred.git
+  version: 5eb4188be504f02cc3b884df65b769e0543d9184
 common.engines.tk-desktop.location:
-  type: app_store
-  name: tk-desktop
-  version: v2.7.3
+  # type: app_store
+  # name: tk-desktop
+  # version: v2.7.3
+  type: git_branch
+  branch: ticket/SG-35870-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-desktop.git
+  version: 92c95f5b97d66314cbf29b95dcfcd065571d0f1f
 common.engines.tk-desktop2.location:
-  type: app_store
-  name: tk-desktop2
-  version: v1.6.0
+  # type: app_store
+  # name: tk-desktop2
+  # version: v1.6.0
+  type: git_branch
+  branch: ticket/SG-35870-first-phase-python2-removing
+  path: https://github.com/shotgunsoftware/tk-desktop2.git
+  version: 762e118d83ff4f477eac20fd935e5dcfbbb82541
 common.engines.tk-shell.location:
   type: app_store
   name: tk-shell
