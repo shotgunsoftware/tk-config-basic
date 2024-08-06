@@ -19,14 +19,22 @@ includes:
 
 common.apps.tk-multi-about:
   location:
-    version: v0.5.0
-    type: app_store
-    name: tk-multi-about
+    # version: v0.5.0
+    # type: app_store
+    # name: tk-multi-about
+    type: git_branch
+    branch: ticket/SG-33500-new-build-resources-yml
+    path: https://github.com/shotgunsoftware/tk-multi-about.git
+    version: 7a75513c01e46ecdec4b3437150ab2c10a89e7a1
 common.apps.tk-multi-pythonconsole:
   location:
-    version: v1.4.1
-    type: app_store
-    name: tk-multi-pythonconsole
+    # version: v1.4.1
+    # type: app_store
+    # name: tk-multi-pythonconsole
+    type: git_branch
+    branch: ticket/SG-33500-new-build-resources-yml
+    path: https://github.com/shotgunsoftware/tk-multi-pythonconsole.git
+    version: ed68715e31997fd56b5ab5f1e9cc162243a339f8
 common.apps.tk-multi-setframerange:
   location:
     version: v0.6.0
@@ -37,17 +45,29 @@ common.apps.tk-multi-publish2.location:
   name: tk-multi-publish2
   version: v2.9.0
 common.apps.tk-multi-loader2.location:
-  type: app_store
-  name: tk-multi-loader2
-  version: v1.25.1
+  # type: app_store
+  # name: tk-multi-loader2
+  # version: v1.25.1
+  type: git_branch
+  branch: ticket/SG-33500-new-build-resources-yml
+  path: https://github.com/shotgunsoftware/tk-multi-loader2.git
+  version: b813a70811030243e90571910f8779baca70e60f
 common.apps.tk-multi-shotgunpanel.location:
-  type: app_store
-  name: tk-multi-shotgunpanel
-  version: v1.9.0
+  # type: app_store
+  # name: tk-multi-shotgunpanel
+  # version: v1.9.0
+  type: git_branch
+  branch: ticket/SG-33500-new-build-resources-yml
+  path: https://github.com/shotgunsoftware/tk-multi-shotgunpanel.git
+  version: ea2eaeb1ef52dbff7bbc060285e8b20803829f00
 common.apps.tk-multi-launchapp.location:
-  type: app_store
-  name: tk-multi-launchapp
-  version: v0.13.1
+  # type: app_store
+  # name: tk-multi-launchapp
+  # version: v0.13.1
+  type: git_branch
+  branch: ticket/SG-33500-new-build-resources-yml
+  path: https://github.com/shotgunsoftware/tk-multi-launchapp.git
+  version: dc913e34bf435081c206594e0fe3fe85a7f80931
 common.apps.tk-multi-reviewsubmission.location:
   type: app_store
   name: tk-multi-reviewsubmission
@@ -61,15 +81,23 @@ common.apps.tk-multi-data-validation.location:
   type: app_store
   name: tk-multi-data-validation
 common.apps.tk-nuke-quickreview.location:
-  type: app_store
-  name: tk-nuke-quickreview
-  version: v1.3.0
+  # type: app_store
+  # name: tk-nuke-quickreview
+  # version: v1.3.0
+  type: git_branch
+  branch: ticket/SG-33500-new-build-resources-yml
+  path: https://github.com/shotgunsoftware/tk-nuke-quickreview.git
+  version: 99cbb17b69c66be5cd88ee253363df1e7a285a2e
 common.apps.tk-shotgun-launchfolder.location:
   type: app_store
   name: tk-shotgun-launchfolder
   version: v0.4.0
 common.apps.tk-shotgun-launchvredreview.location:
-  type: app_store
-  name: tk-shotgun-launchvredreview
-  version: v1.2.0
+  # type: app_store
+  # name: tk-shotgun-launchvredreview
+  # version: v1.2.0
+  type: git_branch
+  branch: ticket/SG-33500-new-build-resources-yml
+  path: https://github.com/shotgunsoftware/tk-shotgun-launchvredreview.git
+  version: 8c218aac4c0872a24aadf4387a1d4391c884d49f
 common.apps.tk-multi-publish2.help_url: https://help.autodesk.com/view/SGSUB/ENU/?guid=SG_Supervisor_Artist_sa_integrations_sa_integrations_user_guide_html#the-publisher
