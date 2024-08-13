@@ -57,9 +57,13 @@ common.engines.tk-aftereffects.location:
   path: https://github.com/shotgunsoftware/tk-aftereffects.git
   version: b8bdc2703fa4fd19686961d853bfe42d55333a22
 common.engines.tk-flame.location:
-  type: app_store
-  name: tk-flame
-  version: v1.19.0
+  # type: app_store
+  # name: tk-flame
+  # version: v1.19.0
+  type: git_branch
+  branch: ticket/SG-33500-new-build-resources-yml
+  path: https://github.com/shotgunsoftware/tk-flame.git
+  version: 6ed8dd867d77c4bd7dcef28c5b7646a8bb01c6ee
 common.engines.tk-alias.location:
   # type: app_store
   # name: tk-alias
@@ -81,9 +85,9 @@ common.engines.tk-desktop.location:
   # name: tk-desktop
   # version: v2.7.3
   type: git_branch
-  branch: ticket/SG-35870-first-phase-python2-removing
+  branch: python2-clean-and-build-resources
   path: https://github.com/shotgunsoftware/tk-desktop.git
-  version: 92c95f5b97d66314cbf29b95dcfcd065571d0f1f
+  version: 06f63037539365de50ddaaef077b0bf57d35803b
 common.engines.tk-desktop2.location:
   # type: app_store
   # name: tk-desktop2
