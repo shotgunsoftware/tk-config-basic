@@ -81,13 +81,13 @@ common.engines.tk-vred.location:
   path: https://github.com/shotgunsoftware/tk-vred.git
   version: 5eb4188be504f02cc3b884df65b769e0543d9184
 common.engines.tk-desktop.location:
-  # type: app_store
-  # name: tk-desktop
-  # version: v2.7.3
-  type: git_branch
-  branch: python2-clean-and-build-resources
-  path: https://github.com/shotgunsoftware/tk-desktop.git
-  version: 06f63037539365de50ddaaef077b0bf57d35803b
+  type: app_store
+  name: tk-desktop
+  version: v2.7.3
+  # type: git_branch
+  # branch: python2-clean-and-build-resources
+  # path: https://github.com/shotgunsoftware/tk-desktop.git
+  # version: 06f63037539365de50ddaaef077b0bf57d35803b
 common.engines.tk-desktop2.location:
   # type: app_store
   # name: tk-desktop2
