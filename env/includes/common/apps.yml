@@ -19,13 +19,13 @@ includes:
 
 common.apps.tk-multi-about:
   location:
-    version: v0.5.0
-    type: app_store
-    name: tk-multi-about
-    # type: git_branch
-    # branch: ticket/SG-33500-new-build-resources-yml
-    # path: https://github.com/shotgunsoftware/tk-multi-about.git
-    # version: 7a75513c01e46ecdec4b3437150ab2c10a89e7a1
+    # version: v0.5.0
+    # type: app_store
+    # name: tk-multi-about
+    type: git_branch
+    branch: ticket/SG-33500-new-build-resources-yml
+    path: https://github.com/shotgunsoftware/tk-multi-about.git
+    version: 7a75513c01e46ecdec4b3437150ab2c10a89e7a1
 common.apps.tk-multi-pythonconsole:
   location:
     # version: v1.4.1
