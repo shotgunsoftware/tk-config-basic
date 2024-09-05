@@ -44,7 +44,7 @@ frameworks:
       type: git_branch
       branch: ticket/SG-35559
       path: https://github.com/shotgunsoftware/tk-framework-adminui.git
-      version: db28a88c141751c2b78ecc9ae7a104c353045b50
+      version: 4dcc999e9dbd0dbdc0ff26ce7b901d802878e68b
   tk-framework-widget_v1.x.x:
     location:
       version: v1.2.0
