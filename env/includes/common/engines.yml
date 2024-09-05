@@ -54,7 +54,7 @@ common.engines.tk-desktop.location:
   type: git_branch
   branch: ticket/SG-35559
   path: https://github.com/shotgunsoftware/tk-desktop.git
-  version: 4c15a3cfe2daec38e84b093a1646f17fb11a31be
+  version: 639b183f11d982cda3040eb2d411fa7114de2727
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
