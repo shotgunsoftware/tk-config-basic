@@ -16,9 +16,11 @@ common.engines.tk-3dsmax.location:
   name: tk-3dsmax
   version: v1.4.1
 common.engines.tk-houdini.location:
-  type: app_store
-  name: tk-houdini
-  version: v1.9.2
+  # type: app_store
+  # name: tk-houdini
+  # version: v1.9.2
+  type: dev
+  path: C:\Users\chaucae\Documents\projects\tk-houdini
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
