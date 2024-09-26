@@ -26,7 +26,7 @@ common.engines.tk-maya.location:
 common.engines.tk-nuke.location:
   type: app_store
   name: tk-nuke
-  version: v0.15.2
+  version: v0.15.3
 common.engines.tk-photoshopcc.location:
   type: app_store
   name: tk-photoshopcc
