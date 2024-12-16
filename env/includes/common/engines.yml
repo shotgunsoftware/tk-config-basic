@@ -34,7 +34,7 @@ common.engines.tk-photoshopcc.location:
 common.engines.tk-aftereffects.location:
   type: app_store
   name: tk-aftereffects
-  version: v0.4.4
+  version: v0.4.5
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
