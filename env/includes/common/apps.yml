@@ -19,23 +19,35 @@ includes:
 
 common.apps.tk-multi-about:
   location:
-    version: v0.5.1
-    type: app_store
-    name: tk-multi-about
+    # version: v0.5.1
+    # type: app_store
+    # name: tk-multi-about
+    type: git_branch
+    branch: ticket/ticket/SG-36835-python2-removal
+    path: git@github.com:shotgunsoftware/tk-multi-about.git
+    version: b55bac1565ae4b158893543aa0ca77a4c6f61014
 common.apps.tk-multi-pythonconsole:
   location:
-    version: v1.4.2
-    type: app_store
-    name: tk-multi-pythonconsole
+    # version: v1.4.2
+    # type: app_store
+    # name: tk-multi-pythonconsole
+    type: git_branch
+    branch: ticket/SG-36835-python2-removal
+    path: git@github.com:shotgunsoftware/tk-multi-pythonconsole.git
+    version: 423d17be1e6e451ab8162f2c362286e4e8eaa7c6
 common.apps.tk-multi-setframerange:
   location:
     version: v0.6.1
     type: app_store
     name: tk-multi-setframerange
 common.apps.tk-multi-publish2.location:
-  type: app_store
-  name: tk-multi-publish2
-  version: v2.10.1
+  # type: app_store
+  # name: tk-multi-publish2
+  # version: v2.10.1
+  type: git_branch
+  branch: ticket/SG-36835-python2-removal
+  path: git@github.com:shotgunsoftware/tk-multi-publish2.git
+  version: 4cc464970622af27149eb1aeba36d2c195bff32f
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
@@ -45,21 +57,33 @@ common.apps.tk-multi-shotgunpanel.location:
   name: tk-multi-shotgunpanel
   version: v1.9.2
 common.apps.tk-multi-launchapp.location:
-  type: app_store
-  name: tk-multi-launchapp
-  version: v0.13.2
+  # type: app_store
+  # name: tk-multi-launchapp
+  # version: v0.13.2
+  type: git_branch
+  branch: ticket/SG-36835-python2-removal
+  path: git@github.com:shotgunsoftware/tk-multi-launchapp.git
+  version: f90f75e197fdd3f34fb89a0fdb6f2512e52e1bd8
 common.apps.tk-multi-reviewsubmission.location:
-  type: app_store
-  name: tk-multi-reviewsubmission
-  version: v1.3.0
+  # type: app_store
+  # name: tk-multi-reviewsubmission
+  # version: v1.3.0
+  type: git_branch
+  branch: ticket/SG-36838-drop-python-2-compatibility
+  path: git@github.com:shotgunsoftware/tk-multi-reviewsubmission.git
+  version: af0c64e26856aba6b9e1bf19211f36bd9d4a410e
 common.apps.tk-multi-setframerange.location:
   version: v0.6.1
   type: app_store
   name: tk-multi-setframerange
 common.apps.tk-multi-data-validation.location:
-  version: v0.3.1
-  type: app_store
-  name: tk-multi-data-validation
+  # version: v0.3.1
+  # type: app_store
+  # name: tk-multi-data-validation
+  type: git_branch
+  branch: ticket/SG-36835-python2-removal
+  path: git@github.com:shotgunsoftware/tk-multi-data-validation.git
+  version: 9ff226bcd9ff0ada2ad2300e523923271b8e6f1e
 common.apps.tk-nuke-quickreview.location:
   type: app_store
   name: tk-nuke-quickreview
