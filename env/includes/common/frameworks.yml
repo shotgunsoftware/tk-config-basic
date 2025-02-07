@@ -29,7 +29,7 @@ frameworks:
       name: tk-framework-shotgunutils
   tk-framework-shotgunutils_v5.x.x:
     location:
-      version: v5.10.1
+      version: v5.10.2
       type: app_store
       name: tk-framework-shotgunutils
   tk-framework-adminui_v0.x.x:
