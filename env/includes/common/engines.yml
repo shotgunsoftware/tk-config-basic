@@ -22,7 +22,7 @@ common.engines.tk-houdini.location:
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
-  version: v0.13.3
+  version: v0.13.4
 common.engines.tk-nuke.location:
   type: app_store
   name: tk-nuke
