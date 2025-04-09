@@ -17,6 +17,7 @@ includes:
 - ../common/settings/tk-multi-publish2.yml
 
 vred.apps.tk-multi-publish2:
+  display_name: "Publish Current Session"
   help_url: "@common.apps.tk-multi-publish2.help_url"
   collector: "{self}/collector.py:{engine}/tk-multi-publish2/basic/collector.py"
   publish_plugins:
@@ -38,6 +39,13 @@ vred.apps.tk-multi-publish2:
   - name: Upload for review
     hook: "{self}/upload_version.py:{engine}/tk-multi-publish2/basic/upload_version.py"
     settings: {}
+  location: "@common.apps.tk-multi-publish2.location"
+
+vred.apps.tk-multi-publish2.snapshot:
+  help_url: "@common.apps.tk-multi-publish2.help_url"
+  collector: "{self}/collector.py"
+  publish_plugins:
+  - '@common.settings.tk-multi-publish2.upload_version'
   location: "@common.apps.tk-multi-publish2.location"
 
 vred.apps.tk-multi-loader2:

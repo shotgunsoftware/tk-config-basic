@@ -24,6 +24,7 @@ vred.project:
     tk-multi-pythonconsole: '@common.apps.tk-multi-pythonconsole'
 
     tk-multi-publish2: '@vred.apps.tk-multi-publish2'
+    tk-multi-publish2-snapshot: '@vred.apps.tk-multi-publish2.snapshot'
 
     tk-multi-loader2: '@vred.apps.tk-multi-loader2'
 
@@ -32,7 +33,8 @@ vred.project:
     tk-multi-data-validation: '@vred.apps.tk-multi-data-validation'
 
   location: "@common.engines.tk-vred.location"
-  menu_favourites: []
+  menu_favourites:
+  - {app_instance: tk-multi-publish2-snapshot, name: Publish...}
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   - {app_instance: tk-multi-pythonconsole, name: 'PTR Python Console...'}
