@@ -53,8 +53,8 @@ vred.apps.tk-multi-loader2:
     Nx File: [import, import_with_options]
     VRED Scene: [import, import_with_options, import_as_env, smart_reference]
     Osb File: [import, import_with_options, import_as_env, smart_reference]
-    Image: [ import_front_sceneplate, import_back_sceneplate ]
-    Rendered Image: [ import_front_sceneplate, import_back_sceneplate ]
+    Image: [import_front_sceneplate, import_back_sceneplate]
+    Rendered Image: [import_front_sceneplate, import_back_sceneplate]
   actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
   entities:
   - caption: Current Project
