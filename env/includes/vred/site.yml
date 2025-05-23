@@ -34,10 +34,11 @@ vred.site:
         Catpart File: [import, import_with_options, smart_reference]
         Fbx File: [import, import_with_options, smart_reference]
         Motion Builder FBX: [import, import_with_options, smart_reference]
+        Nx File: [import, import_with_options, smart_reference]
         VRED Scene: [import, import_with_options, smart_reference]
         Osb File: [import, import_with_options, smart_reference]
-        Image: [import_sceneplate]
-        Rendered Image: [import_sceneplate]
+        Image: [import_front_sceneplate, import_back_sceneplate]
+        Rendered Image: [import_front_sceneplate, import_back_sceneplate]
       actions_hook: "{engine}/tk-multi-loader2/basic/scene_actions.py"
       entities:
       - caption: Project
