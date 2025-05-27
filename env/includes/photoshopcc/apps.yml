@@ -35,14 +35,14 @@ photoshopcc.apps.tk-multi-publish2:
     - name: Publish PNG to FPTR
       hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_image.py"
       settings:
-        "Export Settings":
+        Export Settings:
           format: PNG
           PNG8: False
           quality: 100
     - name: Publish JPEG to FPTR
       hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_image.py"
       settings:
-        "Export Settings":
+        Export Settings:
           format: JPEG
           quality: 100
   location: "@common.apps.tk-multi-publish2.location"
