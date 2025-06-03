@@ -46,7 +46,7 @@ common.engines.tk-alias.location:
 common.engines.tk-vred.location:
   type: app_store
   name: tk-vred
-  version: v3.5.2
+  version: v3.5.3
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
