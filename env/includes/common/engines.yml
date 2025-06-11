@@ -18,7 +18,7 @@ common.engines.tk-3dsmax.location:
 common.engines.tk-houdini.location:
   type: app_store
   name: tk-houdini
-  version: v1.9.5
+  version: v1.9.6
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
