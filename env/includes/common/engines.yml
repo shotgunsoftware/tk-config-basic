@@ -22,7 +22,7 @@ common.engines.tk-houdini.location:
   # REMOVEME: Get latest branch from it is released
   type: git_branch
   branch: master
-  path: git@github.com:shotgunsoftware/tk-core.git
+  path: git@github.com:shotgunsoftware/tk-houdini.git
   version: 13a898c4b32289f0f11be5ddf54d141719384c21
 common.engines.tk-maya.location:
   type: app_store
@@ -31,7 +31,7 @@ common.engines.tk-maya.location:
   # REMOVEME: Get latest branch from it is released
   type: git_branch
   branch: master
-  path: git@github.com:shotgunsoftware/tk-core.git
+  path: git@github.com:shotgunsoftware/tk-maya.git
   version: 6b279ec303fd5e76699b6d206e34198872fd5280
 common.engines.tk-nuke.location:
   type: app_store
@@ -40,7 +40,7 @@ common.engines.tk-nuke.location:
   # REMOVEME: Get latest branch from it is released
   type: git_branch
   branch: master
-  path: git@github.com:shotgunsoftware/tk-core.git
+  path: git@github.com:shotgunsoftware/tk-nuke.git
   version: 02808561cd29466fa6a3aca0e8249b99868e2a47
 common.engines.tk-photoshopcc.location:
   type: app_store
