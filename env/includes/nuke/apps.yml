@@ -181,3 +181,7 @@ nukestudio.apps.tk-multi-shotgunpanel:
 
 nuke.apps.tk-nuke-quickreview:
   location: "@common.apps.tk-nuke-quickreview.location"
+
+nuke.apps.tk-multi-breakdown2:
+  location: "@common.apps.tk-multi-breakdown2.location"
+  panel_mode: False

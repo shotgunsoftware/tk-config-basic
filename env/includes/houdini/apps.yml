@@ -93,3 +93,7 @@ houdini.apps.tk-multi-shotgunpanel:
         filters: {}
     enable_context_switch: true
     location: "@common.apps.tk-multi-shotgunpanel.location"
+
+houdini.apps.tk-multi-breakdown2:
+  location: "@common.apps.tk-multi-breakdown2.location"
+  panel_mode: False

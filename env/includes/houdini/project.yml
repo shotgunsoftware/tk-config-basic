@@ -28,6 +28,8 @@ houdini.project:
 
     tk-multi-shotgunpanel: '@houdini.apps.tk-multi-shotgunpanel'
 
+    tk-multi-breakdown2: '@houdini.apps.tk-multi-breakdown2'
+
   location: "@common.engines.tk-houdini.location"
   menu_favourites: []
   run_at_startup:

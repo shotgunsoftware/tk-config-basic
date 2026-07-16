@@ -93,3 +93,7 @@ maya.apps.tk-multi-reviewsubmission:
   render_media_hook: '{self}/render_media.py:{self}/{engine_name}/render_media.py'
   submitter_hook: '{self}/submitter_create.py'
   location: "@common.apps.tk-multi-reviewsubmission.location"
+
+maya.apps.tk-multi-breakdown2:
+  location: "@common.apps.tk-multi-breakdown2.location"
+  panel_mode: False
