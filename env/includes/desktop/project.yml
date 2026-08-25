@@ -36,6 +36,25 @@ desktop.project:
       hook_before_register_command: "{config}/tk-multi-launchapp/before_register_command.py"
       location: "@common.apps.tk-multi-launchapp.location"
 
+    tk-multi-loader2:
+      location: "@common.apps.tk-multi-loader2.location"
+      entities:
+        - caption: Current Project
+          type: Query
+          entity_type: Project
+          publish_filters: []
+          filters:
+          - ["id", "is", "{context.project.id}"]
+          hierarchy: [name]
+        - caption: My Tasks
+          type: Query
+          entity_type: Task
+          publish_filters: []
+          filters:
+          - [task_assignees, is, "{context.user}"]
+          - ["project", "is", "{context.project}"]
+          hierarchy: [entity, content]
+
   collapse_rules:
   - {button_label: $app, match: Launch $app, menu_label: None}
   default_group: Studio
