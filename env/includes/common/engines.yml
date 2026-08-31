@@ -65,12 +65,7 @@ common.engines.tk-vred.location:
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
-  version: v2.8.6
-  # QA: Use latest branch until it is released
-  type: git_branch
-  branch: master
-  path: git@github.com:shotgunsoftware/tk-desktop.git
-  version: c528bccf01fc1c35e1f676f70bf532a42273b1b6
+  version: v2.8.7
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
