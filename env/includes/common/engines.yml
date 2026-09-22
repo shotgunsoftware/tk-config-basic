@@ -23,16 +23,11 @@ common.engines.tk-houdini.location:
   type: git_branch
   branch: master
   path: git@github.com:shotgunsoftware/tk-houdini.git
-  version: 13a898c4b32289f0f11be5ddf54d141719384c21
+  version: d4bf07d95e5ba53296ec3cfc409bb717f75be19f
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
-  version: v0.13.11
-  # QA: Use latest branch until it is released
-  type: git_branch
-  branch: master
-  path: git@github.com:shotgunsoftware/tk-maya.git
-  version: 6b279ec303fd5e76699b6d206e34198872fd5280
+  version: v0.13.12
 common.engines.tk-nuke.location:
   type: app_store
   name: tk-nuke
@@ -53,7 +48,7 @@ common.engines.tk-aftereffects.location:
 common.engines.tk-flame.location:
   type: app_store
   name: tk-flame
-  version: v1.19.10
+  version: v1.19.12
 common.engines.tk-alias.location:
   type: app_store
   name: tk-alias
@@ -65,7 +60,7 @@ common.engines.tk-vred.location:
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
-  version: v2.8.7
+  version: v2.8.8
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
