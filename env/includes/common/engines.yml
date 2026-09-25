@@ -18,12 +18,7 @@ common.engines.tk-3dsmax.location:
 common.engines.tk-houdini.location:
   type: app_store
   name: tk-houdini
-  version: v1.9.12
-  # QA: Use latest branch until it is released
-  type: git_branch
-  branch: master
-  path: git@github.com:shotgunsoftware/tk-houdini.git
-  version: d4bf07d95e5ba53296ec3cfc409bb717f75be19f
+  version: v1.9.13
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
