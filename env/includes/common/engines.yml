@@ -24,9 +24,14 @@ common.engines.tk-maya.location:
   name: tk-maya
   version: v0.13.12
 common.engines.tk-nuke.location:
-  type: app_store
-  name: tk-nuke
-  version: v0.16.4
+  # type: app_store
+  # name: tk-nuke
+  # version: v0.16.4
+  # QA: Use latest branch until it is released
+  type: git_branch
+  branch: master
+  path: git@github.com:shotgunsoftware/tk-nuke.git
+  version: 02808561cd29466fa6a3aca0e8249b99868e2a47
 common.engines.tk-photoshopcc.location:
   type: app_store
   name: tk-photoshopcc
