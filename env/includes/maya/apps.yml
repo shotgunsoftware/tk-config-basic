@@ -28,6 +28,9 @@ maya.apps.tk-multi-publish2:
   - name: Publish to Flow Production Tracking
     hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py"
     settings: {}
+  - name: Publish Alembic Derivative
+    hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_session.py:{self}/flowam/publish_alembic_derivative.py"
+    settings: {}
   location: "@common.apps.tk-multi-publish2.location"
 
 maya.apps.tk-multi-loader2:
@@ -93,3 +96,7 @@ maya.apps.tk-multi-reviewsubmission:
   render_media_hook: '{self}/render_media.py:{self}/{engine_name}/render_media.py'
   submitter_hook: '{self}/submitter_create.py'
   location: "@common.apps.tk-multi-reviewsubmission.location"
+
+maya.apps.tk-multi-breakdown2:
+  location: "@common.apps.tk-multi-breakdown2.location"
+  panel_mode: False
