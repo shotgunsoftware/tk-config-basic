@@ -29,6 +29,8 @@ nuke.asset_step:
 
     tk-nuke-quickreview: '@nuke.apps.tk-nuke-quickreview'
 
+    tk-multi-breakdown2: '@nuke.apps.tk-multi-breakdown2'
+
   location: "@common.engines.tk-nuke.location"
   menu_favourites: []
   run_at_startup:
