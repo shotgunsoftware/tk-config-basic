@@ -22,7 +22,7 @@ common.engines.tk-houdini.location:
 common.engines.tk-maya.location:
   type: app_store
   name: tk-maya
-  version: v0.13.12
+  version: v0.13.13
 common.engines.tk-nuke.location:
   # type: app_store
   # name: tk-nuke
@@ -51,11 +51,11 @@ common.engines.tk-alias.location:
 common.engines.tk-vred.location:
   type: app_store
   name: tk-vred
-  version: v3.5.7
+  version: v3.5.8
 common.engines.tk-desktop.location:
   type: app_store
   name: tk-desktop
-  version: v2.8.8
+  version: v2.9.0
 common.engines.tk-desktop2.location:
   type: app_store
   name: tk-desktop2
