@@ -35,11 +35,11 @@ common.apps.tk-multi-setframerange:
 common.apps.tk-multi-publish2.location:
   type: app_store
   name: tk-multi-publish2
-  version: v2.11.2
+  version: v2.11.3
 common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
-  version: v1.25.7
+  version: v1.26.0
 common.apps.tk-multi-breakdown2.location:
   type: app_store
   name: tk-multi-breakdown2
