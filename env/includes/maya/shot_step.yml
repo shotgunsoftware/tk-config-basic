@@ -31,6 +31,8 @@ maya.shot_step:
 
     tk-multi-reviewsubmission: '@maya.apps.tk-multi-reviewsubmission'
 
+    tk-multi-breakdown2: '@maya.apps.tk-multi-breakdown2'
+
   location: "@common.engines.tk-maya.location"
   menu_favourites: []
   run_at_startup:
