@@ -31,8 +31,13 @@ maya.shot_step:
 
     tk-multi-reviewsubmission: '@maya.apps.tk-multi-reviewsubmission'
 
+    tk-multi-breakdown2: '@maya.apps.tk-multi-breakdown2'
+
+    tk-multi-scenebuilder: '@maya.apps.tk-multi-scenebuilder.shot_step'
+
   location: "@common.engines.tk-maya.location"
-  menu_favourites: []
+  menu_favourites:
+  - {app_instance: tk-multi-scenebuilder, name: Scene Builder...}
   run_at_startup:
   - {app_instance: tk-multi-shotgunpanel, name: ''}
   launch_builtin_plugins: [basic]

@@ -58,6 +58,49 @@ maya.apps.tk-multi-loader2:
   publish_filters: [["sg_status_list", "is_not", null]]
   location: "@common.apps.tk-multi-loader2.location"
 
+maya.apps.tk-multi-breakdown2:
+  hook_scene_operations: '{self}/tk-maya_scene_operations.py'
+  location: "@common.apps.tk-multi-breakdown2.location"
+
+maya.apps.tk-multi-scenebuilder.asset_step:
+  presets:
+  - name: Reference
+    actions:
+    - context:
+      - [entity, is, '{context.entity}']
+      - [task.Task.downstream_tasks.Task.content, is, '{context.task.name}']
+      - [task.Task.downstream_tasks.Task.step, is, '{context.step}']
+      action_mappings:
+        Maya Scene: reference
+  - name: Import
+    actions:
+    - context:
+      - [entity, is, '{context.entity}']
+      - [task.Task.downstream_tasks.Task.content, is, '{context.task.name}']
+      - [task.Task.downstream_tasks.Task.step, is, '{context.step}']
+      action_mappings:
+        Maya Scene: import
+  location: "@common.apps.tk-multi-scenebuilder.location"
+
+maya.apps.tk-multi-scenebuilder.shot_step:
+  presets:
+  - name: Upstream Assets
+    actions:
+    - context:
+      - [entity.Asset.shots, in, '{context.entity}']
+      - [task.Task.step.Step.code, in, '{context.upstream_steps}']
+      action_mappings:
+        Maya Scene: reference
+  - name: Upstream Shot Tasks
+    actions:
+    - context:
+      - [entity, is, '{context.entity}']
+      - [task.Task.downstream_tasks.Task.content, is, '{context.task.name}']
+      - [task.Task.downstream_tasks.Task.step, is, '{context.step}']
+      action_mappings:
+        Maya Scene: reference
+  location: "@common.apps.tk-multi-scenebuilder.location"
+
 maya.apps.tk-multi-shotgunpanel:
   actions_hook: '{self}/general_actions.py:{self}/tk-maya_actions.py'
   action_mappings:
