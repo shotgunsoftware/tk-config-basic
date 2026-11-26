@@ -40,6 +40,14 @@ common.apps.tk-multi-loader2.location:
   type: app_store
   name: tk-multi-loader2
   version: v1.26.0
+common.apps.tk-multi-breakdown2.location:
+  type: app_store
+  name: tk-multi-breakdown2
+  version: v0.4.7
+common.apps.tk-multi-scenebuilder.location:
+  type: app_store
+  name: tk-multi-scenebuilder
+  version: v0.1.2
 common.apps.tk-multi-shotgunpanel.location:
   type: app_store
   name: tk-multi-shotgunpanel
